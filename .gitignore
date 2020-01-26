@@ -5,4 +5,7 @@
 
 .classpath
 .project
-.settings
+.settings/*
+
+# Keep code-formatting preferences.
+!.settings/org.eclipse.jdt.core.prefs
