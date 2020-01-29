@@ -25,10 +25,10 @@ public class ElevatorDataTest extends TestCase {
             // Deserialize ElevatorData from file
             final ObjectInputStream in = new ObjectInputStream(new FileInputStream("elevatorDataTest.txt"));
             final ElevatorData inputData = (ElevatorData) in.readObject();
-            assertEquals(1, inputData.getElevatorId());
-            assertEquals(2, inputData.getCurrentFloor());
-            assertEquals(3, inputData.getFloorButton());
-            assertEquals(time, inputData.getTime());
+            assertEquals(outputData.getElevatorId(), inputData.getElevatorId());
+            assertEquals(outputData.getCurrentFloor(), inputData.getCurrentFloor());
+            assertEquals(outputData.getFloorButton(), inputData.getFloorButton());
+            assertEquals(outputData.getTime(), inputData.getTime());
             in.close();
 
             // Delete file
