@@ -11,7 +11,6 @@ import core.FloorData.ButtonState;
 import junit.framework.TestCase;
 
 public class FloorDataTest extends TestCase {
-    
     // Test writing/reading FloorData to/from a file.
     public void testFileSerialization() {
         final LocalTime time = LocalTime.now();
