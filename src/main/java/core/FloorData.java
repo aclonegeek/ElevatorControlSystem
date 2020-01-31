@@ -8,7 +8,7 @@ import java.time.LocalTime;
  */
 
 public class FloorData implements Serializable {
-    private enum ButtonState {
+    public static enum ButtonState {
         UP, DOWN, UNPRESSED
     }
 
@@ -18,12 +18,12 @@ public class FloorData implements Serializable {
     private final int elevatorId;
     private final ButtonState buttonState;
 
-    public FloorData(final int elevatorId, final int floorNumber, final ButtonState buttonState,
+    public FloorData(final int elevatorId, final int floorNumber, final ButtonState up,
             final LocalTime time) {
         this.elevatorId = elevatorId;
         this.floorNumber = floorNumber;
         this.time = time;
-        this.buttonState = buttonState;
+        this.buttonState = up;
     }
 
     public LocalTime getTime() {
