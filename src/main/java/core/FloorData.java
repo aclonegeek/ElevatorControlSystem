@@ -6,7 +6,6 @@ import java.time.LocalTime;
 /**
  * @summary Implementation of Floor data
  */
-
 public class FloorData implements Serializable {
     public static enum ButtonState {
         UP, DOWN, UNPRESSED
