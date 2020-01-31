@@ -3,7 +3,6 @@
 *.class
 *.tmp
 
-.classpath
 .project
 .settings/*
 
