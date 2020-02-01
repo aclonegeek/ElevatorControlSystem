@@ -14,7 +14,7 @@ import core.FloorData.ButtonState;
  * @summary Floor subsystem to read an input file using the format shown in project specifications.
  */
 public class FloorReader {
-    //stores the queue of people requesting to get on the elevator of type FloorData.
+    // Stores the queue of people requesting to get on the elevator of type FloorData.
     private final ArrayList<FloorData> floorRequests; 
     
     public FloorReader(final String path){ 
@@ -26,7 +26,7 @@ public class FloorReader {
         }
     }
     
-    //store input file into an ArrayList of type FloorData.
+    // Store input file into an ArrayList of type FloorData.
     private void readFile(final String path) throws Exception {
         final File file = new File(path);
         final BufferedReader br = new BufferedReader(new FileReader(file)); 
@@ -45,7 +45,7 @@ public class FloorReader {
         br.close();
     }
     
-    //getter to get stored ArrayList of FloorData (represents list of floors in text file).
+    // Getter to get stored ArrayList of FloorData (represents list of floors in text file).
     public ArrayList<FloorData> getFloorRequests() {
         return this.floorRequests;
     }
