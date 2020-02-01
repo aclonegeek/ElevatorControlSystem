@@ -4,7 +4,6 @@ package core;
  * @summary Floor subsystem simulates the functionality of a particular floor
  */
 public class FloorSubsystem implements Runnable {
-
     private enum ButtonState {
         UP, DOWN, UNPRESSED
     }
