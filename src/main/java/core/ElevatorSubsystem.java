@@ -4,7 +4,6 @@ public class ElevatorSubsystem implements Runnable {
 
     private final ElevatorData data;
     private final Scheduler scheduler;
-    private FloorData targetFloor;
 
     public ElevatorSubsystem(ElevatorData dataInput, Scheduler schedulerInput){
 
@@ -12,6 +11,9 @@ public class ElevatorSubsystem implements Runnable {
         this.scheduler = schedulerInput;
     }
     public synchronized void run() {
+
+        scheduler.registerElevatorSubsystem(this.data);
+
         while(true){
             scheduler.addElevatorEvent(scheduler.getFloorEvent());
         }
