@@ -53,7 +53,7 @@ public class FloorSubsystem implements Runnable {
         this.scheduler.registerFloorSubsystem(this);
         //ArrayList<FloorData> floorRequests = FloorReader(this.path).getFloorRequests();
         boolean running = true;
-        while (running) {
+        while (true) {
             /*FloorData firstFloorRequest = floorRequests.get(0);
             if(simTime == firstFloorRequest.getTime()){
                 floorRequests.remove(0);
