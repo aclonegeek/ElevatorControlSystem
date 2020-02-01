@@ -8,3 +8,4 @@
 
 # Keep code-formatting preferences.
 !.settings/org.eclipse.jdt.core.prefs
+/bin/
