@@ -1,18 +1,18 @@
 package core;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 
 public class Scheduler implements Runnable {
     private ElevatorSubsystem elevatorSubsystem;
     private FloorSubsystem floorSubsystem;
 
-    private ArrayList<ElevatorData> elevatorEvents;
-    private ArrayList<FloorData> floorEvents;
+    private ArrayDeque<FloorData> elevatorEvents;
+    private ArrayDeque<FloorData> floorEvents;
 
     public Scheduler() {
-        this.elevatorEvents = new ArrayList<>();
-        this.floorEvents = new ArrayList<>();
+        this.elevatorEvents = new ArrayDeque<>();
+        this.floorEvents = new ArrayDeque<>();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class Scheduler implements Runnable {
         this.notifyAll();
     }
 
-    public synchronized void addElevatorEvent(final ElevatorData elevatorData) {
+    public synchronized void addElevatorEvent(final FloorData elevatorData) {
         this.elevatorEvents.add(elevatorData);
         this.notifyAll();
     }
@@ -53,10 +53,10 @@ public class Scheduler implements Runnable {
             }
         }
 
-        return this.floorEvents.remove(0);
+        return this.floorEvents.removeFirst();
     }
 
-    public synchronized ElevatorData getElevatorEvent() {
+    public synchronized FloorData getElevatorEvent() {
         while (this.elevatorEvents.isEmpty()) {
             try {
                 this.wait();
@@ -65,6 +65,6 @@ public class Scheduler implements Runnable {
             }
         }
 
-        return this.elevatorEvents.remove(0);
+        return this.elevatorEvents.removeFirst();
     }
 }
