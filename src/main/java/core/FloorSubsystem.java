@@ -3,7 +3,6 @@ package core;
 /**
  * @summary Floor subsystem simulates the functionality of a particular floor
  */
-
 public class FloorSubsystem implements Runnable {
 
     private enum ButtonState {
@@ -41,7 +40,7 @@ public class FloorSubsystem implements Runnable {
         }
     }
 
-    public void setButtonState(ButtonState state) {
+    public void setButtonState(final ButtonState state) {
         this.buttonState = state;
     }
 
@@ -49,7 +48,7 @@ public class FloorSubsystem implements Runnable {
         return this.buttonState;
     }
 
-    public void setElevatorState(ElevatorState state) {
+    public void setElevatorState(final ElevatorState state) {
         this.elevatorState = state;
     }
 
@@ -60,5 +59,4 @@ public class FloorSubsystem implements Runnable {
     public int getFloorNumber() {
         return this.floor;
     }
-
 }
