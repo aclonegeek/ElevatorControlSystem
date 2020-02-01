@@ -26,7 +26,7 @@ public class FloorSubsystem implements Runnable {
         this.number = number;
     }
 
-    public void setButtonState(ButtonState state) {
+    public void setButtonState(final ButtonState state) {
         this.buttonState = state;
     }
     
