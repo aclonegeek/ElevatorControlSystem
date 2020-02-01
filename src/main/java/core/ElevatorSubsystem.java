@@ -13,7 +13,7 @@ public class ElevatorSubsystem implements Runnable {
     }
     public synchronized void run() {
         while(true){
-            targetFloor = scheduler.getFloorEvent();
+            scheduler.addFloorEvent(scheduler.getFloorEvent());
         }
     }
 
