@@ -26,7 +26,7 @@ public class FloorReader {
         }
     }
     
-    // store input file into an ArrayList of type FloorData.
+    //store input file into an ArrayList of type FloorData.
     private void readFile(final String path) throws Exception {
         final File file = new File(path);
         final BufferedReader br = new BufferedReader(new FileReader(file)); 
