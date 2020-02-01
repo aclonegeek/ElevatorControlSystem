@@ -14,7 +14,7 @@ public class FloorSubsystem implements Runnable {
         UP, DOWN, IDLE, NONE
     }
 
-    private Scheduler scheduler;
+    private final Scheduler scheduler;
     private ButtonState buttonState;
     private ElevatorState elevatorState;
     private final int number;
