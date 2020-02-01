@@ -33,7 +33,7 @@ public class FloorSubsystem implements Runnable {
     }
     
     
-    public void setElevatorState(ElevatorState state) {
+    public void setElevatorState(final ElevatorState state) {
         this.elevatorState = state;
     }
 
