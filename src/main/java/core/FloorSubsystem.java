@@ -15,7 +15,7 @@ public class FloorSubsystem implements Runnable {
     private final Scheduler scheduler;
     private ButtonState buttonState;
     private ElevatorState elevatorState;
-    private final int number;
+    private final int floor;
 
     public FloorSubsystem(final Scheduler scheduler, final int number) {
         this.scheduler = scheduler;
