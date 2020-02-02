@@ -34,12 +34,13 @@ public class FloorSubsystem implements Runnable {
         this.scheduler.registerFloorSubsystem(this);
         final String filePath = this.getClass().getResource("/floorData.txt").getFile();
         ArrayList<FloorData> floorRequests = floorReader.readFile(filePath);
-        boolean running = true;
-        while (running) {
-            for (FloorData floorRequest : floorRequests) {
-                this.scheduler.addFloorEvent(floorRequest);
-                floorRequests.remove(0);
-                floorRequests.add(this.scheduler.getElevatorEvent());
+        System.out.println("floorRequests size: " + floorRequests.size());
+        while (true) {
+            if (!floorRequests.isEmpty()) {
+                this.scheduler.addFloorEvent(floorRequests.remove(0));
+                FloorData returnedData = this.scheduler.getElevatorEvent();
+                System.out.println("Floor receives FloorData: " + returnedData.getFloorNumber());
+                System.out.println("floorRequests size: " + floorRequests.size());
             }
         }
     }
