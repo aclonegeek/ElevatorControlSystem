@@ -46,6 +46,6 @@ Code:
     - Scheduler: Randy
     - Elevator: Mike and Layne
     - Floor: Galen
-    - FloorReader: Ton and Randy
+    - FloorReader: Tan and Randy
 Testing: Everyone
 UML: Everyone
