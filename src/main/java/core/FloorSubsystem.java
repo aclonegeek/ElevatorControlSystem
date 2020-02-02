@@ -39,7 +39,6 @@ public class FloorSubsystem implements Runnable {
      */
     @Override
     public void run() {
-        this.scheduler.registerFloorSubsystem(this);
         final String filePath = this.getClass().getResource("/floorData.txt").getFile();
         ArrayList<FloorData> floorRequests = floorReader.readFile(filePath);
         while (true) {

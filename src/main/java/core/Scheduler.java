@@ -7,9 +7,6 @@ import java.util.ArrayDeque;
  * Acts as a middleman by routing FloorData events between them.
  */
 public class Scheduler implements Runnable {
-    private ElevatorSubsystem elevatorSubsystem;
-    private FloorSubsystem floorSubsystem;
-
     private ArrayDeque<FloorData> elevatorEvents;
     private ArrayDeque<FloorData> floorEvents;
 
@@ -25,24 +22,6 @@ public class Scheduler implements Runnable {
     @Override
     public void run() {
 
-    }
-
-    /**
-     * Stores a reference to an ElevatorSubsystem, so the Scheduler can communicate with it.
-     *
-     * @param elevatorSubsytem the ElevatorSubsystem to store
-     */
-    public void registerElevatorSubsystem(final ElevatorSubsystem elevatorSubsystem) {
-        this.elevatorSubsystem = elevatorSubsystem;
-    }
-
-    /**
-     * Stores a reference to a FloorSubsystem, so the Scheduler can communicate with it.
-     *
-     * @param floorSubsytem the FloorSubsystem to store
-     */
-    public void registerFloorSubsystem(final FloorSubsystem floorSubsystem) {
-        this.floorSubsystem = floorSubsystem;
     }
 
     /**

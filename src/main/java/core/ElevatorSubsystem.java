@@ -21,7 +21,6 @@ public class ElevatorSubsystem implements Runnable {
      */
     @Override
     public void run() {
-        this.scheduler.registerElevatorSubsystem(this);
         while (true) {
             FloorData floorData = this.scheduler.removeFloorEvent();
             this.floorDataCount++;
