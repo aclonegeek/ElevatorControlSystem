@@ -2,11 +2,12 @@ package core;
 
 import junit.framework.TestCase;
 
-public class SystemTest extends TestCase {
-    public void testSystem() {
-        Scheduler scheduler = new Scheduler();
-        FloorSubsystem floorSubsystem = new FloorSubsystem(scheduler, 1);
-        ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(scheduler);
+public class FloorSubsystemTest extends TestCase {
+    // Tests that FloorData objects pass through FloorSubsystem the correct number of times.
+    public void testFloorSubsystem() {
+        final Scheduler scheduler = new Scheduler();
+        final FloorSubsystem floorSubsystem = new FloorSubsystem(scheduler, 1);
+        final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(scheduler);
         
         new Thread(scheduler).start();
         new Thread(floorSubsystem).start();
@@ -19,6 +20,5 @@ public class SystemTest extends TestCase {
         }
         
         assertEquals(4, floorSubsystem.getFloorDataCount());
-        assertEquals(4, elevatorSubsystem.getFloorDataCount());
     }
 }
