@@ -3,7 +3,7 @@ package core;
 import junit.framework.TestCase;
 
 public class SchedulerTest extends TestCase {
-    // Tests that FloorData objects pass through Scheduler the correct number of times
+    // Tests that FloorData objects pass through Scheduler the correct number of times.
     public void testScheduler() {
         Scheduler scheduler = new Scheduler();
         FloorSubsystem floorSubsystem = new FloorSubsystem(scheduler, 1);
