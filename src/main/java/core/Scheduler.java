@@ -2,13 +2,17 @@ package core;
 
 import java.util.ArrayDeque;
 
+/*
+ * Scheduler subsystem which coordinates the elevator and floor subsystems.
+ * Acts as a middleman by routing FloorData events between them.
+ */
 public class Scheduler implements Runnable {
     private ElevatorSubsystem elevatorSubsystem;
     private FloorSubsystem floorSubsystem;
 
     private ArrayDeque<FloorData> elevatorEvents;
     private ArrayDeque<FloorData> floorEvents;
-    
+
     // Used for testing purposes.
     private int floorDataCount;
 
@@ -20,7 +24,7 @@ public class Scheduler implements Runnable {
 
     @Override
     public void run() {
-        
+
     }
 
     public void registerElevatorSubsystem(final ElevatorSubsystem elevatorSubsystem) {
@@ -72,7 +76,7 @@ public class Scheduler implements Runnable {
         System.out.println("Floor gets FloorData.");
         return this.elevatorEvents.removeFirst();
     }
-    
+
     public int getFloorDataCount() {
         return this.floorDataCount;
     }

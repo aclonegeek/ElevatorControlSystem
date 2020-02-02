@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.time.LocalTime;
 
 /**
- * @summary Implementation of Floor data
+ * Implements a basic class which holds floor data. Only has a constructor,
+ * getters, and setters. FloorData instances are passed between the subsystems
+ * to signify events.
  */
 public class FloorData implements Serializable {
     public static enum ButtonState {
