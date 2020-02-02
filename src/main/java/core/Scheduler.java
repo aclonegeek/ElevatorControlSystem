@@ -1,7 +1,6 @@
 package core;
 
 import java.util.ArrayDeque;
-import java.util.HashMap;
 
 public class Scheduler implements Runnable {
     private ElevatorSubsystem elevatorSubsystem;
