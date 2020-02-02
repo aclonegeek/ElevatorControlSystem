@@ -8,12 +8,17 @@ public class SystemTest extends TestCase {
         FloorSubsystem floorSubsystem = new FloorSubsystem(scheduler, 1);
         ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(scheduler);
         
-        Thread schedulerThread = new Thread(scheduler);
-        Thread floorSubsystemThread = new Thread(floorSubsystem);
-        Thread elevatorSubsystemThread = new Thread(elevatorSubsystem);
+        new Thread(scheduler).start();
+        new Thread(floorSubsystem).start();
+        new Thread(elevatorSubsystem).start();
         
-        schedulerThread.start();
-        floorSubsystemThread.start();
-        elevatorSubsystemThread.start(); 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.err.println(e);
+        }
+        
+        assertEquals(4, floorSubsystem.getFloorDataCount());
+        assertEquals(4, elevatorSubsystem.getFloorDataCount());
     }
 }
