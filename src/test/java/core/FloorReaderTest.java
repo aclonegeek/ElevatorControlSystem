@@ -7,6 +7,7 @@ import core.FloorData.ButtonState;
 import junit.framework.TestCase;
 
 public class FloorReaderTest extends TestCase {
+    // Tests that the floor reader creates FloorData objects with the correct data.
     public void testFloorReader() {
         final FloorReader floorReader = new FloorReader();
         final String path = this.getClass().getResource("/floorData.txt").getFile();

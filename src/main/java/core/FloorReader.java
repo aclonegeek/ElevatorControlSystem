@@ -14,8 +14,8 @@ import core.FloorData;
 import core.FloorData.ButtonState;
 
 /**
- * @summary Reads an input file following the floor subsystem format into a list
- *          of serializable objects.
+ * Reads an input file following the floor subsystem format into a list of
+ * serializable objects.
  */
 public class FloorReader {
     public ArrayList<FloorData> readFile(final String path) {

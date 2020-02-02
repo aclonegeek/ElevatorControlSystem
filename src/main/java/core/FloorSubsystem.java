@@ -2,8 +2,9 @@ package core;
 
 import java.util.ArrayList;
 
-/**
- * @summary Floor subsystem simulates the functionality of a particular floor
+/*
+ * Floor subsystem which simulates the functionality of a particular floor.
+ * Communicates with the scheduler through FloorData objects.
  */
 public class FloorSubsystem implements Runnable {
 
@@ -20,7 +21,7 @@ public class FloorSubsystem implements Runnable {
     private ElevatorState elevatorState;
     private final int floor;
     private final FloorReader floorReader;
-    
+
     // Used for testing purposes.
     private int floorDataCount;
 
@@ -33,6 +34,10 @@ public class FloorSubsystem implements Runnable {
         this.floorDataCount = 0;
     }
 
+    /*
+     * Reads input data from a file and continually tries to send FloorData events
+     * to the scheduler.
+     */
     @Override
     public void run() {
         this.scheduler.registerFloorSubsystem(this);
@@ -42,7 +47,8 @@ public class FloorSubsystem implements Runnable {
             if (!floorRequests.isEmpty()) {
                 this.scheduler.addFloorEvent(floorRequests.remove(0));
                 FloorData returnedData = this.scheduler.removeElevatorEvent();
-                System.out.println("Floor receives FloorData with floor number: " + returnedData.getFloorNumber());
+                System.out.println(
+                        "Floor receives FloorData with floor number: " + returnedData.getFloorNumber());
                 this.floorDataCount++;
             }
         }
@@ -67,7 +73,7 @@ public class FloorSubsystem implements Runnable {
     public int getFloorNumber() {
         return this.floor;
     }
-    
+
     public int getFloorDataCount() {
         return this.floorDataCount;
     }
