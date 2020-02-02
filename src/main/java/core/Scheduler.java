@@ -16,13 +16,7 @@ public class Scheduler implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
-        }
+        
     }
 
     public void registerElevatorSubsystem(final ElevatorSubsystem elevatorSubsystem) {
@@ -36,11 +30,13 @@ public class Scheduler implements Runnable {
     public synchronized void addFloorEvent(final FloorData floorData) {
         this.floorEvents.add(floorData);
         this.notifyAll();
+        System.out.println("Floor adds FloorData.");
     }
 
     public synchronized void addElevatorEvent(final FloorData elevatorData) {
         this.elevatorEvents.add(elevatorData);
         this.notifyAll();
+        System.out.println("Elevator adds FloorData.");
     }
 
     public synchronized FloorData getFloorEvent() {
@@ -52,6 +48,7 @@ public class Scheduler implements Runnable {
             }
         }
 
+        System.out.println("Elevator gets FloorData.");
         return this.floorEvents.removeFirst();
     }
 
@@ -64,6 +61,7 @@ public class Scheduler implements Runnable {
             }
         }
 
+        System.out.println("Floor gets FloorData.");
         return this.elevatorEvents.removeFirst();
     }
 }

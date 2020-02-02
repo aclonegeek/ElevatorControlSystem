@@ -1,5 +1,7 @@
 package core;
 
+import java.util.ArrayList;
+
 /**
  * @summary Floor subsystem simulates the functionality of a particular floor
  */
@@ -17,26 +19,32 @@ public class FloorSubsystem implements Runnable {
     private ButtonState buttonState;
     private ElevatorState elevatorState;
     private final int floor;
+    private final FloorReader floorReader;
+    
+    // Used for testing purposes.
+    private int floorDataCount;
 
     public FloorSubsystem(final Scheduler scheduler, final int floor) {
         this.scheduler = scheduler;
         this.buttonState = ButtonState.UNPRESSED;
         this.elevatorState = ElevatorState.NONE;
         this.floor = floor;
+        this.floorReader = new FloorReader();
+        this.floorDataCount = 0;
     }
 
     @Override
     public void run() {
         this.scheduler.registerFloorSubsystem(this);
-        // ArrayList<FloorData> floorRequests =
-        // FloorReader(this.path).getFloorRequests();
-        boolean running = true;
-        while (running) {
-            /*
-             * FloorData firstFloorRequest = floorRequests.get(0); if(simTime ==
-             * firstFloorRequest.getTime()){ floorRequests.remove(0);
-             * this.scheduler.addFloorEvent(floorData); }
-             */
+        final String filePath = this.getClass().getResource("/floorData.txt").getFile();
+        ArrayList<FloorData> floorRequests = floorReader.readFile(filePath);
+        while (true) {
+            if (!floorRequests.isEmpty()) {
+                this.scheduler.addFloorEvent(floorRequests.remove(0));
+                FloorData returnedData = this.scheduler.getElevatorEvent();
+                System.out.println("Floor receives FloorData with floor number: " + returnedData.getFloorNumber());
+                this.floorDataCount++;
+            }
         }
     }
 
@@ -58,5 +66,9 @@ public class FloorSubsystem implements Runnable {
 
     public int getFloorNumber() {
         return this.floor;
+    }
+    
+    public int getFloorDataCount() {
+        return this.floorDataCount;
     }
 }
