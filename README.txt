@@ -39,7 +39,7 @@ Each of the subsystem tests (FloorSubsystemTest, ElevatorSubsystemTest, Schedule
     - SchedulerTest.java
 - src/test/resources/floorData.txt
   - This contains the test data (a sample floor input file) used by the floor subsystem and floor reader.
-- uml/ClassDiagram.png
+- uml/ClassDiagram.pdf
 
 ======================
 === WORK BREAKDOWN ===
