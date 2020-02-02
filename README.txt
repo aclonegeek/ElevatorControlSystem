@@ -5,8 +5,13 @@
 =============
 === SETUP ===
 =============
-1. Clone the repo: git clone https://github.com/aclonegeek/ElevatorControlSystem.git
-2. In Eclipse, File > Import... > Maven > Existing Maven Projects > Select ElevatorControlSystem as Root Directory > Finish
+1. In Eclipse, File > Import... > Maven > Existing Maven Projects > Select ElevatorControlSystem as Root Directory > Finish
+
+Important notes:
+- This project uses Java 10 (the default on lab computers).
+- If for some reason JUnit is not imported correctly, please ensure it is on your classpath. Eclipse can do this for you (i.e. highlight over the error and click Eclipse's suggestion of adding JUnit to the classpath).
+- If the project does not import correctly for some reason, try importing it like this:
+  - File > Import... > General > Projects from Folder or Archive > Select ElevatorControlSystem as Import source > Finish
 
 ===============
 === RUNNING ===
