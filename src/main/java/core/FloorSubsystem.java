@@ -20,6 +20,9 @@ public class FloorSubsystem implements Runnable {
     private ElevatorState elevatorState;
     private final int floor;
     private final FloorReader floorReader;
+    
+    // Used for testing purposes.
+    private int floorDataCount;
 
     public FloorSubsystem(final Scheduler scheduler, final int floor) {
         this.scheduler = scheduler;
@@ -27,6 +30,7 @@ public class FloorSubsystem implements Runnable {
         this.elevatorState = ElevatorState.NONE;
         this.floor = floor;
         this.floorReader = new FloorReader();
+        this.floorDataCount = 0;
     }
 
     @Override
@@ -34,13 +38,12 @@ public class FloorSubsystem implements Runnable {
         this.scheduler.registerFloorSubsystem(this);
         final String filePath = this.getClass().getResource("/floorData.txt").getFile();
         ArrayList<FloorData> floorRequests = floorReader.readFile(filePath);
-        System.out.println("floorRequests size: " + floorRequests.size());
         while (true) {
             if (!floorRequests.isEmpty()) {
                 this.scheduler.addFloorEvent(floorRequests.remove(0));
                 FloorData returnedData = this.scheduler.getElevatorEvent();
-                System.out.println("Floor receives FloorData: " + returnedData.getFloorNumber());
-                System.out.println("floorRequests size: " + floorRequests.size());
+                System.out.println("Floor receives FloorData with floor number: " + returnedData.getFloorNumber());
+                this.floorDataCount++;
             }
         }
     }
@@ -63,5 +66,9 @@ public class FloorSubsystem implements Runnable {
 
     public int getFloorNumber() {
         return this.floor;
+    }
+    
+    public int getFloorDataCount() {
+        return this.floorDataCount;
     }
 }
