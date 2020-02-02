@@ -17,7 +17,7 @@ public class ElevatorSubsystem implements Runnable {
 
     /*
      * Continually attempts to retrieve FloorData events from the Scheduler For now,
-     * immediately returns them to the Scheduler
+     * immediately returns them to the Scheduler.
      */
     @Override
     public void run() {
