@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 
 public class ElevatorSubsystemTest extends TestCase {
     // Tests that FloorData objects pass through ElevatorSubsystem the correct number of times
-    public void testScheduler() {
+    public void testElevatorSubsystem() {
         Scheduler scheduler = new Scheduler();
         FloorSubsystem floorSubsystem = new FloorSubsystem(scheduler, 1);
         ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(scheduler);
