@@ -7,7 +7,6 @@ import java.util.ArrayList;
  * Communicates with the scheduler through FloorData objects.
  */
 public class FloorSubsystem implements Runnable {
-
     private enum ButtonState {
         UP, DOWN, UNPRESSED
     }

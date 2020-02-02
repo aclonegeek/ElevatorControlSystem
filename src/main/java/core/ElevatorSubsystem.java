@@ -1,6 +1,6 @@
 package core;
 
-/*
+/**
  * Elevator subsystem which simulates the functionality of a particular elevator.
  * Communicates with the scheduler through FloorData objects.
  */
@@ -15,7 +15,7 @@ public class ElevatorSubsystem implements Runnable {
         this.floorDataCount = 0;
     }
 
-    /*
+    /**
      * Continually attempts to retrieve FloorData events from the Scheduler. For now,
      * immediately returns them to the Scheduler.
      */

@@ -2,7 +2,7 @@ package core;
 
 import java.util.ArrayDeque;
 
-/*
+/**
  * Scheduler subsystem which coordinates the elevator and floor subsystems.
  * Acts as a middleman by routing FloorData events between them.
  */
@@ -27,14 +27,29 @@ public class Scheduler implements Runnable {
 
     }
 
+    /**
+     * Stores a reference to an ElevatorSubsystem, so the Scheduler can communicate with it.
+     *
+     * @param elevatorSubsytem the ElevatorSubsystem to store
+     */
     public void registerElevatorSubsystem(final ElevatorSubsystem elevatorSubsystem) {
         this.elevatorSubsystem = elevatorSubsystem;
     }
 
+    /**
+     * Stores a reference to a FloorSubsystem, so the Scheduler can communicate with it.
+     *
+     * @param floorSubsytem the FloorSubsystem to store
+     */
     public void registerFloorSubsystem(final FloorSubsystem floorSubsystem) {
         this.floorSubsystem = floorSubsystem;
     }
 
+    /**
+     * Adds a floor event to the Scheduler, which it will later send to the ElevatorSubsystem.
+     *
+     * @param floorData the FloorData to store in the queue
+     */
     public synchronized void addFloorEvent(final FloorData floorData) {
         this.floorEvents.add(floorData);
         this.notifyAll();
@@ -42,6 +57,11 @@ public class Scheduler implements Runnable {
         System.out.println("Floor adds FloorData.");
     }
 
+    /**
+     * Adds an elevator event to the Scheduler, which it will later send to the FloorSubsystem.
+     *
+     * @param floorData the FloorData to store in the queue
+     */
     public synchronized void addElevatorEvent(final FloorData elevatorData) {
         this.elevatorEvents.add(elevatorData);
         this.notifyAll();
