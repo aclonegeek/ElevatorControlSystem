@@ -15,7 +15,7 @@ public class ElevatorSubsystem implements Runnable {
     public void run() {
         this.scheduler.registerElevatorSubsystem(this);
         while (true) {
-            FloorData floorData = this.scheduler.getFloorEvent();
+            FloorData floorData = this.scheduler.removeFloorEvent();
             this.floorDataCount++;
             this.scheduler.addElevatorEvent(floorData);
         }

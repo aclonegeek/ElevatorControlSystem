@@ -41,7 +41,7 @@ public class FloorSubsystem implements Runnable {
         while (true) {
             if (!floorRequests.isEmpty()) {
                 this.scheduler.addFloorEvent(floorRequests.remove(0));
-                FloorData returnedData = this.scheduler.getElevatorEvent();
+                FloorData returnedData = this.scheduler.removeElevatorEvent();
                 System.out.println("Floor receives FloorData with floor number: " + returnedData.getFloorNumber());
                 this.floorDataCount++;
             }

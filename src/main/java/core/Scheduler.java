@@ -45,7 +45,7 @@ public class Scheduler implements Runnable {
         System.out.println("Elevator adds FloorData.");
     }
 
-    public synchronized FloorData getFloorEvent() {
+    public synchronized FloorData removeFloorEvent() {
         while (this.floorEvents.isEmpty()) {
             try {
                 this.wait();
@@ -59,7 +59,7 @@ public class Scheduler implements Runnable {
         return this.floorEvents.removeFirst();
     }
 
-    public synchronized FloorData getElevatorEvent() {
+    public synchronized FloorData removeElevatorEvent() {
         while (this.elevatorEvents.isEmpty()) {
             try {
                 this.wait();
