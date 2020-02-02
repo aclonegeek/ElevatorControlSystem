@@ -16,13 +16,7 @@ public class Scheduler implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
-        }
+        
     }
 
     public void registerElevatorSubsystem(final ElevatorSubsystem elevatorSubsystem) {
