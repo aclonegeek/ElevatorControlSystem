@@ -2,8 +2,9 @@ package core;
 
 import junit.framework.TestCase;
 
-public class SystemTest extends TestCase {
-    public void testSystem() {
+public class FloorSubsystemTest extends TestCase {
+    // Tests that FloorData objects pass through Scheduler the correct number of times
+    public void testScheduler() {
         Scheduler scheduler = new Scheduler();
         FloorSubsystem floorSubsystem = new FloorSubsystem(scheduler, 1);
         ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(scheduler);
@@ -19,6 +20,5 @@ public class SystemTest extends TestCase {
         }
         
         assertEquals(4, floorSubsystem.getFloorDataCount());
-        assertEquals(4, elevatorSubsystem.getFloorDataCount());
     }
 }
