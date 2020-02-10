@@ -1,9 +1,11 @@
-package core;
+package floor;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-import core.FloorData.ButtonState;
+import floor.FloorData;
+import floor.FloorReader;
+import floor.FloorData.ButtonState;
 import junit.framework.TestCase;
 
 public class FloorReaderTest extends TestCase {

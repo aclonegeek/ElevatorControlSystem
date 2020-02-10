@@ -1,6 +1,8 @@
-package core;
+package scheduler;
 
 import java.util.ArrayDeque;
+
+import floor.FloorData;
 
 /**
  * Scheduler subsystem which coordinates the elevator and floor subsystems.

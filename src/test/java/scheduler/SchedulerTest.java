@@ -1,11 +1,14 @@
-package core;
+package scheduler;
 
+import elevator.ElevatorSubsystem;
+import floor.FloorSubsystem;
 import junit.framework.TestCase;
+import scheduler.Scheduler;
 
-public class FloorSubsystemTest extends TestCase {
-    // Tests that FloorData objects pass through FloorSubsystem the correct number
-    // of times.
-    public void testFloorSubsystem() {
+public class SchedulerTest extends TestCase {
+    // Tests that FloorData objects pass through Scheduler the correct number of
+    // times.
+    public void testScheduler() {
         final Scheduler scheduler = new Scheduler();
         final FloorSubsystem floorSubsystem = new FloorSubsystem(scheduler, 1);
         final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem(scheduler);
@@ -20,6 +23,6 @@ public class FloorSubsystemTest extends TestCase {
             System.err.println(e);
         }
 
-        assertEquals(4, floorSubsystem.getFloorDataCount());
+        assertEquals(16, scheduler.getFloorDataCount());
     }
 }
