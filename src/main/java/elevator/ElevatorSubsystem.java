@@ -19,7 +19,7 @@ public class ElevatorSubsystem {
         this.state = State.IDLE_DOOR_CLOSED;
     }
 
-    public void updateState(ElevatorAction elevatorAction) {
+    public ElevatorResponse updateState(ElevatorAction elevatorAction) {
         switch (elevatorAction) {
         case START_MOVING:
             this.state = State.MOVING_DOOR_CLOSED;
@@ -30,6 +30,9 @@ public class ElevatorSubsystem {
         case CLOSE_DOORS:
             this.state = State.IDLE_DOOR_CLOSED;
         }
+        
+        // For now, assume all state changes are valid
+        return ElevatorResponse.SUCCESS;
     }
 
     public void setCurrentFloor(final int currentFloor) {

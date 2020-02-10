@@ -19,14 +19,15 @@ public class Elevator implements Runnable {
     @Override
     public void run() {
         while (true) {
-            // Receive FloorData from Scheduler
+            // Receive ElevatorEvent from Scheduler
             final ElevatorEvent elevatorEvent = this.scheduler.removeElevatorEvent();
             this.elevatorEventCount++;
 
             // Update ElevatorSubsystem state
-            elevatorSubsystem.updateState(elevatorEvent.getElevatorAction());
+            ElevatorResponse response = elevatorSubsystem.updateState(elevatorEvent.getElevatorAction());
 
-            // TODO: What to send back to Scheduler?
+            // Return response to Scheduler
+            this.scheduler.sendElevatorResponse(response);
         }
     }
 
