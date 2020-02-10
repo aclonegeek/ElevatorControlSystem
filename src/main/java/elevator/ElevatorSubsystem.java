@@ -3,46 +3,32 @@ package elevator;
 import java.time.LocalTime;
 
 public class ElevatorSubsystem {
-    private enum MotorState {
-        IDLE, MOVING_UP, MOVING_DOWN
-    }
-
-    private enum DoorState {
-        OPEN, CLOSED
-    }
-
-    public enum ElevatorCommand {
-        START_MOVING, STOP_MOVING, OPEN_DOORS, CLOSE_DOORS
+    private enum State {
+        IDLE_DOOR_OPEN, IDLE_DOOR_CLOSED, MOVING_DOOR_CLOSED
     }
 
     private final int elevatorId;
     private int currentFloor;
     private int destinationFloor;
-    private MotorState motorState;
-    private DoorState doorState;
+    private State state;
 
     public ElevatorSubsystem(final int elevatorId) {
         this.elevatorId = elevatorId;
         this.currentFloor = 0;
         this.destinationFloor = 0;
-        this.motorState = MotorState.IDLE;
-        this.doorState = DoorState.CLOSED;
+        this.state = State.IDLE_DOOR_CLOSED;
     }
 
-    // TODO: These actions need to take time
-    public void updateState(ElevatorCommand elevatorCommand) {
-        switch (elevatorCommand) {
+    public void updateState(ElevatorAction elevatorAction) {
+        switch (elevatorAction) {
         case START_MOVING:
-            if (this.doorState == DoorState.OPEN) {
-                this.doorState = DoorState.CLOSED;
-            }
-
-            if (this.destinationFloor > this.currentFloor) {
-                this.motorState = MotorState.MOVING_UP;
-            } else {
-                this.motorState = MotorState.MOVING_DOWN;
-            }
-        default:
+            this.state = State.MOVING_DOOR_CLOSED;
+        case STOP_MOVING:
+            this.state = State.IDLE_DOOR_CLOSED;
+        case OPEN_DOORS:
+            this.state = State.IDLE_DOOR_OPEN;
+        case CLOSE_DOORS:
+            this.state = State.IDLE_DOOR_CLOSED;
         }
     }
 
