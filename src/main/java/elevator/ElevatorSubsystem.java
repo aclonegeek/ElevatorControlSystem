@@ -1,4 +1,7 @@
-package core;
+package elevator;
+
+import floor.FloorData;
+import scheduler.Scheduler;
 
 /**
  * Elevator subsystem which simulates the functionality of a particular elevator.

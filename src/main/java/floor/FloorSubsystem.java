@@ -1,6 +1,8 @@
-package core;
+package floor;
 
 import java.util.ArrayList;
+
+import scheduler.Scheduler;
 
 /*
  * Floor subsystem which simulates the functionality of a particular floor.
