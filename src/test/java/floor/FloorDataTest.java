@@ -1,4 +1,4 @@
-package core;
+package floor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,7 +7,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.time.LocalTime;
 
-import core.FloorData.ButtonState;
+import floor.FloorData;
+import floor.FloorData.ButtonState;
 import junit.framework.TestCase;
 
 public class FloorDataTest extends TestCase {

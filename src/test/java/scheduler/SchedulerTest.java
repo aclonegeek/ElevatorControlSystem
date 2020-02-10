@@ -1,6 +1,9 @@
-package core;
+package scheduler;
 
+import elevator.ElevatorSubsystem;
+import floor.FloorSubsystem;
 import junit.framework.TestCase;
+import scheduler.Scheduler;
 
 public class SchedulerTest extends TestCase {
     // Tests that FloorData objects pass through Scheduler the correct number of

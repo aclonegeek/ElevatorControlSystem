@@ -1,4 +1,7 @@
-package core;
+package elevator;
+
+import floor.FloorData;
+import scheduler.Scheduler;
 
 import java.time.LocalTime;
 

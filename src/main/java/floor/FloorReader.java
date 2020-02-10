@@ -1,4 +1,4 @@
-package core;
+package floor;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -9,9 +9,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import core.FloorData;
-
-import core.FloorData.ButtonState;
+import floor.FloorData;
+import floor.FloorData.ButtonState;
 
 /**
  * Handles reading files following the floor subsystem format.
