@@ -1,4 +1,4 @@
-package core;
+package elevator;
 
 import java.io.Serializable;
 import java.time.LocalTime;

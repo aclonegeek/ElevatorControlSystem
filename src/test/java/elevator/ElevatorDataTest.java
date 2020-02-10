@@ -1,4 +1,4 @@
-package core;
+package elevator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +27,7 @@ public class ElevatorDataTest extends TestCase {
             final ElevatorData inputData = (ElevatorData) in.readObject();
             assertEquals(outputData.getElevatorId(), inputData.getElevatorId());
             assertEquals(outputData.getCurrentFloor(), inputData.getCurrentFloor());
-            assertEquals(outputData.getDestinationFloor()(), inputData.getDestinationFloor());
+            assertEquals(outputData.getDestinationFloor(), inputData.getDestinationFloor());
             assertEquals(outputData.getTime(), inputData.getTime());
             in.close();
 

@@ -1,6 +1,6 @@
 package floor;
 
-import elevator.ElevatorSubsystem;
+import elevator.Elevator;
 import floor.FloorSubsystem;
 import junit.framework.TestCase;
 import scheduler.Scheduler;
