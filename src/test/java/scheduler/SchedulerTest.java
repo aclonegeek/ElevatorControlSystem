@@ -11,7 +11,7 @@ public class SchedulerTest extends TestCase {
     public void testScheduler() {
         final Scheduler scheduler = new Scheduler();
         final FloorSubsystem floorSubsystem = new FloorSubsystem(scheduler, 1);
-        final Elevator elevator = new Elevator(scheduler);
+        final Elevator elevator = new Elevator(0, scheduler);
 
         new Thread(scheduler).start();
         new Thread(floorSubsystem).start();

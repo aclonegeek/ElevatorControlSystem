@@ -8,32 +8,29 @@ public class Elevator implements Runnable {
     private final Scheduler scheduler;
 
     // Used for testing purposes.
-    private int floorDataCount;
+    private int elevatorEventCount;
 
-    public Elevator(final Scheduler scheduler) {
-        this.elevatorSubsystem = new ElevatorSubsystem(0);
+    public Elevator(final int elevatorId, final Scheduler scheduler) {
+        this.elevatorSubsystem = new ElevatorSubsystem(elevatorId);
         this.scheduler = scheduler;
-        this.floorDataCount = 0;
+        this.elevatorEventCount = 0;
     }
     
     @Override
     public void run() {
         while (true) {
             // Receive FloorData from Scheduler
-            final FloorData floorData = this.scheduler.removeFloorEvent();
-            this.floorDataCount++;
-            
-            // TODO: Receive ElevatorCommand from Scheduler?
+            final ElevatorEvent elevatorEvent = this.scheduler.removeElevatorEvent();
+            this.elevatorEventCount++;
             
             // Update ElevatorSubsystem state
+            elevatorSubsystem.updateState(elevatorEvent.getElevatorAction());
             
-            // Send Elevator data back to Scheduler
-            
-            this.scheduler.addElevatorEvent(floorData);
+            // TODO: What to send back to Scheduler?
         }
     }
 
-    public int getFloorDataCount() {
-        return this.floorDataCount;
+    public int getElevatorEventCount() {
+        return this.elevatorEventCount;
     }
 }
