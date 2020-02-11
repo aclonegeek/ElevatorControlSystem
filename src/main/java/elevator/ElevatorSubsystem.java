@@ -4,7 +4,7 @@ import java.time.LocalTime;
 
 public class ElevatorSubsystem {
     private enum State {
-        IDLE_DOOR_OPEN, IDLE_DOOR_CLOSED, MOVING_DOOR_CLOSED
+        IDLE_DOOR_OPEN, IDLE_DOOR_CLOSED, MOVING_UP, MOVING_DOWN
     }
 
     private final int elevatorId;
@@ -19,8 +19,10 @@ public class ElevatorSubsystem {
 
     public ElevatorResponse updateState(ElevatorAction elevatorAction) {
         switch (elevatorAction) {
-        case START_MOVING:
-            this.state = State.MOVING_DOOR_CLOSED;
+        case MOVE_UP:
+            this.state = State.MOVING_UP;
+        case MOVE_DOWN:
+            this.state = State.MOVING_DOWN;
         case STOP_MOVING:
             this.state = State.IDLE_DOOR_CLOSED;
         case OPEN_DOORS:
@@ -28,7 +30,7 @@ public class ElevatorSubsystem {
         case CLOSE_DOORS:
             this.state = State.IDLE_DOOR_CLOSED;
         }
-        
+
         // For now, assume all state changes are valid
         return ElevatorResponse.SUCCESS;
     }
