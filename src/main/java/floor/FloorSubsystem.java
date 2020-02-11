@@ -4,8 +4,9 @@ import java.util.ArrayList;
 
 import scheduler.Scheduler;
 
-/*
- * Floor subsystem which simulates the functionality of a particular floor.
+/**
+ * TODO: Update this - it does more than just a particular floor.
+ * Simulates the functionality of a particular floor.
  * Communicates with the scheduler through FloorData objects.
  */
 public class FloorSubsystem implements Runnable {
@@ -13,43 +14,30 @@ public class FloorSubsystem implements Runnable {
         UP, DOWN, UNPRESSED
     }
 
-    private enum ElevatorState {
-        UP, DOWN, IDLE, NONE
-    }
-
     private final Scheduler scheduler;
     private ButtonState buttonState;
-    private ElevatorState elevatorState;
     private final int floor;
     private final FloorReader floorReader;
-
-    // Used for testing purposes.
-    private int floorDataCount;
 
     public FloorSubsystem(final Scheduler scheduler, final int floor) {
         this.scheduler = scheduler;
         this.buttonState = ButtonState.UNPRESSED;
-        this.elevatorState = ElevatorState.NONE;
         this.floor = floor;
         this.floorReader = new FloorReader();
-        this.floorDataCount = 0;
     }
 
-    /*
-     * Reads input data from a file and continually tries to send FloorData events
-     * to the scheduler.
+    /**
+     * Reads input data from a file and continually tries to send {@link FloorData} events
+     * to the {@link Scheduler}.
      */
     @Override
     public void run() {
         final String filePath = this.getClass().getResource("/floorData.txt").getFile();
-        ArrayList<FloorData> floorRequests = floorReader.readFile(filePath);
+        final ArrayList<FloorData> floorRequests = floorReader.readFile(filePath);
+
         while (true) {
             if (!floorRequests.isEmpty()) {
-                this.scheduler.addFloorEvent(floorRequests.remove(0));
-                FloorData returnedData = this.scheduler.removeElevatorEvent();
-                System.out.println(
-                        "Floor receives FloorData with floor number: " + returnedData.getFloorNumber());
-                this.floorDataCount++;
+                this.scheduler.addElevatorEvent(floorRequests.remove(0));
             }
         }
     }
@@ -62,19 +50,7 @@ public class FloorSubsystem implements Runnable {
         return this.buttonState;
     }
 
-    public void setElevatorState(final ElevatorState state) {
-        this.elevatorState = state;
-    }
-
-    public ElevatorState getElevatorState() {
-        return this.elevatorState;
-    }
-
-    public int getFloorNumber() {
+    public int getFloor() {
         return this.floor;
-    }
-
-    public int getFloorDataCount() {
-        return this.floorDataCount;
     }
 }
