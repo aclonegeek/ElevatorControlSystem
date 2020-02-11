@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import elevator.ElevatorAction;
 import elevator.ElevatorData;
 import elevator.ElevatorEvent;
+import elevator.ElevatorResponse;
 import floor.FloorData;
 import floor.FloorSubsystem;
 
@@ -56,11 +57,11 @@ public class Scheduler implements Runnable {
     }
 
     /**
-     * Removes an {@link ElevatorAction} from the queue.
+     * Gets the first {@link ElevatorAction} from the queue.
      *
      * @return the first {@link ElevatorAction} in the queue
      */
-    public synchronized ElevatorAction removeElevatorAction(final int id) {
+    public synchronized ElevatorAction getElevatorAction(final int id) {
         while (this.elevatorEvents.get(id).isEmpty()) {
             try {
                 this.wait();
@@ -69,10 +70,26 @@ public class Scheduler implements Runnable {
             }
         }
 
-        ElevatorAction action = this.elevatorEvents.get(id).removeFirst().getAction();
+        ElevatorAction action = this.elevatorEvents.get(id).getFirst().getAction();
 
         this.notifyAll();
         return action;
+    }
+
+    /**
+     * Handles an {@link ElevatorResponse}.
+     *
+     * @param elevatorId the ID of the elevator
+     * @param response   success or failure
+     */
+    public synchronized void handleElevatorResponse(final int elevatorId, final ElevatorResponse response) {
+        if (response == ElevatorResponse.FAILURE) {
+            // TODO: Handle the error - try resending?
+            return;
+        }
+
+        this.elevatorEvents.get(elevatorId).removeFirst();
+        this.notifyAll();
     }
 
     /**
