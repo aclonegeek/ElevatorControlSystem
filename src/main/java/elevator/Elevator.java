@@ -14,10 +14,12 @@ public class Elevator implements Runnable {
 
     @Override
     public void run() {
+        scheduler.registerElevator(elevatorSubsystem.getElevatorId());
         while (true) {
             // Receive ElevatorEvent from Scheduler, update state, and return response to
             // the Scheduler.
-            final ElevatorAction elevatorAction = this.scheduler.getElevatorAction();
+            final ElevatorAction elevatorAction =
+                    this.scheduler.getElevatorAction(elevatorSubsystem.getElevatorId());
             ElevatorResponse response = elevatorSubsystem.updateState(elevatorAction);
             this.scheduler.sendElevatorResponse(response);
 
