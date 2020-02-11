@@ -9,13 +9,11 @@ public class ElevatorSubsystem {
 
     private final int elevatorId;
     private int currentFloor;
-    private int destinationFloor;
     private State state;
 
     public ElevatorSubsystem(final int elevatorId) {
         this.elevatorId = elevatorId;
         this.currentFloor = 0;
-        this.destinationFloor = 0;
         this.state = State.IDLE_DOOR_CLOSED;
     }
 
@@ -39,12 +37,8 @@ public class ElevatorSubsystem {
         this.currentFloor = currentFloor;
     }
 
-    public void setDestinationFloor(final int destinationFloor) {
-        this.destinationFloor = destinationFloor;
-    }
-
     public ElevatorData getElevatorData() {
-        return new ElevatorData(this.elevatorId, this.currentFloor, this.destinationFloor, LocalTime.now());
+        return new ElevatorData(this.elevatorId, this.currentFloor, LocalTime.now());
     }
 
     public int getElevatorId() {
