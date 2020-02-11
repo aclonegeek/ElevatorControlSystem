@@ -37,7 +37,7 @@ public class FloorReader {
                 final int floorNumber = Integer.parseInt(data[1]);
                 final ButtonState buttonState = ButtonState.valueOf(data[2]);
 
-                floorRequests.add(new FloorData(1, floorNumber, buttonState, localTime));
+                floorRequests.add(new FloorData(floorNumber, buttonState, localTime));
             }
         } catch (FileNotFoundException f) {
             System.err.println(f);
