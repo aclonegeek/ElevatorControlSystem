@@ -14,14 +14,14 @@ public class Elevator implements Runnable {
 
     @Override
     public void run() {
-        scheduler.registerElevator(elevatorSubsystem.getElevatorId());
+        int id = elevatorSubsystem.getElevatorId();
+        scheduler.registerElevator(id);
         while (true) {
             // Receive ElevatorEvent from Scheduler, update state, and return response to
             // the Scheduler.
-            final ElevatorAction elevatorAction =
-                    this.scheduler.getElevatorAction(elevatorSubsystem.getElevatorId());
+            final ElevatorAction elevatorAction = this.scheduler.getElevatorAction(id);
             ElevatorResponse response = elevatorSubsystem.updateState(elevatorAction);
-            this.scheduler.sendElevatorResponse(response);
+            this.scheduler.handleElevatorResponse(id, response);
 
             // TODO: Implement pressing floor buttons and sending events to Scheduler.
             // TODO: Check each passing floor to see if it should stop.
