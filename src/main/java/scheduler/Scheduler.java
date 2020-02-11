@@ -23,10 +23,12 @@ public class Scheduler implements Runnable {
     }
 
     @Override
-    public void run() {}
+    public void run() {
+    }
 
     /**
-     * Registers an {@link Elevator} with the {@link Scheduler}, so that the {@link Scheduler} can use it.
+     * Registers an {@link Elevator} with the {@link Scheduler}, so that the
+     * {@link Scheduler} can use it.
      *
      * @param id the {@link Elevator}'s id
      */
@@ -42,12 +44,13 @@ public class Scheduler implements Runnable {
      */
     public synchronized void scheduleElevator(final FloorData floorData) {
         final int elevatorId = this.getClosestElevatorToFloor(floorData.getFloor());
-        final ElevatorData elevatorData = new ElevatorData(elevatorId,
-                                                           this.elevatorLocations.get(elevatorId),
-                                                           floorData.getFloor(),
-                                                           null); // TODO: Time stuff.
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData,
-                                                                  ElevatorAction.START_MOVING));
+        final ElevatorData elevatorData = new ElevatorData(elevatorId, this.elevatorLocations.get(elevatorId),
+                floorData.getFloor(), null); // TODO: Time stuff.
+
+        this.elevatorEvents.get(elevatorId)
+                .add(new ElevatorEvent(elevatorData,
+                        floorData.getButtonState() == FloorData.ButtonState.UP ? ElevatorAction.MOVE_UP
+                                : ElevatorAction.MOVE_DOWN));
 
         this.notifyAll();
     }
