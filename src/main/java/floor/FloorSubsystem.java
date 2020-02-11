@@ -14,6 +14,8 @@ public class FloorSubsystem implements Runnable {
         UP, DOWN, UNPRESSED
     }
 
+    public static int MAX_FLOORS = 50;
+
     private final Scheduler scheduler;
     private ButtonState buttonState;
     private final int floor;
