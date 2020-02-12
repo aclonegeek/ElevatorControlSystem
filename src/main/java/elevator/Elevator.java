@@ -23,7 +23,7 @@ public class Elevator implements Runnable {
             this.scheduler.handleElevatorResponse(id, response);
         }
     }
-    
+
     public ElevatorSubsystem getSubsystem() {
         return this.elevatorSubsystem;
     }

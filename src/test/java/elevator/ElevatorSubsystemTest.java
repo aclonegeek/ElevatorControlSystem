@@ -41,7 +41,7 @@ public class ElevatorSubsystemTest extends TestCase {
         scheduler.addElevatorEvent(moveDownEvent);
         this.sleep();
         assertEquals(ElevatorState.MOVING_DOWN, elevator.getSubsystem().getState());
-        
+
         // Verify state after stopping elevator.
         final ElevatorData stopData =
                 new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
@@ -58,7 +58,7 @@ public class ElevatorSubsystemTest extends TestCase {
         this.sleep();
         assertEquals(ElevatorState.IDLE_DOOR_OPEN, elevator.getSubsystem().getState());
     }
-    
+
     public void testMovement() {
         final int elevatorId = 0;
         final Scheduler scheduler = new Scheduler();
@@ -83,7 +83,7 @@ public class ElevatorSubsystemTest extends TestCase {
         scheduler.addElevatorEvent(moveUpEvent);
         this.sleep();
         assertEquals(1, elevator.getSubsystem().getCurrentFloor());
-        
+
         // Verify elevator's current floor after moving up three more floors.
         scheduler.addElevatorEvent(moveUpEvent);
         this.sleep();
@@ -92,7 +92,7 @@ public class ElevatorSubsystemTest extends TestCase {
         scheduler.addElevatorEvent(moveUpEvent);
         this.sleep();
         assertEquals(4, elevator.getSubsystem().getCurrentFloor());
-        
+
         // Verify elevator's current floor after moving down two floors.
         final ElevatorData moveDownData =
                 new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
@@ -103,7 +103,7 @@ public class ElevatorSubsystemTest extends TestCase {
         this.sleep();
         assertEquals(2, elevator.getSubsystem().getCurrentFloor());
     }
-    
+
     private void sleep() {
         try {
             Thread.sleep(100);

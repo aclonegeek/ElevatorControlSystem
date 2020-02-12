@@ -45,7 +45,7 @@ public class ElevatorSubsystem {
     public int getCurrentFloor() {
         return this.currentFloor;
     }
-    
+
     public ElevatorState getState() {
         return this.state;
     }
