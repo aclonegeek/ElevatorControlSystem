@@ -40,6 +40,7 @@ public class Scheduler implements Runnable {
 
     public synchronized void addElevatorEvent(final ElevatorEvent event) {
         this.elevatorEvents.get(event.getData().getElevatorId()).add(event);
+        this.notifyAll();
     }
 
     /**
