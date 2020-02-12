@@ -1,6 +1,5 @@
 package elevator;
 
-import floor.FloorData;
 import scheduler.Scheduler;
 
 public class Elevator implements Runnable {
@@ -14,17 +13,14 @@ public class Elevator implements Runnable {
 
     @Override
     public void run() {
-        int id = elevatorSubsystem.getElevatorId();
-        scheduler.registerElevator(id);
+        final int id = elevatorSubsystem.getElevatorId();
+        this.scheduler.registerElevator(id);
         while (true) {
             // Receive ElevatorEvent from Scheduler, update state, and return response to
             // the Scheduler.
-            final ElevatorAction elevatorAction = this.scheduler.getElevatorAction(id);
-            ElevatorResponse response = elevatorSubsystem.updateState(elevatorAction);
+            final ElevatorAction elevatorAction = this.scheduler.removeElevatorAction(id);
+            ElevatorResponse response = this.elevatorSubsystem.updateState(elevatorAction);
             this.scheduler.handleElevatorResponse(id, response);
-
-            // TODO: Implement pressing floor buttons and sending events to Scheduler.
-            // TODO: Check each passing floor to see if it should stop.
         }
     }
 }
