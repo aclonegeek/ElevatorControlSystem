@@ -6,7 +6,7 @@ public class ElevatorSubsystem {
     private enum State {
         IDLE_DOOR_OPEN, IDLE_DOOR_CLOSED, MOVING_UP, MOVING_DOWN
     }
-
+    
     private final int elevatorId;
     private int currentFloor;
     private State state;
@@ -21,8 +21,10 @@ public class ElevatorSubsystem {
         switch (elevatorAction) {
         case MOVE_UP:
             this.state = State.MOVING_UP;
+            currentFloor++;
         case MOVE_DOWN:
             this.state = State.MOVING_DOWN;
+            currentFloor--;
         case STOP_MOVING:
             this.state = State.IDLE_DOOR_CLOSED;
         case OPEN_DOORS:
@@ -34,16 +36,16 @@ public class ElevatorSubsystem {
         // For now, assume all state changes are valid
         return ElevatorResponse.SUCCESS;
     }
-
-    public void setCurrentFloor(final int currentFloor) {
-        this.currentFloor = currentFloor;
-    }
-
-    public ElevatorData getElevatorData() {
-        return new ElevatorData(this.elevatorId, this.currentFloor, LocalTime.now());
-    }
-
+    
     public int getElevatorId() {
         return this.elevatorId;
+    }
+    
+    public int getCurrentFloor() {
+        return this.currentFloor;
+    }
+    
+    public ElevatorData getElevatorData() {
+        return new ElevatorData(this.elevatorId, this.currentFloor, LocalTime.now());
     }
 }
