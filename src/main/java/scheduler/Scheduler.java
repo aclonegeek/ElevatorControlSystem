@@ -44,14 +44,24 @@ public class Scheduler implements Runnable {
      * @param floorData the floor information from where the request came
      */
     public synchronized void scheduleElevator(final FloorData floorData) {
-        final int elevatorId = this.getClosestElevatorToFloor(floorData.getFloor());
+        final ClosestElevator closestElevator = this.getClosestElevatorToFloor(floorData.getFloor());
+        final int elevatorId = closestElevator.elevatorId;
+        final int numFloors = closestElevator.numFloors;
+
         final ElevatorData elevatorData = new ElevatorData(elevatorId, this.elevatorLocations.get(elevatorId),
                 floorData.getFloor(), null); // TODO: Time stuff.
 
-        this.elevatorEvents.get(elevatorId)
-                .add(new ElevatorEvent(elevatorData,
-                        floorData.getButtonState() == FloorData.ButtonState.UP ? ElevatorAction.MOVE_UP
-                                : ElevatorAction.MOVE_DOWN));
+        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
+
+        for (int i = 0; i < numFloors; i++) {
+            this.elevatorEvents.get(elevatorId)
+                    .add(new ElevatorEvent(elevatorData,
+                            floorData.getButtonState() == FloorData.ButtonState.UP ? ElevatorAction.MOVE_UP
+                                    : ElevatorAction.MOVE_DOWN));
+        }
+
+        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
+        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
 
         this.notifyAll();
     }
@@ -95,9 +105,10 @@ public class Scheduler implements Runnable {
     /**
      * Returns the closest elevator to the specified floor.
      *
-     * @return the ID of the {@link Elevator} closest to the specified floor.
+     * @return the ID and number of floors to travel for the {@link Elevator}
+     *         closest to the specified floor.
      */
-    private int getClosestElevatorToFloor(final int floor) {
+    private ClosestElevator getClosestElevatorToFloor(final int floor) {
         int closestElevator = 1;
         int closestDistance = FloorSubsystem.MAX_FLOORS;
         for (final Entry<Integer, Integer> entry : this.elevatorLocations.entrySet()) {
@@ -109,6 +120,16 @@ public class Scheduler implements Runnable {
             }
         }
 
-        return closestElevator;
+        return new ClosestElevator(closestElevator, closestDistance);
+    }
+}
+
+final class ClosestElevator {
+    public final int elevatorId;
+    public final int numFloors;
+
+    public ClosestElevator(final int elevatorId, final int numFloors) {
+        this.elevatorId = elevatorId;
+        this.numFloors = numFloors;
     }
 }
