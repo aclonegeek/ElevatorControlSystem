@@ -2,7 +2,7 @@ package elevator;
 
 import java.io.Serializable;
 
-/*
+/**
  * Class consisting of ElevatorData and an ElevatorAction
  */
 public class ElevatorEvent implements Serializable {
@@ -15,11 +15,11 @@ public class ElevatorEvent implements Serializable {
         this.elevatorAction = elevatorAction;
     }
 
-    public ElevatorData getElevatorData() {
+    public ElevatorData getData() {
         return this.elevatorData;
     }
 
-    public ElevatorAction getElevatorAction() {
+    public ElevatorAction getAction() {
         return this.elevatorAction;
     }
 }
