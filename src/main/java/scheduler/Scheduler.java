@@ -38,6 +38,10 @@ public class Scheduler implements Runnable {
         this.elevatorLocations.put(id, 0); // All elevators start at the ground floor.
     }
 
+    public synchronized void addElevatorEvent(final int elevatorId, final ElevatorEvent event) {
+        this.elevatorEvents.get(elevatorId).add(event);
+    }
+
     /**
      * Adds an {@link ElevatorEvent} to the {@link Scheduler}'s queue.
      *
