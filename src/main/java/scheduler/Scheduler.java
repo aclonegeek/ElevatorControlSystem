@@ -47,7 +47,7 @@ public class Scheduler implements Runnable {
      *
      * @param floorData the floor information from where the request came
      */
-    public synchronized void scheduleElevator(final FloorData floorData) {
+    public void scheduleElevator(final FloorData floorData) {
         final ClosestElevator closestElevator = this.getClosestElevatorToFloor(floorData.getFloor());
         final int elevatorId = closestElevator.elevatorId;
         final int numFloors = closestElevator.numFloors;
@@ -55,17 +55,23 @@ public class Scheduler implements Runnable {
         final ElevatorData elevatorData =
                 new ElevatorData(elevatorId, this.elevatorLocations.get(elevatorId), null);
 
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
-
-        for (int i = 0; i < numFloors; i++) {
+        synchronized (this) {
             this.elevatorEvents.get(elevatorId)
-                    .add(new ElevatorEvent(elevatorData,
-                            floorData.getButtonState() == FloorData.ButtonState.UP ? ElevatorAction.MOVE_UP
-                                    : ElevatorAction.MOVE_DOWN));
-        }
+                    .add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
 
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
+            for (int i = 0; i < numFloors; i++) {
+                this.elevatorEvents.get(elevatorId)
+                        .add(new ElevatorEvent(elevatorData,
+                                floorData.getButtonState() == FloorData.ButtonState.UP
+                                        ? ElevatorAction.MOVE_UP
+                                        : ElevatorAction.MOVE_DOWN));
+            }
+
+            this.elevatorEvents.get(elevatorId)
+                    .add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
+            this.elevatorEvents.get(elevatorId)
+                    .add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
+        }
 
         this.notifyAll();
     }
