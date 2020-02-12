@@ -48,8 +48,8 @@ public class Scheduler implements Runnable {
         final int elevatorId = closestElevator.elevatorId;
         final int numFloors = closestElevator.numFloors;
 
-        final ElevatorData elevatorData = new ElevatorData(elevatorId, this.elevatorLocations.get(elevatorId),
-                floorData.getFloor(), null); // TODO: Time stuff.
+        final ElevatorData elevatorData =
+                new ElevatorData(elevatorId, this.elevatorLocations.get(elevatorId), null);
 
         this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
 
