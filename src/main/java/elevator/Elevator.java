@@ -18,9 +18,13 @@ public class Elevator implements Runnable {
         while (true) {
             // Receive ElevatorEvent from Scheduler, update state, and return response to
             // the Scheduler.
-            final ElevatorAction elevatorAction = this.scheduler.removeElevatorAction(id);
+            final ElevatorAction elevatorAction = this.scheduler.getElevatorAction(id);
             final ElevatorResponse response = this.elevatorSubsystem.updateState(elevatorAction);
             this.scheduler.handleElevatorResponse(id, response);
         }
+    }
+    
+    public ElevatorSubsystem getSubsystem() {
+        return this.elevatorSubsystem;
     }
 }
