@@ -13,7 +13,7 @@ public class ElevatorDataTest extends TestCase {
     // Test writing/reading ElevatorData to/from a file.
     public void testFileSerialization() {
         final LocalTime time = LocalTime.now();
-        final ElevatorData outputData = new ElevatorData(1, 2, 3, time);
+        final ElevatorData outputData = new ElevatorData(1, 2, time);
         try {
             // Serialize ElevatorData to file.
             final FileOutputStream fout = new FileOutputStream("elevatorDataTest.txt");
@@ -27,7 +27,6 @@ public class ElevatorDataTest extends TestCase {
             final ElevatorData inputData = (ElevatorData) in.readObject();
             assertEquals(outputData.getElevatorId(), inputData.getElevatorId());
             assertEquals(outputData.getCurrentFloor(), inputData.getCurrentFloor());
-            assertEquals(outputData.getDestinationFloor(), inputData.getDestinationFloor());
             assertEquals(outputData.getTime(), inputData.getTime());
             in.close();
 
