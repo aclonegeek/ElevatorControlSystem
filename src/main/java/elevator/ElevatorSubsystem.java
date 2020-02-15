@@ -1,37 +1,56 @@
 package elevator;
 
-import floor.FloorData;
-import scheduler.Scheduler;
+import java.time.LocalTime;
 
-/**
- * Elevator subsystem which simulates the functionality of a particular elevator.
- * Communicates with the scheduler through FloorData objects.
- */
-public class ElevatorSubsystem implements Runnable {
-    private final Scheduler scheduler;
+public class ElevatorSubsystem {
+    private final int elevatorId;
+    private int currentFloor;
+    private ElevatorState state;
 
-    // Used for testing purposes.
-    private int floorDataCount;
-
-    public ElevatorSubsystem(final Scheduler scheduler) {
-        this.scheduler = scheduler;
-        this.floorDataCount = 0;
+    public ElevatorSubsystem(final int elevatorId) {
+        this.elevatorId = elevatorId;
+        this.currentFloor = 0;
+        this.state = ElevatorState.IDLE_DOOR_OPEN;
     }
 
-    /**
-     * Continually attempts to retrieve FloorData events from the Scheduler. For now,
-     * immediately returns them to the Scheduler.
-     */
-    @Override
-    public void run() {
-        while (true) {
-            FloorData floorData = this.scheduler.removeFloorEvent();
-            this.floorDataCount++;
-            this.scheduler.addElevatorEvent(floorData);
+    public ElevatorResponse updateState(ElevatorAction elevatorAction) {
+        switch (elevatorAction) {
+        case MOVE_UP:
+            this.state = ElevatorState.MOVING_UP;
+            currentFloor++;
+            break;
+        case MOVE_DOWN:
+            this.state = ElevatorState.MOVING_DOWN;
+            currentFloor--;
+            break;
+        case STOP_MOVING:
+            this.state = ElevatorState.IDLE_DOOR_CLOSED;
+            break;
+        case OPEN_DOORS:
+            this.state = ElevatorState.IDLE_DOOR_OPEN;
+            break;
+        case CLOSE_DOORS:
+            this.state = ElevatorState.IDLE_DOOR_CLOSED;
+            break;
         }
+
+        // For now, assume all state changes are valid
+        return ElevatorResponse.SUCCESS;
     }
 
-    public int getFloorDataCount() {
-        return this.floorDataCount;
+    public int getElevatorId() {
+        return this.elevatorId;
+    }
+
+    public int getCurrentFloor() {
+        return this.currentFloor;
+    }
+
+    public ElevatorState getState() {
+        return this.state;
+    }
+
+    public ElevatorData getElevatorData() {
+        return new ElevatorData(this.elevatorId, this.currentFloor, LocalTime.now());
     }
 }
