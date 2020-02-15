@@ -72,9 +72,9 @@ public class Scheduler implements Runnable {
                     .add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
             this.elevatorEvents.get(elevatorId)
                     .add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
-        }
 
-        this.notifyAll();
+            this.notifyAll();
+        }
     }
 
     /**
