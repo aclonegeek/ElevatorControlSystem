@@ -17,7 +17,7 @@ public class ElevatorSubsystemTest extends TestCase {
         new Thread(elevator).start();
 
         // Verify initial state of the elevator (idle with door open).
-        this.sleep();
+        this.sleep(100);
         assertEquals(ElevatorState.IDLE_DOOR_OPEN, elevator.getSubsystem().getState());
 
         // Verify state after closing elevator door.
@@ -25,7 +25,7 @@ public class ElevatorSubsystemTest extends TestCase {
                 new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
         final ElevatorEvent closeDoorEvent = new ElevatorEvent(closeDoorData, ElevatorAction.CLOSE_DOORS);
         scheduler.addElevatorEvent(closeDoorEvent);
-        this.sleep();
+        this.sleep(100);
         assertEquals(ElevatorState.IDLE_DOOR_CLOSED, elevator.getSubsystem().getState());
 
         // Verify state while moving up.
@@ -33,7 +33,7 @@ public class ElevatorSubsystemTest extends TestCase {
                 new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
         final ElevatorEvent moveUpEvent = new ElevatorEvent(moveUpData, ElevatorAction.MOVE_UP);
         scheduler.addElevatorEvent(moveUpEvent);
-        this.sleep();
+        this.sleep(100);
         assertEquals(ElevatorState.MOVING_UP, elevator.getSubsystem().getState());
 
         // Verify state while moving down.
@@ -41,7 +41,7 @@ public class ElevatorSubsystemTest extends TestCase {
                 new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
         final ElevatorEvent moveDownEvent = new ElevatorEvent(moveDownData, ElevatorAction.MOVE_DOWN);
         scheduler.addElevatorEvent(moveDownEvent);
-        this.sleep();
+        this.sleep(100);
         assertEquals(ElevatorState.MOVING_DOWN, elevator.getSubsystem().getState());
 
         // Verify state after stopping elevator.
@@ -49,7 +49,7 @@ public class ElevatorSubsystemTest extends TestCase {
                 new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
         final ElevatorEvent stopEvent = new ElevatorEvent(stopData, ElevatorAction.STOP_MOVING);
         scheduler.addElevatorEvent(stopEvent);
-        this.sleep();
+        this.sleep(100);
         assertEquals(ElevatorState.IDLE_DOOR_CLOSED, elevator.getSubsystem().getState());
 
         // Verify state after opening elevator door.
@@ -57,7 +57,7 @@ public class ElevatorSubsystemTest extends TestCase {
                 new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
         final ElevatorEvent openDoorEvent = new ElevatorEvent(openDoorData, ElevatorAction.OPEN_DOORS);
         scheduler.addElevatorEvent(openDoorEvent);
-        this.sleep();
+        this.sleep(100);
         assertEquals(ElevatorState.IDLE_DOOR_OPEN, elevator.getSubsystem().getState());
     }
 
@@ -75,7 +75,7 @@ public class ElevatorSubsystemTest extends TestCase {
         new Thread(floor0).start();
         new Thread(floor1).start();
         new Thread(floor2).start();
-        this.sleep();
+        this.sleep(100);
         
         // Verify elevator is initially on ground floor (0).
         assertEquals(0, elevator.getSubsystem().getCurrentFloor());
@@ -83,26 +83,25 @@ public class ElevatorSubsystemTest extends TestCase {
         // Verify elevator moves up to first floor when UP button is pressed on first floor.
         final FloorData floor1Data = new FloorData(floor1.getFloor(), FloorData.ButtonState.UP, LocalTime.now());
         floor1.addFloorRequest(floor1Data);
-        System.out.println(floor1.getFloorRequestsSize());
-        this.sleep();
+        this.sleep(100);
         assertEquals(1, elevator.getSubsystem().getCurrentFloor());
         
         // Verify elevator moves up to second floor when DOWN button is pressed on second floor.
         final FloorData floor2Data = new FloorData(floor2.getFloor(), FloorData.ButtonState.DOWN, LocalTime.now());
         floor2.addFloorRequest(floor2Data);
-        this.sleep();
+        this.sleep(100);
         assertEquals(2, elevator.getSubsystem().getCurrentFloor());
         
         // Verify elevator moves back down to ground floor (0) when UP button is pressed on ground floor.
         final FloorData floor0Data = new FloorData(floor0.getFloor(), FloorData.ButtonState.UP, LocalTime.now());
         floor0.addFloorRequest(floor0Data);
-        this.sleep();
+        this.sleep(100);
         assertEquals(0, elevator.getSubsystem().getCurrentFloor());
     }
 
-    private void sleep() {
+    private void sleep(int ms) {
         try {
-            Thread.sleep(100);
+            Thread.sleep(ms);
         } catch (InterruptedException e) {
             System.err.println(e);
         }
