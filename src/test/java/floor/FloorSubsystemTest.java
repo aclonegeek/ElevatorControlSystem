@@ -56,7 +56,7 @@ public class FloorSubsystemTest extends TestCase {
         assertEquals(5, elevator.getSubsystem().getCurrentFloor());
     }
 
-    private void sleep(int ms) {
+    private void sleep(final int ms) {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
