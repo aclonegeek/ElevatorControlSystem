@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import scheduler.Scheduler;
 
 /**
- * TODO: Update this - it does more than just a particular floor. Simulates the
- * functionality of a particular floor. Communicates with the scheduler through
- * FloorData objects.
+ * Simulates the functionality of a particular floor.
  */
 public class FloorSubsystem implements Runnable {
     private enum ButtonState {
