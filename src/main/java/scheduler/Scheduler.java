@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import elevator.Elevator;
 import elevator.ElevatorAction;
 import elevator.ElevatorData;
 import elevator.ElevatorEvent;
@@ -15,12 +16,22 @@ import floor.FloorSubsystem;
  * Coordinates the elevator and floor subsystems.
  */
 public class Scheduler implements Runnable {
-    private HashMap<Integer, ArrayDeque<ElevatorEvent>> elevatorEvents;
-    private HashMap<Integer, Integer> elevatorLocations;
+    public static enum SchedulerState {
+        WAITING,
+        SCHEDULING_ELEVATOR,
+        WAITING_FOR_ELEVATOR_RESPONSE,
+        HANDLING_ELEVATOR_RESPONSE,
+    }
+
+    private final HashMap<Integer, ArrayDeque<ElevatorEvent>> elevatorEvents;
+    private final HashMap<Integer, Integer> elevatorLocations;
+
+    private SchedulerState state;
 
     public Scheduler() {
         this.elevatorEvents = new HashMap<>();
         this.elevatorLocations = new HashMap<>();
+        this.state = SchedulerState.WAITING;
     }
 
     @Override
@@ -49,6 +60,8 @@ public class Scheduler implements Runnable {
      * @param floorData the floor information from where the request came
      */
     public synchronized void scheduleElevator(final FloorData floorData) {
+        this.state = SchedulerState.SCHEDULING_ELEVATOR;
+
         final ClosestElevator closestElevator = this.getClosestElevatorToFloor(floorData.getFloor());
         final int elevatorId = closestElevator.elevatorId;
         final int numFloorsToTravel = closestElevator.numFloors;
@@ -71,6 +84,8 @@ public class Scheduler implements Runnable {
             .add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
 
         this.notifyAll();
+
+        this.state = SchedulerState.WAITING;
     }
 
     /**
@@ -88,6 +103,7 @@ public class Scheduler implements Runnable {
         }
 
         ElevatorAction action = this.elevatorEvents.get(id).getFirst().getAction();
+        this.state = SchedulerState.WAITING_FOR_ELEVATOR_RESPONSE;
 
         this.notifyAll();
         return action;
@@ -96,21 +112,32 @@ public class Scheduler implements Runnable {
     /**
      * Handles an {@link ElevatorResponse}.
      *
-     * @param elevatorId the ID of the elevator
+     * @param elevatorId the ID of the {@link Elevator}
      * @param response   success or failure
      */
     public synchronized void handleElevatorResponse(final int elevatorId, final ElevatorResponse response) {
         if (response == ElevatorResponse.FAILURE) {
-            // TODO: Handle the error - try resending?
             return;
         }
 
         this.elevatorEvents.get(elevatorId).removeFirst();
         this.notifyAll();
+
+        this.state = SchedulerState.WAITING;
     }
 
+    /**
+     * Updates an {@link Elevator}'s location.
+     *
+     * @param elevatorId the ID of the {@link Elevator} to update
+     * @param floor      the floor the {@link Elevator} is on
+     */
     public synchronized void updateElevatorLocation(final int elevatorId, final int floor) {
         this.elevatorLocations.put(elevatorId, floor);
+    }
+
+    public SchedulerState getState() {
+        return this.state;
     }
 
     /**
@@ -135,6 +162,9 @@ public class Scheduler implements Runnable {
     }
 }
 
+/**
+ * Represents the elevator that is closest to a specific floor, and how many floors it must travel to reach it.
+ */
 final class ClosestElevator {
     public final int elevatorId;
     public final int numFloors;
