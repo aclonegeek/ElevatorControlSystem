@@ -13,13 +13,14 @@ public class Elevator implements Runnable {
 
     @Override
     public void run() {
-        final int id = elevatorSubsystem.getElevatorId();
+        final int id = this.elevatorSubsystem.getElevatorId();
         this.scheduler.registerElevator(id);
         while (true) {
             // Receive ElevatorEvent from Scheduler, update state, and return response to
             // the Scheduler.
             final ElevatorAction elevatorAction = this.scheduler.getElevatorAction(id);
             final ElevatorResponse response = this.elevatorSubsystem.updateState(elevatorAction);
+            this.scheduler.updateElevatorLocation(id, this.elevatorSubsystem.getCurrentFloor());
             this.scheduler.handleElevatorResponse(id, response);
         }
     }

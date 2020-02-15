@@ -48,33 +48,29 @@ public class Scheduler implements Runnable {
      *
      * @param floorData the floor information from where the request came
      */
-    public void scheduleElevator(final FloorData floorData) {
+    public synchronized void scheduleElevator(final FloorData floorData) {
         final ClosestElevator closestElevator = this.getClosestElevatorToFloor(floorData.getFloor());
         final int elevatorId = closestElevator.elevatorId;
-        final int numFloors = closestElevator.numFloors;
+        final int numFloorsToTravel = closestElevator.numFloors;
 
-        final ElevatorData elevatorData =
-                new ElevatorData(elevatorId, this.elevatorLocations.get(elevatorId), null);
+        final int currentFloor = this.elevatorLocations.get(elevatorId);
+        final ElevatorData elevatorData = new ElevatorData(elevatorId, currentFloor, null);
+        final ElevatorAction action =
+            currentFloor > floorData.getFloor() ? ElevatorAction.MOVE_DOWN : ElevatorAction.MOVE_UP;
 
-        synchronized (this) {
-            this.elevatorEvents.get(elevatorId)
-                    .add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
+        this.elevatorEvents.get(elevatorId)
+            .add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
 
-            for (int i = 0; i < numFloors; i++) {
-                this.elevatorEvents.get(elevatorId)
-                        .add(new ElevatorEvent(elevatorData,
-                                floorData.getButtonState() == FloorData.ButtonState.UP
-                                        ? ElevatorAction.MOVE_UP
-                                        : ElevatorAction.MOVE_DOWN));
-            }
-
-            this.elevatorEvents.get(elevatorId)
-                    .add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
-            this.elevatorEvents.get(elevatorId)
-                    .add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
-
-            this.notifyAll();
+        for (int i = 0; i < numFloorsToTravel; i++) {
+            this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, action));
         }
+
+        this.elevatorEvents.get(elevatorId)
+            .add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
+        this.elevatorEvents.get(elevatorId)
+            .add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
+
+        this.notifyAll();
     }
 
     /**
@@ -111,6 +107,10 @@ public class Scheduler implements Runnable {
 
         this.elevatorEvents.get(elevatorId).removeFirst();
         this.notifyAll();
+    }
+
+    public synchronized void updateElevatorLocation(final int elevatorId, final int floor) {
+        this.elevatorLocations.put(elevatorId, floor);
     }
 
     /**
