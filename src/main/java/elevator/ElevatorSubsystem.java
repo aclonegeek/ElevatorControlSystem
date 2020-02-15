@@ -13,7 +13,7 @@ public class ElevatorSubsystem {
         this.state = ElevatorState.IDLE_DOOR_OPEN;
     }
 
-    public ElevatorResponse updateState(ElevatorAction elevatorAction) {
+    public ElevatorResponse updateState(final ElevatorAction elevatorAction) {
         switch (elevatorAction) {
         case MOVE_UP:
             this.state = ElevatorState.MOVING_UP;
