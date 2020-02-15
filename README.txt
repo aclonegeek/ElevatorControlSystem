@@ -2,6 +2,14 @@
 === SYSC3303B PROJECT - GROUP 8 ===
 ===================================
 
+=========================
+=== TABLE OF CONTENTS ===
+=========================
+- Setup
+- Running
+- Files
+- Work Breakdown
+
 =============
 === SETUP ===
 =============
@@ -24,26 +32,54 @@ Each of the subsystem tests (FloorSubsystemTest, ElevatorSubsystemTest, Schedule
 === FILES ===
 =============
 - src/main/java/core/
+    - Main.java
+- src/main/java/elevator/
+    - Elevator.java
+    - ElevatorAction.java
+    - ElevatorData.java
+    - ElevatorEvent.java
+    - ElevatorResponse.java
+    - ElevatorState.java
     - ElevatorSubsystem.java
+- src/main/java/floor/
     - FloorData.java
       - Represents one entry in the floor subsystem input file as an object.
     - FloorReader.java
       - Handles reading the floor subsystem input files.
     - FloorSubsystem.java
+- src/main/java/scheduler/
     - Scheduler.java
-- src/test/java/core/
+- src/test/java/elevator/
+    - ElevatorDataTest.java
+    - ElevatorSubsystemTest.java
+- src/test/java/floor/
     - FloorDataTest.java
     - FloorReaderTest.java
     - FloorSubsystemTest.java
-    - ElevatorSubsystemTest.java
+- src/test/java/scheduler/
     - SchedulerTest.java
 - src/test/resources/floorData.txt
   - This contains the test data (a sample floor input file) used by the floor subsystem and floor reader.
 - uml/ClassDiagram.pdf
+- uml/SequenceDiagram.pdf
+- uml/StateMachineDiagram.pdf
 
 ======================
 === WORK BREAKDOWN ===
 ======================
+===================
+=== ITERATION 2 ===
+===================
+Code:
+    - Scheduler (state, scheduling elevator): Randy
+    - Floor (scheduling elevator): Randy
+    - Elevator (moving): Layne
+    - ElevatorSubsystem (state): Layne
+Diagrams:
+    - Class Diagram: Tan, Galen, Randy, Layne and Mike
+    - Sequence Diagram: Tan and Galen
+    - State Machine Diagram: Tan, Galen, and Randy
+
 ===================
 === ITERATION 1 ===
 ===================
