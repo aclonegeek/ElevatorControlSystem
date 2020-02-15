@@ -44,7 +44,7 @@ public class FloorSubsystem implements Runnable {
             try {
                 this.wait();
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.err.println(e);
             }
         }
 
