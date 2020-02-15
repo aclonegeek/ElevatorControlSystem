@@ -37,18 +37,30 @@ public class FloorSubsystem implements Runnable {
     @Override
     public void run() {
         while (true) {
-            if (!this.requests.isEmpty()) {
-                this.scheduler.scheduleElevator(this.requests.remove(0));
-            }
+            this.handleRequests();
         }
     }
 
-    public void addFloorRequest(final FloorData data) {
-        this.requests.add(data);
+    private synchronized void handleRequests() {
+        while (this.requests.isEmpty()) {
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        this.scheduler.scheduleElevator(this.requests.remove(0));
     }
 
-    public void addFloorRequest(final String path) {
+    public synchronized void addFloorRequest(final FloorData data) {
+        this.requests.add(data);
+        this.notifyAll();
+    }
+
+    public synchronized void addFloorRequest(final String path) {
         this.requests = this.floorReader.readFile(this.getClass().getResource(path).getFile());
+        this.notifyAll();
     }
 
     public void setButtonState(final ButtonState state) {
