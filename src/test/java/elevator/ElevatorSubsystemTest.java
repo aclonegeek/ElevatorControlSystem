@@ -2,6 +2,8 @@ package elevator;
 
 import java.time.LocalTime;
 
+import floor.FloorData;
+import floor.FloorSubsystem;
 import junit.framework.TestCase;
 import scheduler.Scheduler;
 
@@ -63,45 +65,39 @@ public class ElevatorSubsystemTest extends TestCase {
         final int elevatorId = 0;
         final Scheduler scheduler = new Scheduler();
         final Elevator elevator = new Elevator(elevatorId, scheduler);
+        final FloorSubsystem floor0 = new FloorSubsystem(scheduler, 0);
+        final FloorSubsystem floor1 = new FloorSubsystem(scheduler, 1);
+        final FloorSubsystem floor2 = new FloorSubsystem(scheduler, 2);
+        scheduler.registerElevator(elevatorId);
 
         new Thread(scheduler).start();
         new Thread(elevator).start();
-
-        // Verify elevator's initial current floor.
+        new Thread(floor0).start();
+        new Thread(floor1).start();
+        new Thread(floor2).start();
         this.sleep();
-        final ElevatorData closeDoorData =
-                new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
-        final ElevatorEvent closeDoorEvent = new ElevatorEvent(closeDoorData, ElevatorAction.CLOSE_DOORS);
-        scheduler.addElevatorEvent(closeDoorEvent);
-        this.sleep();
+        
+        // Verify elevator is initially on ground floor (0).
         assertEquals(0, elevator.getSubsystem().getCurrentFloor());
-
-        // Verify elevator's current floor after moving up one floor.
-        final ElevatorData moveUpData =
-                new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
-        final ElevatorEvent moveUpEvent = new ElevatorEvent(moveUpData, ElevatorAction.MOVE_UP);
-        scheduler.addElevatorEvent(moveUpEvent);
+        
+        // Verify elevator moves up to first floor when UP button is pressed on first floor.
+        final FloorData floor1Data = new FloorData(floor1.getFloor(), FloorData.ButtonState.UP, LocalTime.now());
+        floor1.addFloorRequest(floor1Data);
+        System.out.println(floor1.getFloorRequestsSize());
         this.sleep();
         assertEquals(1, elevator.getSubsystem().getCurrentFloor());
-
-        // Verify elevator's current floor after moving up three more floors.
-        scheduler.addElevatorEvent(moveUpEvent);
-        this.sleep();
-        scheduler.addElevatorEvent(moveUpEvent);
-        this.sleep();
-        scheduler.addElevatorEvent(moveUpEvent);
-        this.sleep();
-        assertEquals(4, elevator.getSubsystem().getCurrentFloor());
-
-        // Verify elevator's current floor after moving down two floors.
-        final ElevatorData moveDownData =
-                new ElevatorData(elevatorId, elevator.getSubsystem().getCurrentFloor(), LocalTime.now());
-        final ElevatorEvent moveDownEvent = new ElevatorEvent(moveDownData, ElevatorAction.MOVE_DOWN);
-        scheduler.addElevatorEvent(moveDownEvent);
-        this.sleep();
-        scheduler.addElevatorEvent(moveDownEvent);
+        
+        // Verify elevator moves up to second floor when DOWN button is pressed on second floor.
+        final FloorData floor2Data = new FloorData(floor2.getFloor(), FloorData.ButtonState.DOWN, LocalTime.now());
+        floor2.addFloorRequest(floor2Data);
         this.sleep();
         assertEquals(2, elevator.getSubsystem().getCurrentFloor());
+        
+        // Verify elevator moves back down to ground floor (0) when UP button is pressed on ground floor.
+        final FloorData floor0Data = new FloorData(floor0.getFloor(), FloorData.ButtonState.UP, LocalTime.now());
+        floor0.addFloorRequest(floor0Data);
+        this.sleep();
+        assertEquals(0, elevator.getSubsystem().getCurrentFloor());
     }
 
     private void sleep() {
