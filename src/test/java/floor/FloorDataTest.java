@@ -15,7 +15,7 @@ public class FloorDataTest extends TestCase {
     // Test writing/reading FloorData to/from a file.
     public void testFileSerialization() {
         final LocalTime time = LocalTime.now();
-        final FloorData outputData = new FloorData(2, ButtonState.UP, time);
+        final FloorData outputData = new FloorData(2, ButtonState.UP, time, 4);
         try {
             // Serialize FloorData to file.
             final FileOutputStream fout = new FileOutputStream("floorDataTest.txt");
@@ -30,6 +30,7 @@ public class FloorDataTest extends TestCase {
             assertEquals(outputData.getFloor(), inputData.getFloor());
             assertEquals(outputData.getButtonState(), inputData.getButtonState());
             assertEquals(outputData.getTime(), inputData.getTime());
+            assertEquals(outputData.getDestination(), inputData.getDestination());
             in.close();
 
             // Delete file.

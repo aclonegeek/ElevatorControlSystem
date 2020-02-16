@@ -18,9 +18,11 @@ public class FloorReaderTest extends TestCase {
         assertEquals(2, floorData.get(0).getFloor());
         assertEquals(ButtonState.UP, floorData.get(0).getButtonState());
         assertEquals(LocalTime.parse("14:05:15.500"), floorData.get(0).getTime());
+        assertEquals(6, floorData.get(0).getDestination());
 
         assertEquals(8, floorData.get(1).getFloor());
         assertEquals(ButtonState.DOWN, floorData.get(1).getButtonState());
         assertEquals(LocalTime.parse("18:25:35.600"), floorData.get(1).getTime());
+        assertEquals(5, floorData.get(1).getDestination());
     }
 }

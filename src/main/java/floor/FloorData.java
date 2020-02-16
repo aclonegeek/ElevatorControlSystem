@@ -11,12 +11,17 @@ public class FloorData implements Serializable {
     private static final long serialVersionUID = 1L;
     private final LocalTime time;
     private final int floor;
+    private final int destination;
     private final ButtonState buttonState;
 
-    public FloorData(final int floor, final ButtonState buttonState, final LocalTime time) {
+    public FloorData(final int floor,
+                     final ButtonState buttonState,
+                     final LocalTime time,
+                     final int destination) {
         this.floor = floor;
         this.time = time;
         this.buttonState = buttonState;
+        this.destination = destination;
     }
 
     public LocalTime getTime() {
@@ -25,6 +30,10 @@ public class FloorData implements Serializable {
 
     public int getFloor() {
         return this.floor;
+    }
+
+    public int getDestination() {
+        return this.destination;
     }
 
     public ButtonState getButtonState() {
