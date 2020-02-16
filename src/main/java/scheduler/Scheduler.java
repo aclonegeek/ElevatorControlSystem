@@ -60,32 +60,80 @@ public class Scheduler implements Runnable {
      * @param floorData the floor information from where the request came
      */
     public synchronized void scheduleElevator(final FloorData floorData) {
+        while (this.state != SchedulerState.WAITING) {
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                System.err.println(e);
+            }
+        }
+
         this.state = SchedulerState.SCHEDULING_ELEVATOR;
 
+        // Get the elevator for the job.
         final ClosestElevator closestElevator = this.getClosestElevatorToFloor(floorData.getFloor());
         final int elevatorId = closestElevator.elevatorId;
-        final int numFloorsToTravel = closestElevator.numFloors;
+        int numFloorsToTravel = closestElevator.numFloors;
+        int currentLocation = this.elevatorLocations.get(elevatorId);
 
-        final int currentFloor = this.elevatorLocations.get(elevatorId);
+        // Move the elevator to the floor if necessary.
+        if (numFloorsToTravel > 0) {
+            this.createEventsToMoveElevatorToFloor(elevatorId,
+                                                   currentLocation,
+                                                   floorData.getFloor(),
+                                                   numFloorsToTravel);
+        }
+
+        // Determine the elevator's location after it moves to the floor.
+        if (currentLocation > floorData.getFloor()) {
+            currentLocation -= numFloorsToTravel;
+        } else {
+            currentLocation += numFloorsToTravel;
+        }
+
+        numFloorsToTravel = Math.abs(floorData.getDestination() - currentLocation);
+
+        // Move the elevator to the destination if we're not already there.
+        if (numFloorsToTravel > 0) {
+            this.createEventsToMoveElevatorToFloor(elevatorId,
+                                                   currentLocation,
+                                                   floorData.getDestination(),
+                                                   numFloorsToTravel);
+        }
+
+        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(new ElevatorData(elevatorId,
+                                                                                   currentLocation,
+                                                                                   null),
+                                                                  ElevatorAction.DESTINATION_REACHED));
+
+        this.notifyAll();
+    }
+
+    /**
+     * Adds the events to the queue that will move the {@link Elevator} to the desired floor.
+     *
+     * @param elevatorId        the ID of the {@link Elevator}
+     * @param currentFloor      the current floor of the {@link Elevator}
+     * @param floor             the floor to go to
+     * @param numFloorsToTravel the number of floors to travel
+     */
+    private void createEventsToMoveElevatorToFloor(final int elevatorId,
+                                                   final int currentFloor,
+                                                   final int floor,
+                                                   final int numFloorsToTravel) {
         final ElevatorData elevatorData = new ElevatorData(elevatorId, currentFloor, null);
         final ElevatorAction action =
-            currentFloor > floorData.getFloor() ? ElevatorAction.MOVE_DOWN : ElevatorAction.MOVE_UP;
+                currentFloor > floor ? ElevatorAction.MOVE_DOWN : ElevatorAction.MOVE_UP;
 
-        this.elevatorEvents.get(elevatorId)
-            .add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
+        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
 
+        // Add the events to move the elevator.
         for (int i = 0; i < numFloorsToTravel; i++) {
             this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, action));
         }
 
-        this.elevatorEvents.get(elevatorId)
-            .add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
-        this.elevatorEvents.get(elevatorId)
-            .add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
-
-        this.notifyAll();
-
-        this.state = SchedulerState.WAITING;
+        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
+        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
     }
 
     /**
@@ -118,14 +166,20 @@ public class Scheduler implements Runnable {
     public synchronized void handleElevatorResponse(final int elevatorId, final ElevatorResponse response) {
         this.state = SchedulerState.HANDLING_ELEVATOR_RESPONSE;
 
-        if (response == ElevatorResponse.FAILURE) {
+        switch (response) {
+        case DESTINATION_REACHED:
+            this.state = SchedulerState.WAITING;
+            break;
+        // There are still more floors to travel until destination.
+        case SUCCESS:
+            this.state = SchedulerState.WAITING_FOR_ELEVATOR_RESPONSE;
+            break;
+        case FAILURE:
             return;
         }
 
         this.elevatorEvents.get(elevatorId).removeFirst();
         this.notifyAll();
-
-        this.state = SchedulerState.WAITING;
     }
 
     /**
