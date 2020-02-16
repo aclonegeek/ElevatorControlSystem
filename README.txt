@@ -77,7 +77,7 @@ Code:
     - ElevatorSubsystem (state): Layne
 Diagrams:
     - Class Diagram: Tan, Galen, Randy, Layne and Mike
-    - Sequence Diagram: Tan and Galen
+    - Sequence Diagram: Tan, Galen, and Layne
     - State Machine Diagram: Tan, Galen, and Randy
 
 ===================
