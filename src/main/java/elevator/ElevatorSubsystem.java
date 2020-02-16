@@ -15,6 +15,8 @@ public class ElevatorSubsystem {
 
     public ElevatorResponse updateState(final ElevatorAction elevatorAction) {
         switch (elevatorAction) {
+        case DESTINATION_REACHED:
+            return ElevatorResponse.DESTINATION_REACHED;
         case MOVE_UP:
             this.state = ElevatorState.MOVING_UP;
             currentFloor++;
@@ -34,7 +36,7 @@ public class ElevatorSubsystem {
             break;
         }
 
-        // For now, assume all state changes are valid
+        // For now, there are no errors.
         return ElevatorResponse.SUCCESS;
     }
 

@@ -1,5 +1,7 @@
 package elevator;
 
 public enum ElevatorResponse {
-    SUCCESS, FAILURE
+    DESTINATION_REACHED,
+    SUCCESS,
+    FAILURE
 }
