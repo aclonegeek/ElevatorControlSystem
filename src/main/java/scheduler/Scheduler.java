@@ -136,6 +136,7 @@ public class Scheduler implements Runnable {
      */
     public synchronized void updateElevatorLocation(final int elevatorId, final int floor) {
         this.elevatorLocations.put(elevatorId, floor);
+        this.notifyAll();
     }
 
     public SchedulerState getState() {
@@ -165,7 +166,8 @@ public class Scheduler implements Runnable {
 }
 
 /**
- * Represents the elevator that is closest to a specific floor, and how many floors it must travel to reach it.
+ * Represents the elevator that is closest to a specific floor, and how many
+ * floors it must travel to reach it.
  */
 final class ClosestElevator {
     public final int elevatorId;
