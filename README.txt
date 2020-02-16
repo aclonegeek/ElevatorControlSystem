@@ -24,7 +24,8 @@ Important notes:
 ===============
 === RUNNING ===
 ===============
-In Eclipse, right click on the /src/test/java folder on the Package Explorer pane and click Run As > JUnit Test.
+- Program: Open src/main/java/core/Main.java and Run.
+- Tests: In Eclipse, right click on the /src/test/java folder on the Package Explorer pane and click Run As > JUnit Test.
 
 Each of the subsystem tests (FloorSubsystemTest, ElevatorSubsystemTest, SchedulerTest) showcase the entire system in action.
 
@@ -58,7 +59,7 @@ Each of the subsystem tests (FloorSubsystemTest, ElevatorSubsystemTest, Schedule
     - FloorSubsystemTest.java
 - src/test/java/scheduler/
     - SchedulerTest.java
-- src/test/resources/floorData.txt
+- src/main/resources/floorData.txt and src/test/resources/floorData.txt
   - This contains the test data (a sample floor input file) used by the floor subsystem and floor reader.
 - uml/ClassDiagram.pdf
 - uml/SequenceDiagram.pdf
