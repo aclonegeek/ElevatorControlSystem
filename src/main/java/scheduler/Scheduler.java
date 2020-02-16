@@ -116,6 +116,8 @@ public class Scheduler implements Runnable {
      * @param response   success or failure
      */
     public synchronized void handleElevatorResponse(final int elevatorId, final ElevatorResponse response) {
+        this.state = SchedulerState.HANDLING_ELEVATOR_RESPONSE;
+
         if (response == ElevatorResponse.FAILURE) {
             return;
         }
