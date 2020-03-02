@@ -1,28 +1,20 @@
 package elevator;
 
-import scheduler.Scheduler;
-
 public class Elevator implements Runnable {
     private final ElevatorSubsystem elevatorSubsystem;
-    private final Scheduler scheduler;
+    private final ElevatorSystem elevatorSystem;
 
-    public Elevator(final int elevatorId, final Scheduler scheduler) {
+    public Elevator(final int elevatorId, final ElevatorSystem elevatorSystem) {
+        this.elevatorSystem = elevatorSystem;
         this.elevatorSubsystem = new ElevatorSubsystem(elevatorId);
-        this.scheduler = scheduler;
     }
 
     @Override
     public void run() {
-        final int id = this.elevatorSubsystem.getElevatorId();
-        this.scheduler.registerElevator(id);
-        while (true) {
-            // Receive ElevatorEvent from Scheduler, update state, and return response to
-            // the Scheduler.
-            final ElevatorAction elevatorAction = this.scheduler.getElevatorAction(id);
-            final ElevatorResponse response = this.elevatorSubsystem.updateState(elevatorAction);
-            this.scheduler.updateElevatorLocation(id, this.elevatorSubsystem.getCurrentFloor());
-            this.scheduler.handleElevatorResponse(id, response);
-        }
+        // Do whatever it needs to do
+        // ...
+        
+        this.elevatorSystem.sendData();
     }
 
     public ElevatorSubsystem getSubsystem() {
