@@ -26,7 +26,7 @@ public class ElevatorSystem {
         // Create sockets to send and receive data through.
         try {
             this.receiveSocket = new DatagramSocket(Ports.ELEVATOR);
-            this.sendSocket = new DatagramSocket(Ports.SCHEDULER);
+            this.sendSocket = new DatagramSocket(Ports.SCHEDULER_FOR_ELEVATOR);
         } catch (SocketException se) {
             System.err.println(se);
             System.exit(1);
