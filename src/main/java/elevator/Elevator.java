@@ -13,11 +13,12 @@ public class Elevator implements Runnable {
     public void run() {
         // TODO: Not sure what run needs to do.
     }
-    
+
     // Update elevator state then return the response and current floor.
     public void processAction(ElevatorAction action) {
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
-        this.elevatorSystem.sendData(response, this.elevatorSubsystem.getCurrentFloor());
+        this.elevatorSystem.sendData(this.elevatorSubsystem.getElevatorId(), response,
+                this.elevatorSubsystem.getCurrentFloor());
     }
 
     public ElevatorSubsystem getSubsystem() {
