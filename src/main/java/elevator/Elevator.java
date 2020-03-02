@@ -14,7 +14,7 @@ public class Elevator implements Runnable {
         // Do whatever it needs to do
         // ...
         
-        this.elevatorSystem.sendData();
+        this.elevatorSystem.sendData(ElevatorResponse.SUCCESS);
     }
 
     public ElevatorSubsystem getSubsystem() {

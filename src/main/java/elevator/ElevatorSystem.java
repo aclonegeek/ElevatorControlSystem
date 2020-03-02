@@ -45,7 +45,7 @@ public class ElevatorSystem {
     // Send data back to Scheduler.
     // This method will be called from inside an Elevator thread.
     // Synchronized so only one Elevator thread can interact with the socket at a time.
-    public synchronized void sendData() {
+    public synchronized void sendData(ElevatorResponse response) {
         
     }
     
