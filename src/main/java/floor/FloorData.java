@@ -14,10 +14,7 @@ public class FloorData implements Serializable {
     private final int destination;
     private final ButtonState buttonState;
 
-    public FloorData(final int floor,
-                     final ButtonState buttonState,
-                     final LocalTime time,
-                     final int destination) {
+    public FloorData(final int floor, final ButtonState buttonState, final LocalTime time, final int destination) {
         this.floor = floor;
         this.time = time;
         this.buttonState = buttonState;

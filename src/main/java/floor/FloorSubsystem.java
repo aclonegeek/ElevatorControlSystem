@@ -1,16 +1,13 @@
 package floor;
 
 import java.util.ArrayList;
-
+import floor.FloorData.ButtonState;
 import scheduler.Scheduler;
 
 /**
  * Simulates the functionality of a particular floor.
  */
 public class FloorSubsystem implements Runnable {
-    private enum ButtonState {
-        UP, DOWN, UNPRESSED
-    }
 
     public static final int MAX_FLOORS = 50;
 
