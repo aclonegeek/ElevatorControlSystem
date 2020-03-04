@@ -13,6 +13,15 @@ public class ElevatorSystem {
     private final ArrayList<Elevator> elevators;
     private DatagramSocket receiveSocket, sendSocket;
     private boolean sendingData;
+    
+    public static void main(String args[]) {
+        final ElevatorSystem elevatorSystem = new ElevatorSystem(3);
+        elevatorSystem.registerElevators();
+
+        while (true) {
+            elevatorSystem.receiveData();
+        }
+    }
 
     public ElevatorSystem(final int numOfElevators) {
         // Create Elevator threads.
@@ -20,7 +29,6 @@ public class ElevatorSystem {
         for (int i = 0; i < numOfElevators; i++) {
             final Elevator elevator = new Elevator(i, this);
             this.elevators.add(elevator);
-            new Thread(elevator).start();
         }
 
         // Create sockets to send and receive data through.
@@ -121,15 +129,6 @@ public class ElevatorSystem {
             this.notifyAll();
         } catch (InterruptedException e) {
             System.err.println(e);
-        }
-    }
-
-    public static void main(String args[]) {
-        final ElevatorSystem elevatorSystem = new ElevatorSystem(3);
-        elevatorSystem.registerElevators();
-
-        while (true) {
-            elevatorSystem.receiveData();
         }
     }
 }
