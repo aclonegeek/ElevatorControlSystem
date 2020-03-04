@@ -34,11 +34,7 @@ public class Scheduler {
     private DatagramSocket sendSocket;
 
     public static void main(String args[]) {
-        final Scheduler scheduler = new Scheduler();
-
-        while (true) {
-            scheduler.receive();
-        }
+        new Scheduler().run();
     }
 
     public Scheduler() {
@@ -54,7 +50,14 @@ public class Scheduler {
         }
     }
 
-    private void receive() {
+    private void run() {
+        while (true) {
+            DatagramPacket packet = this.receive();
+            this.handleMessage(packet.getData(), packet.getPort());
+        }
+    }
+
+    private DatagramPacket receive() {
         byte data[] = new byte[10]; // TODO: Magic # (MAX_DATA?).
         DatagramPacket packet = new DatagramPacket(data, data.length);
 
@@ -65,7 +68,7 @@ public class Scheduler {
             System.exit(1);
         }
 
-        this.handleMessage(packet.getData(), packet.getPort());
+        return packet;
     }
 
     private void handleMessage(final byte[] data, final int port) {
@@ -77,9 +80,6 @@ public class Scheduler {
 
         // TODO: We want these case statements to not be magic #'s.
         switch (data[0]) {
-        // Empty message.
-        case 0:
-            return;
         // Floor message.
         case 1:
             this.handleFloorMessage(data, port);
