@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import global.Globals;
 
@@ -60,12 +61,12 @@ public class ElevatorSystem {
                 System.exit(1);
             }
 
-            System.out.println("ElevatorSystem sent packet to Scheduler to register elevator "
-                    + elevator.getSubsystem().getElevatorId() + ".");
+            System.out.println("Sent to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
 
             // Block until Scheduler responds signifying the elevator has been registered.
             // TODO: Handle success/failure cases.
-            final DatagramPacket receivePacket = new DatagramPacket(new byte[1], 1);
+            final byte[] receiveData = new byte[1];
+            final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             try {
                 this.receiveSocket.receive(receivePacket);
             } catch (IOException e) {
@@ -73,7 +74,7 @@ public class ElevatorSystem {
                 System.exit(1);
             }
 
-            System.out.println("ElevatorSystem received confirmation packet from Scheduler.");
+            System.out.println("Received: " + Arrays.toString(receiveData));
         }
     }
 
