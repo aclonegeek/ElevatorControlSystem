@@ -18,10 +18,10 @@ public class Globals {
     public static final int FROM_SCHEDULER = 3;
 
     // Floor globals.
-    public static final int MAX_FLOORS = 99;
+    public static final int MAX_FLOORS = 22;
 
     // Elevator globals.
-    public static final int MAX_ELEVATORS = 9;
+    public static final int MAX_ELEVATORS = 4;
    
     static {
         try {
