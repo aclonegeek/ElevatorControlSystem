@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import elevator.Elevator;
@@ -19,14 +20,7 @@ public class Scheduler {
 
     // TODO: Grab these from Floor?
     private static enum FloorMessageType {
-        REQUEST,
-        INVALID,
-    }
-
-    // TODO: Grab these from Elevator?
-    private static enum ElevatorMessageType {
-        REGISTER,
-        INVALID,
+        REQUEST, INVALID,
     }
 
     private final HashMap<Integer, Integer> elevatorLocations;
@@ -46,6 +40,7 @@ public class Scheduler {
 
         try {
             this.receiveSocket = new DatagramSocket(Globals.SCHEDULER_PORT);
+            this.sendSocket = new DatagramSocket();
         } catch (SocketException e) {
             System.err.println(e);
             System.exit(1);
@@ -53,6 +48,8 @@ public class Scheduler {
     }
 
     private void run() {
+        System.out.println("Running scheduler...");
+
         while (true) {
             DatagramPacket packet = this.receive();
             this.handleMessage(packet.getData(), packet.getPort());
@@ -80,6 +77,8 @@ public class Scheduler {
             return;
         }
 
+        System.out.println("Received: " + Arrays.toString(data));
+
         switch (data[0]) {
         // Floor message.
         case Globals.FROM_FLOOR:
@@ -96,6 +95,8 @@ public class Scheduler {
     }
 
     private void handleFloorMessage(final byte[] data, final int port) {
+        System.out.println("Handling a floor message.");
+
         final int floor = data[1];
 
         switch (this.parseFloorMessage(data)) {
@@ -107,14 +108,17 @@ public class Scheduler {
     }
 
     private void handleElevatorMessage(final byte[] data, final int port) {
+        System.out.println("Handling an elevator message.");
+
         final int id = data[1];
 
-        switch (this.parseElevatorMessage(data)) {
+        switch (this.parseElevatorMessage(data)) { // TODO: Don't need a method for this.
         case REGISTER:
             this.registerElevator(id);
             // Reply with success.
             byte reply[] = { 0 };
-            DatagramPacket packet = new DatagramPacket(reply, reply.length, Globals.IP, port);
+            DatagramPacket packet =
+                    new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
             this.send(packet);
             break;
         case INVALID:
@@ -126,16 +130,18 @@ public class Scheduler {
         return FloorMessageType.REQUEST;
     }
 
-    private ElevatorMessageType parseElevatorMessage(final byte[] data) {
-        if (data.length == 2) {
-            return ElevatorMessageType.REGISTER;
+    private Elevator.Request parseElevatorMessage(final byte[] data) {
+        if (Elevator.Request.values()[data[2]] == Elevator.Request.REGISTER) {
+            return Elevator.Request.REGISTER;
         }
 
-        return ElevatorMessageType.INVALID;
+        return Elevator.Request.INVALID;
     }
 
     // TODO: Move this to a utility class?
     private void send(final DatagramPacket packet) {
+        System.out.println("Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()));
+
         try {
             this.sendSocket.send(packet);
         } catch (IOException e) {
@@ -151,6 +157,7 @@ public class Scheduler {
      * @param id the {@link Elevator}'s id
      */
     public void registerElevator(final int id) {
+        System.out.println("Registering elevator " + id + ".");
         this.elevatorLocations.put(id, 0); // All elevators start at the ground floor.
     }
 
