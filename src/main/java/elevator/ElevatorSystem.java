@@ -3,12 +3,10 @@ package elevator;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
 import global.Globals;
-import global.Ports;
 
 // Contains all Elevators/ElevatorSubsystems and handles networking with Scheduler.
 public class ElevatorSystem {
@@ -35,8 +33,8 @@ public class ElevatorSystem {
 
         // Create sockets to send and receive data through.
         try {
-            this.receiveSocket = new DatagramSocket(Ports.ELEVATOR);
-            this.sendSocket = new DatagramSocket(Ports.SCHEDULER_FOR_ELEVATOR);
+            this.receiveSocket = new DatagramSocket(Globals.ELEVATOR_PORT);
+            this.sendSocket = new DatagramSocket(Globals.SCHEDULER_PORT);
         } catch (SocketException se) {
             System.err.println(se);
             System.exit(1);
@@ -53,7 +51,7 @@ public class ElevatorSystem {
             sendData[0] = 2;
             sendData[1] = (byte) elevator.getSubsystem().getElevatorId();
             final DatagramPacket sendPacket =
-                    new DatagramPacket(sendData, sendData.length, Globals.IP, Ports.SCHEDULER_FOR_ELEVATOR);
+                    new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
             try {
                 this.sendSocket.send(sendPacket);
@@ -61,6 +59,9 @@ public class ElevatorSystem {
                 System.err.println(e);
                 System.exit(1);
             }
+
+            System.out.println("ElevatorSystem sent packet to Scheduler to register elevator "
+                    + elevator.getSubsystem().getElevatorId() + ".");
 
             // Block until Scheduler responds signifying the elevator has been registered.
             // TODO: Handle success/failure cases.
@@ -71,6 +72,8 @@ public class ElevatorSystem {
                 System.err.println(e);
                 System.exit(1);
             }
+
+            System.out.println("ElevatorSystem received confirmation packet from Scheduler.");
         }
     }
 
@@ -109,7 +112,7 @@ public class ElevatorSystem {
 
             this.sendingData = true;
             final DatagramPacket sendPacket =
-                    new DatagramPacket(sendData, sendData.length, Globals.IP, Ports.SCHEDULER_FOR_ELEVATOR);
+                    new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
             try {
                 this.receiveSocket.send(sendPacket);
             } catch (IOException e) {
