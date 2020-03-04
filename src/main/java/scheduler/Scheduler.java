@@ -25,6 +25,11 @@ public class Scheduler {
         WAITING, SCHEDULING_ELEVATOR, WAITING_FOR_ELEVATOR_RESPONSE, HANDLING_ELEVATOR_RESPONSE,
     }
 
+    // TODO: Grab these from Floor?
+    private static enum FloorMessageType {
+        REQUEST,
+        INVALID,
+    }
 
     // TODO: Grab these from Elevator?
     private static enum ElevatorMessageType {
@@ -101,6 +106,14 @@ public class Scheduler {
     }
 
     private void handleFloorMessage(final byte[] data, final int port) {
+        final int floor = data[1];
+
+        switch (this.parseFloorMessage(data)) {
+        case REQUEST:
+            break;
+        case INVALID:
+            break;
+        }
     }
 
     private void handleElevatorMessage(final byte[] data, final int port) {
@@ -117,6 +130,10 @@ public class Scheduler {
         case INVALID:
             break;
         }
+    }
+
+    private FloorMessageType parseFloorMessage(final byte[] data) {
+        return FloorMessageType.REQUEST;
     }
 
     private ElevatorMessageType parseElevatorMessage(final byte[] data) {
