@@ -25,6 +25,13 @@ public class Scheduler {
         WAITING, SCHEDULING_ELEVATOR, WAITING_FOR_ELEVATOR_RESPONSE, HANDLING_ELEVATOR_RESPONSE,
     }
 
+
+    // TODO: Grab these from Elevator?
+    private static enum ElevatorMessageType {
+        REGISTER,
+        INVALID,
+    }
+
     private final HashMap<Integer, ArrayDeque<ElevatorEvent>> elevatorEvents;
     private final HashMap<Integer, Integer> elevatorLocations;
 
@@ -99,16 +106,25 @@ public class Scheduler {
     private void handleElevatorMessage(final byte[] data, final int port) {
         final int id = data[1];
 
-        // Register the elevator.
-        // TODO: We want an enum that will store every possible elevator message type.
-        if (data.length == 2) {
+        switch (this.parseElevatorMessage(data)) {
+        case REGISTER:
             this.registerElevator(id);
-
             // Reply with success.
             byte reply[] = { 0 };
             DatagramPacket packet = new DatagramPacket(reply, reply.length, Globals.IP, port);
             this.send(packet);
+            break;
+        case INVALID:
+            break;
         }
+    }
+
+    private ElevatorMessageType parseElevatorMessage(final byte[] data) {
+        if (data.length == 2) {
+            return ElevatorMessageType.REGISTER;
+        }
+
+        return ElevatorMessageType.INVALID;
     }
 
     // TODO: Move this to a utility class?
