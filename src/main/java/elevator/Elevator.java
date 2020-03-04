@@ -6,6 +6,12 @@ public class Elevator {
     private final ElevatorSubsystem elevatorSubsystem;
     private final ElevatorSystem elevatorSystem;
 
+    public static enum Request {
+        REGISTER, UPDATE_LOCATION, INVALID;
+
+        public static final Request[] values = Request.values();
+    }
+
     public Elevator(final int elevatorId, final ElevatorSystem elevatorSystem) {
         this.elevatorSystem = elevatorSystem;
         this.elevatorSubsystem = new ElevatorSubsystem(elevatorId, elevatorSystem);
@@ -28,10 +34,10 @@ public class Elevator {
         // Parse action and destination floor from receiveData.
         final ElevatorAction action = ElevatorAction.values[receiveData[1]];
         final int destinationFloor = (int) receiveData[2];
-        
+
         // Update ElevatorSubsystem state.
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action, destinationFloor);
-        
+
         // Construct response message.
         final int currentFloor = elevatorSubsystem.getCurrentFloor();
         final byte[] sendData = new byte[4];
@@ -39,7 +45,7 @@ public class Elevator {
         sendData[1] = (byte) elevatorSubsystem.getElevatorId();
         sendData[2] = (byte) response.ordinal();
         sendData[3] = (byte) currentFloor;
-        
+
         // Send response message.
         this.elevatorSystem.sendData(sendData);
     }
