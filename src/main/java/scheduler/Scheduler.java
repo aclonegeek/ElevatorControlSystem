@@ -140,7 +140,8 @@ public class Scheduler {
 
     // TODO: Move this to a utility class?
     private void send(final DatagramPacket packet) {
-        System.out.println("Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()));
+        System.out.println(
+                "Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()) + "\n");
 
         try {
             this.sendSocket.send(packet);
