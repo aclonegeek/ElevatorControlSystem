@@ -78,14 +78,13 @@ public class Scheduler {
             return;
         }
 
-        // TODO: We want these case statements to not be magic #'s.
         switch (data[0]) {
         // Floor message.
-        case 1:
+        case Globals.FROM_FLOOR:
             this.handleFloorMessage(data, port);
             break;
         // Elevator message.
-        case 2:
+        case Globals.FROM_ELEVATOR:
             this.handleElevatorMessage(data, port);
             break;
         default:
