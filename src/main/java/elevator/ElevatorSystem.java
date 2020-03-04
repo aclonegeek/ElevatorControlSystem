@@ -27,7 +27,7 @@ public class ElevatorSystem {
     public ElevatorSystem(final int numOfElevators) {
         // Create Elevator threads.
         this.elevators = new ArrayList<>();
-        for (int i = 1; i < numOfElevators; i++) {
+        for (int i = 1; i <= numOfElevators; i++) {
             final Elevator elevator = new Elevator(i, this);
             this.elevators.add(elevator);
         }
@@ -54,14 +54,13 @@ public class ElevatorSystem {
             final DatagramPacket sendPacket =
                     new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
+            System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
             try {
                 this.sendSocket.send(sendPacket);
             } catch (IOException e) {
                 System.err.println(e);
                 System.exit(1);
             }
-
-            System.out.println("Sent to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
 
             // Block until Scheduler responds signifying the elevator has been registered.
             // TODO: Handle success/failure cases.
@@ -74,7 +73,7 @@ public class ElevatorSystem {
                 System.exit(1);
             }
 
-            System.out.println("Received: " + Arrays.toString(receiveData));
+            System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
         }
     }
 
@@ -114,6 +113,8 @@ public class ElevatorSystem {
             this.sendingData = true;
             final DatagramPacket sendPacket =
                     new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
+
+            System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
             try {
                 this.receiveSocket.send(sendPacket);
             } catch (IOException e) {
@@ -130,6 +131,8 @@ public class ElevatorSystem {
                 System.err.println(e);
                 System.exit(1);
             }
+            
+            System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
 
             this.sendingData = false;
             this.notifyAll();
