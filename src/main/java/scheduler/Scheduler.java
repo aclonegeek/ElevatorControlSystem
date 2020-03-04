@@ -48,7 +48,7 @@ public class Scheduler {
     }
 
     private void run() {
-        System.out.println("Running scheduler...");
+        System.out.println("Running scheduler...\n");
 
         while (true) {
             DatagramPacket packet = this.receive();
