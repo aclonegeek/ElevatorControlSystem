@@ -74,7 +74,8 @@ public class Scheduler implements Runnable {
 
     private void handleMessage(final byte[] data, final int port) {
         // Empty message.
-        if (data[0] == 0) {
+        if (data.length == 0) {
+            System.out.println("Received empty message.");
             return;
         }
 
