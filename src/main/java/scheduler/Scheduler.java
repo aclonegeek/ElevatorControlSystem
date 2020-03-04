@@ -1,5 +1,9 @@
 package scheduler;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -11,6 +15,7 @@ import elevator.ElevatorEvent;
 import elevator.ElevatorResponse;
 import floor.FloorData;
 import floor.FloorSubsystem;
+import global.Globals;
 
 /**
  * Coordinates the elevator and floor subsystems.
@@ -28,14 +33,102 @@ public class Scheduler implements Runnable {
 
     private SchedulerState state;
 
+    private DatagramSocket receiveSocket;
+    private DatagramSocket sendSocket;
+
+    public static void main(String args[]) {
+        final Scheduler scheduler = new Scheduler();
+
+        while (true) {
+            scheduler.receive();
+        }
+    }
+
     public Scheduler() {
         this.elevatorEvents = new HashMap<>();
         this.elevatorLocations = new HashMap<>();
         this.state = SchedulerState.WAITING;
+
+        try {
+            this.receiveSocket = new DatagramSocket(Globals.SCHEDULER_PORT);
+        } catch (SocketException e) {
+            System.err.println(e);
+            System.exit(1);
+        }
     }
 
     @Override
     public void run() {
+    }
+
+    private void receive() {
+        byte data[] = new byte[10]; // TODO: Magic # (MAX_DATA?).
+        DatagramPacket packet = new DatagramPacket(data, data.length);
+
+        try {
+            this.receiveSocket.receive(packet);
+        } catch (IOException e) {
+            System.err.println(e);
+            System.exit(1);
+        }
+
+        this.handleMessage(packet.getData(), packet.getPort());
+    }
+
+    private void handleMessage(final byte[] data, final int port) {
+        // Empty message.
+        if (data[0] == 0) {
+            return;
+        }
+
+        // TODO: We want these case statements to not be magic #'s.
+        switch (data[0]) {
+        // Empty message.
+        case 0:
+            return;
+         // Floor message.
+        case 1:
+            this.handleFloorMessage(data, port);
+            break;
+        // Elevator message.
+        case 2:
+            this.handleElevatorMessage(data, port);
+            break;
+        default:
+            System.err.println("Received invalid bytes.");
+            break;
+        }
+    }
+
+    private void handleFloorMessage(final byte[] data, final int port) {
+    }
+
+    private void handleElevatorMessage(final byte[] data, final int port) {
+        final int id = data[1];
+
+        // Register the elevator.
+        // TODO: We want an enum that will store every possible elevator message type.
+        if (data.length == 2) {
+            this.registerElevator(id);
+
+            // Reply with success.
+            byte reply[] = {0};
+            DatagramPacket packet = new DatagramPacket(reply,
+                                                       reply.length,
+                                                       Globals.IP,
+                                                       port);
+            this.send(packet);
+        }
+    }
+
+    // TODO: Move this to a utility class?
+    private void send(final DatagramPacket packet) {
+        try {
+            this.sendSocket.send(packet);
+        } catch (IOException e) {
+            System.err.println(e);
+            System.exit(1);
+        }
     }
 
     /**
