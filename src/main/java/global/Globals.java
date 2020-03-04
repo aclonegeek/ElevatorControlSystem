@@ -11,8 +11,8 @@ public class Globals {
     public static InetAddress IP;
 
     // Networking data transfer globals.
-    public static final int SUCCESS = -1;
-    public static final int FAILURE = 0;
+    public static final int SUCCESS = 0;
+    public static final int FAILURE = -1;
     public static final int FROM_FLOOR = 1;
     public static final int FROM_ELEVATOR = 2;
 
