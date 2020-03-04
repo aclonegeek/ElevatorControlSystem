@@ -3,9 +3,11 @@ package elevator;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+import global.Globals;
 import global.Ports;
 
 // Contains all Elevators/ElevatorSubsystems and handles networking with Scheduler.
@@ -13,7 +15,7 @@ public class ElevatorSystem {
     private final ArrayList<Elevator> elevators;
     private DatagramSocket receiveSocket, sendSocket;
     private boolean sendingData;
-    
+
     public static void main(String args[]) {
         final ElevatorSystem elevatorSystem = new ElevatorSystem(3);
         elevatorSystem.registerElevators();
@@ -50,11 +52,10 @@ public class ElevatorSystem {
             final byte[] sendData = new byte[2];
             sendData[0] = 2;
             sendData[1] = (byte) elevator.getSubsystem().getElevatorId();
-            final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length);
+            final DatagramPacket sendPacket =
+                    new DatagramPacket(sendData, sendData.length, Globals.IP, Ports.SCHEDULER_FOR_ELEVATOR);
 
             try {
-                System.out.println(sendSocket);
-                System.out.println(sendPacket);
                 this.sendSocket.send(sendPacket);
             } catch (IOException e) {
                 System.err.println(e);
@@ -107,7 +108,8 @@ public class ElevatorSystem {
             }
 
             this.sendingData = true;
-            final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length);
+            final DatagramPacket sendPacket =
+                    new DatagramPacket(sendData, sendData.length, Globals.IP, Ports.SCHEDULER_FOR_ELEVATOR);
             try {
                 this.receiveSocket.send(sendPacket);
             } catch (IOException e) {
