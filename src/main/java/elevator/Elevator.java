@@ -1,5 +1,7 @@
 package elevator;
 
+import global.Globals;
+
 public class Elevator implements Runnable {
     private final ElevatorSubsystem elevatorSubsystem;
     private final ElevatorSystem elevatorSystem;
@@ -36,7 +38,7 @@ public class Elevator implements Runnable {
         // Construct response message.
         final int currentFloor = elevatorSubsystem.getCurrentFloor();
         final byte[] sendData = new byte[currentFloor > 9 ? 5 : 4];
-        sendData[0] = 2;
+        sendData[0] = Globals.FROM_ELEVATOR;
         sendData[1] = (byte) elevatorSubsystem.getElevatorId();
         sendData[2] = (byte) response.ordinal();
 

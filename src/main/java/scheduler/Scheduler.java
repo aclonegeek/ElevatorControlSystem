@@ -11,6 +11,7 @@ import elevator.ElevatorEvent;
 import elevator.ElevatorResponse;
 import floor.FloorData;
 import floor.FloorSubsystem;
+import global.Globals;
 
 /**
  * Coordinates the elevator and floor subsystems.
@@ -205,7 +206,7 @@ public class Scheduler implements Runnable {
      */
     private ClosestElevator getClosestElevatorToFloor(final int floor) {
         int closestElevator = 1;
-        int closestDistance = FloorSubsystem.MAX_FLOORS;
+        int closestDistance = Globals.MAX_FLOORS;
         for (final Entry<Integer, Integer> entry : this.elevatorLocations.entrySet()) {
             final int distance = Math.abs(entry.getValue() - floor);
 
