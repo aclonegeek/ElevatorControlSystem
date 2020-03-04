@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import global.Ports;
@@ -75,7 +76,7 @@ public class ElevatorSystem {
         }
 
         // Receive data back from Scheduler.
-        final byte receiveData[] = new byte[2];
+        final byte receiveData[] = new byte[4];
         final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
         try {
             this.receiveSocket.receive(receivePacket);
@@ -84,12 +85,27 @@ public class ElevatorSystem {
             System.exit(1);
         }
 
+        // Remove trailing buffer 0s from receiveData
+        final byte trimmedData[] = new byte[receivePacket.getLength()];
+        System.arraycopy(receivePacket.getData(), receivePacket.getOffset(), trimmedData, 0,
+                receivePacket.getLength());
+
         // Extract ElevatorAction from packet, forward it to the corresponding Elevator
         // receiveData[0] is the id of the elevator
         // receiveData[1] is the serialized ElevatorAction
-        // TODO: Extract destination floor, use this to set the button state
-        final ElevatorAction action = ElevatorAction.values[receiveData[1]];
-        this.elevators.get(receiveData[0]).processAction(action);
+        // receiveData[2+] is the destination floor
+        final int elevatorId = trimmedData[0];
+        final ElevatorAction elevatorAction = ElevatorAction.values[trimmedData[1]];
+
+        String destinationFloorString = new String();
+        for (int i = 2; i < trimmedData.length; i++) {
+            destinationFloorString += trimmedData[i];
+        }
+
+        final int destinationFloor = Integer.parseInt(destinationFloorString);
+
+        this.elevators.get(elevatorId).setDestinationFloor(destinationFloor);
+        this.elevators.get(elevatorId).processAction(elevatorAction);
     }
 
     // Send data back to Scheduler.
@@ -107,11 +123,19 @@ public class ElevatorSystem {
             this.sendingData = true;
 
             // Send data back to Scheduler.
-            final byte[] sendData = new byte[4];
+            // If currentFloor is two digits, then byte array size is 5; otherwise, it is 4.
+            final byte[] sendData = new byte[currentFloor > 9 ? 5 : 4];
             sendData[0] = 2;
             sendData[1] = (byte) elevatorId;
             sendData[2] = (byte) response.ordinal();
-            sendData[3] = (byte) currentFloor; // TODO: Support floors greater than one byte (ie. >9)
+
+            if (currentFloor > 9) {
+                String currentFloorString = Integer.toString(currentFloor);
+                sendData[3] = (byte) Character.getNumericValue((currentFloorString.charAt(0)));
+                sendData[4] = (byte) Character.getNumericValue((currentFloorString.charAt(1)));
+            } else {
+                sendData[3] = (byte) currentFloor;
+            }
 
             final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length);
             try {

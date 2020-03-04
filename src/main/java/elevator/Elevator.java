@@ -14,8 +14,8 @@ public class Elevator implements Runnable {
         // TODO: Not sure what run needs to do.
     }
 
-    // Update elevator state then return the response and current floor.
-    public void processAction(ElevatorAction action) {
+    // Update ElevatorSubsystem state then return a response.
+    public void processAction(final ElevatorAction action) {
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
         this.elevatorSystem.sendData(this.elevatorSubsystem.getElevatorId(), response,
                 this.elevatorSubsystem.getCurrentFloor());
@@ -23,5 +23,10 @@ public class Elevator implements Runnable {
 
     public ElevatorSubsystem getSubsystem() {
         return this.elevatorSubsystem;
+    }
+    
+    // TODO: Set destination floor lights
+    public void setDestinationFloor(final int destinationFloor) {
+        
     }
 }
