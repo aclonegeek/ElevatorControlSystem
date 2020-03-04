@@ -21,11 +21,10 @@ public class Elevator implements Runnable {
      * receiveData[0] is the id of the elevator.
      * receiveData[1] is the serialized ElevatorAction.
      * receiveData[2+] is the destination floor.
-     * TODO: Need to also send data back every time a new floor is reached.
      */
     public void processData(byte[] receiveData) {
         // Parse action and destination floor from receiveData.
-        final ElevatorAction action = ElevatorAction.values[receiveData[1]];
+        final ElevatorAction action = ElevatorAction.values[receiveData[2]];
         String destinationFloorString = new String();
         for (int i = 2; i < receiveData.length; i++) {
             destinationFloorString += receiveData[i];

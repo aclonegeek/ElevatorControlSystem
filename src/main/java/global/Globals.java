@@ -15,6 +15,7 @@ public class Globals {
     public static final int FAILURE = -1;
     public static final int FROM_FLOOR = 1;
     public static final int FROM_ELEVATOR = 2;
+    public static final int FROM_SCHEDULER = 3;
 
     // Floor globals.
     public static final int MAX_FLOORS = 99;

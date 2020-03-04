@@ -82,9 +82,10 @@ public class ElevatorSystem {
         final byte trimmedData[] = new byte[receivePacket.getLength()];
         System.arraycopy(receivePacket.getData(), receivePacket.getOffset(), trimmedData, 0,
                 receivePacket.getLength());
-        
-        // trimmedData[0] is an elevatorId. Forward data to the corresponding elevator.
-        this.elevators.get(trimmedData[0]).processData(trimmedData);
+
+        // TODO: Extract origin at index 0, currently assumes all come from Scheduler.
+        // trimmedData[1] is an elevatorId. Forward data to the corresponding elevator.
+        this.elevators.get(trimmedData[1]).processData(trimmedData);
     }
 
     // Send data back to Scheduler.
