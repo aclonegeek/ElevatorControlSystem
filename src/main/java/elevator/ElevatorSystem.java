@@ -85,35 +85,19 @@ public class ElevatorSystem {
             System.exit(1);
         }
 
-        // Remove trailing buffer 0s from receiveData
+        // Remove trailing buffer 0s from receiveData.
         final byte trimmedData[] = new byte[receivePacket.getLength()];
         System.arraycopy(receivePacket.getData(), receivePacket.getOffset(), trimmedData, 0,
                 receivePacket.getLength());
-
-        // Extract ElevatorAction from packet, forward it to the corresponding Elevator
-        // receiveData[0] is the id of the elevator
-        // receiveData[1] is the serialized ElevatorAction
-        // receiveData[2+] is the destination floor
-        final int elevatorId = trimmedData[0];
-        final ElevatorAction elevatorAction = ElevatorAction.values[trimmedData[1]];
-
-        String destinationFloorString = new String();
-        for (int i = 2; i < trimmedData.length; i++) {
-            destinationFloorString += trimmedData[i];
-        }
-
-        final int destinationFloor = Integer.parseInt(destinationFloorString);
-
-        this.elevators.get(elevatorId).setDestinationFloor(destinationFloor);
-        this.elevators.get(elevatorId).processAction(elevatorAction);
+        
+        // trimmedData[0] is an elevatorId. Forward data to the corresponding elevator.
+        this.elevators.get(trimmedData[0]).processData(trimmedData);
     }
 
     // Send data back to Scheduler.
-    // This method will be called from inside an Elevator thread after processing
-    // the data.
+    // This method is called by an Elevator thread after processing the data.
     // Synchronized so only one Elevator thread can interact with socket at a time.
-    public synchronized void sendData(final int elevatorId, final ElevatorResponse response,
-            final int currentFloor) {
+    public synchronized void sendData(byte[] sendData) {
         try {
             // If another thread is currently sending data, then wait until it is done
             while (this.sendingData) {
@@ -121,22 +105,6 @@ public class ElevatorSystem {
             }
 
             this.sendingData = true;
-
-            // Send data back to Scheduler.
-            // If currentFloor is two digits, then byte array size is 5; otherwise, it is 4.
-            final byte[] sendData = new byte[currentFloor > 9 ? 5 : 4];
-            sendData[0] = 2;
-            sendData[1] = (byte) elevatorId;
-            sendData[2] = (byte) response.ordinal();
-
-            if (currentFloor > 9) {
-                String currentFloorString = Integer.toString(currentFloor);
-                sendData[3] = (byte) Character.getNumericValue((currentFloorString.charAt(0)));
-                sendData[4] = (byte) Character.getNumericValue((currentFloorString.charAt(1)));
-            } else {
-                sendData[3] = (byte) currentFloor;
-            }
-
             final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length);
             try {
                 this.receiveSocket.send(sendPacket);

@@ -13,7 +13,8 @@ public class ElevatorSubsystem {
         this.state = ElevatorState.IDLE_DOOR_OPEN;
     }
 
-    public ElevatorResponse updateState(final ElevatorAction elevatorAction) {
+    // TODO: Set elevator lights based on selected destinationFloor.
+    public ElevatorResponse updateState(final ElevatorAction elevatorAction, final int destinationFloor) {
         switch (elevatorAction) {
         case DESTINATION_REACHED:
             return ElevatorResponse.DESTINATION_REACHED;
