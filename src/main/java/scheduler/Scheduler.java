@@ -22,10 +22,7 @@ import global.Globals;
  */
 public class Scheduler implements Runnable {
     public static enum SchedulerState {
-        WAITING,
-        SCHEDULING_ELEVATOR,
-        WAITING_FOR_ELEVATOR_RESPONSE,
-        HANDLING_ELEVATOR_RESPONSE,
+        WAITING, SCHEDULING_ELEVATOR, WAITING_FOR_ELEVATOR_RESPONSE, HANDLING_ELEVATOR_RESPONSE,
     }
 
     private final HashMap<Integer, ArrayDeque<ElevatorEvent>> elevatorEvents;
@@ -86,7 +83,7 @@ public class Scheduler implements Runnable {
         // Empty message.
         case 0:
             return;
-         // Floor message.
+        // Floor message.
         case 1:
             this.handleFloorMessage(data, port);
             break;
@@ -112,11 +109,8 @@ public class Scheduler implements Runnable {
             this.registerElevator(id);
 
             // Reply with success.
-            byte reply[] = {0};
-            DatagramPacket packet = new DatagramPacket(reply,
-                                                       reply.length,
-                                                       Globals.IP,
-                                                       port);
+            byte reply[] = { 0 };
+            DatagramPacket packet = new DatagramPacket(reply, reply.length, Globals.IP, port);
             this.send(packet);
         }
     }
@@ -171,10 +165,8 @@ public class Scheduler implements Runnable {
 
         // Move the elevator to the floor if necessary.
         if (numFloorsToTravel > 0) {
-            this.createEventsToMoveElevatorToFloor(elevatorId,
-                                                   currentLocation,
-                                                   floorData.getFloor(),
-                                                   numFloorsToTravel);
+            this.createEventsToMoveElevatorToFloor(elevatorId, currentLocation, floorData.getFloor(),
+                    numFloorsToTravel);
         }
 
         // Determine the elevator's location after it moves to the floor.
@@ -188,32 +180,27 @@ public class Scheduler implements Runnable {
 
         // Move the elevator to the destination if we're not already there.
         if (numFloorsToTravel > 0) {
-            this.createEventsToMoveElevatorToFloor(elevatorId,
-                                                   currentLocation,
-                                                   floorData.getDestination(),
-                                                   numFloorsToTravel);
+            this.createEventsToMoveElevatorToFloor(elevatorId, currentLocation, floorData.getDestination(),
+                    numFloorsToTravel);
         }
 
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(new ElevatorData(elevatorId,
-                                                                                   currentLocation,
-                                                                                   null),
-                                                                  ElevatorAction.DESTINATION_REACHED));
+        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(
+                new ElevatorData(elevatorId, currentLocation, null), ElevatorAction.DESTINATION_REACHED));
 
         this.notifyAll();
     }
 
     /**
-     * Adds the events to the queue that will move the {@link Elevator} to the desired floor.
+     * Adds the events to the queue that will move the {@link Elevator} to the
+     * desired floor.
      *
      * @param elevatorId        the ID of the {@link Elevator}
      * @param currentFloor      the current floor of the {@link Elevator}
      * @param floor             the floor to go to
      * @param numFloorsToTravel the number of floors to travel
      */
-    private void createEventsToMoveElevatorToFloor(final int elevatorId,
-                                                   final int currentFloor,
-                                                   final int floor,
-                                                   final int numFloorsToTravel) {
+    private void createEventsToMoveElevatorToFloor(final int elevatorId, final int currentFloor,
+            final int floor, final int numFloorsToTravel) {
         final ElevatorData elevatorData = new ElevatorData(elevatorId, currentFloor, null);
         final ElevatorAction action =
                 currentFloor > floor ? ElevatorAction.MOVE_DOWN : ElevatorAction.MOVE_UP;
