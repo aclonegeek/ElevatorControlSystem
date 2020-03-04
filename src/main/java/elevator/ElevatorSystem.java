@@ -124,14 +124,15 @@ public class ElevatorSystem {
 
             // Block until receive response from Scheduler.
             // TODO: Handle success/failure cases.
-            final DatagramPacket receivePacket = new DatagramPacket(new byte[1], 1);
+            final byte[] receiveData = new byte[1];
+            final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
             try {
                 this.receiveSocket.receive(receivePacket);
             } catch (IOException e) {
                 System.err.println(e);
                 System.exit(1);
             }
-            
+
             System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
 
             this.sendingData = false;
