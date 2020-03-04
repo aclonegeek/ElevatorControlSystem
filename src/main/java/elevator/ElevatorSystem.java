@@ -45,6 +45,8 @@ public class ElevatorSystem {
             final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length);
 
             try {
+                System.out.println(sendSocket);
+                System.out.println(sendPacket);
                 this.sendSocket.send(sendPacket);
             } catch (IOException e) {
                 System.err.println(e);
@@ -52,7 +54,8 @@ public class ElevatorSystem {
             }
 
             // Block until Scheduler responds signifying the elevator has been registered.
-            final DatagramPacket receivePacket = new DatagramPacket(new byte[0], 0);
+            // TODO: Handle success/failure cases.
+            final DatagramPacket receivePacket = new DatagramPacket(new byte[1], 1);
             try {
                 this.receiveSocket.receive(receivePacket);
             } catch (IOException e) {
@@ -62,18 +65,9 @@ public class ElevatorSystem {
         }
     }
 
-    // Request and receive data from Scheduler.
+    // Receive data from Scheduler.
     // Forward this event to the corresponding Elevator.
     private void receiveData() {
-        // Send empty packet to request data.
-        final DatagramPacket sendPacket = new DatagramPacket(new byte[0], 0);
-        try {
-            this.sendSocket.send(sendPacket);
-        } catch (IOException e) {
-            System.err.println(e);
-            System.exit(1);
-        }
-
         // Receive data back from Scheduler.
         final byte receiveData[] = new byte[4];
         final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -113,7 +107,8 @@ public class ElevatorSystem {
             }
 
             // Block until receive response from Scheduler.
-            final DatagramPacket receivePacket = new DatagramPacket(new byte[0], 0);
+            // TODO: Handle success/failure cases.
+            final DatagramPacket receivePacket = new DatagramPacket(new byte[1], 1);
             try {
                 this.receiveSocket.receive(receivePacket);
             } catch (IOException e) {
