@@ -26,7 +26,7 @@ public class ElevatorSystem {
     public ElevatorSystem(final int numOfElevators) {
         // Create Elevator threads.
         this.elevators = new ArrayList<>();
-        for (int i = 0; i < numOfElevators; i++) {
+        for (int i = 1; i < numOfElevators; i++) {
             final Elevator elevator = new Elevator(i, this);
             this.elevators.add(elevator);
         }
@@ -34,7 +34,7 @@ public class ElevatorSystem {
         // Create sockets to send and receive data through.
         try {
             this.receiveSocket = new DatagramSocket(Globals.ELEVATOR_PORT);
-            this.sendSocket = new DatagramSocket(Globals.SCHEDULER_PORT);
+            this.sendSocket = new DatagramSocket();
         } catch (SocketException se) {
             System.err.println(se);
             System.exit(1);
