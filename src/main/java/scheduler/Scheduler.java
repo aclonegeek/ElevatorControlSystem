@@ -20,7 +20,7 @@ import global.Globals;
 /**
  * Coordinates the elevator and floor subsystems.
  */
-public class Scheduler implements Runnable {
+public class Scheduler {
     public static enum SchedulerState {
         WAITING, SCHEDULING_ELEVATOR, WAITING_FOR_ELEVATOR_RESPONSE, HANDLING_ELEVATOR_RESPONSE,
     }
@@ -52,10 +52,6 @@ public class Scheduler implements Runnable {
             System.err.println(e);
             System.exit(1);
         }
-    }
-
-    @Override
-    public void run() {
     }
 
     private void receive() {
