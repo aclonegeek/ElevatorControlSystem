@@ -9,6 +9,7 @@ import elevator.ElevatorAction;
 import elevator.ElevatorData;
 import elevator.ElevatorEvent;
 import elevator.ElevatorResponse;
+import elevator.ElevatorStatus;
 import floor.FloorData;
 import floor.FloorSubsystem;
 
