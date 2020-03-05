@@ -7,7 +7,7 @@ import scheduler.Scheduler;
 /**
  * Simulates the functionality of a particular floor.
  */
-public class FloorSubsystem implements Runnable {
+public class Floor implements Runnable {
 
     public static final int MAX_FLOORS = 50;
 
