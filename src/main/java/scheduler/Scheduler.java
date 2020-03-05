@@ -26,6 +26,8 @@ public class Scheduler implements Runnable {
     private final HashMap<Integer, ArrayDeque<ElevatorEvent>> elevatorEvents;
     
     private final HashMap<Integer, Integer> elevatorLocations;
+    
+    private final HashMap<Integer, ElevatorStatus> elevatorStatuses;
 
     private SchedulerState state;
 
@@ -220,30 +222,51 @@ public class Scheduler implements Runnable {
     }
     
     
-    private ElevatorRoute getClosestElevator2Floor(final FloorData floor) {
-        ElevatorRoute = tempElevatorRoute;
-        int closestElevatorStopsBetween = FloorSubsystem.MAX_FLOORS;
+    private int getSexiestElevator(final int floor, Direction direction) {
+        int finalElevatorId;
         
-        for (ElevatorRoute elevatorRoute : this.ElevatorRoutes) {
-            if(elevatorRoute.getDirection() == NONE) {
-                tempElevatorRoute = elevatorRoute;
+        int tempElevatorId;
+        ElevatorStatus tempElevatorStatus;
+        Boolean anotherElevatorOnRoute = false;
+        
+        for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
+            
+            tempElevatorId = entry.getKey();
+            tempElevatorStatus = entry.getValue();
+            
+            if(tempElevatorStatus.getDirection() == NONE) {
+                finalElevatorId = tempElevatorId;
                 break;
             }
-            else if(elevatorRoute.getFloor() >= floor && 
-                        elevatorRoute.getDirection() == DOWN &&
-                            elevatorRoute.getDirection() == floor.getButtonState()) {
-                
-                if(elevatorRoute.getStopsBetween(floor) < closestElevatorStopsBetween) {
-                    tempElevatorRoute = elevatorRoute;
-                    closestElevatorStopsBetween = elevatorRoute.getStopsBetween(floor);
+            
+            if(tempElevatorStatus.getDirection() == direction && direction == UP) {
+                if(tempElevatorStatus.getCurrentFloor() < floor) {
+                    if(tempElevatorStatus.getStopsBefore(floor) < this.elevatorStatuses.get(elevatorId).getStopsBefore(floor)) {
+                        int elevatorId = tempElevatorId;
+                        anotherElevatorOnRoute = true;
+                    }
                 }
-                
-            if(elevatorRoute.getFloor() <= floor && elevatorRoute.getDirection() == UP) {
-                
             }
-        }
+            
+            else if(tempElevatorStatus.getDirection() == direction && direction == DOWN) {
+                if(tempElevatorStatus.getCurrentFloor() > floor) {
+                    if(tempElevatorStatus.getStopsBefore(floor) < this.elevatorStatuses.get(elevatorId).getStopsBefore(floor)) {
+                        int elevatorId = tempElevatorId;
+                        anotherElevatorOnRoute = true;
+                    }
+                }     
+            }
+            
+           
+            if(tempElevatorStatus.getStopsBefore(floor) < this.elevatorStatuses.get(elevatorId).getStopsBefore() && !anotherElevatorOnRoute) {
+                int elevatorId = tempElevatorId;
+            }
         
-        return tempElevatorRoute;
+        }
+
+        this.elevatorStatuses.get(finalElevatorId).addStop(floor);
+        
+        return finalElevatorId;
     }
     
     
