@@ -24,6 +24,7 @@ public class Scheduler implements Runnable {
     }
 
     private final HashMap<Integer, ArrayDeque<ElevatorEvent>> elevatorEvents;
+    
     private final HashMap<Integer, Integer> elevatorLocations;
 
     private SchedulerState state;
@@ -217,6 +218,38 @@ public class Scheduler implements Runnable {
 
         return new ClosestElevator(closestElevator, closestDistance);
     }
+    
+    
+    private ElevatorRoute getClosestElevator2Floor(final FloorData floor) {
+        ElevatorRoute = tempElevatorRoute;
+        int closestElevatorStopsBetween = FloorSubsystem.MAX_FLOORS;
+        
+        for (ElevatorRoute elevatorRoute : this.ElevatorRoutes) {
+            if(elevatorRoute.getDirection() == NONE) {
+                tempElevatorRoute = elevatorRoute;
+                break;
+            }
+            else if(elevatorRoute.getFloor() >= floor && 
+                        elevatorRoute.getDirection() == DOWN &&
+                            elevatorRoute.getDirection() == floor.getButtonState()) {
+                
+                if(elevatorRoute.getStopsBetween(floor) < closestElevatorStopsBetween) {
+                    tempElevatorRoute = elevatorRoute;
+                    closestElevatorStopsBetween = elevatorRoute.getStopsBetween(floor);
+                }
+                
+            if(elevatorRoute.getFloor() <= floor && elevatorRoute.getDirection() == UP) {
+                
+            }
+        }
+        
+        return tempElevatorRoute;
+    }
+    
+    
+    
+    
+    
 }
 
 /**
