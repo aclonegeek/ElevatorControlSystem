@@ -97,16 +97,13 @@ public class Scheduler {
 
         switch (Floor.Request.values[data[2]]) {
         case REQUEST:
-            final ClosestElevator closestElevator = this.getClosestElevator(data[1], data[4]);
-            final ElevatorAction direction =
-                    closestElevator.direction == FloorData.ButtonState.UP ? ElevatorAction.MOVE_UP
-                            : ElevatorAction.MOVE_DOWN;
-            final byte reply[] =
-                    { Globals.FROM_SCHEDULER, closestElevator.id, (byte) direction.ordinal(), data[3] };
-            final DatagramPacket packet =
-                    new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+            this.closeElevatorDoors(data[1]);
+            this.moveElevator(data[1], data[3]);
             break;
         case INVALID:
+            break;
+        default:
+            System.out.println("Unknown floor message received.");
             break;
         }
     }
@@ -123,9 +120,17 @@ public class Scheduler {
                     new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
             this.send(packet);
             break;
+        case READY:
+            this.closeElevatorDoors(data[1]);
+            // TODO: Maybe don't calculate the destination list again.
+            this.moveElevator(data[1], this.elevatorStatuses.get(data[1]).getNextDestination());
+            break;
         case UPDATE_LOCATION:
             break;
         case INVALID:
+            break;
+        default:
+            System.out.println("Unknown elevator message received.");
             break;
         }
     }
@@ -162,9 +167,28 @@ public class Scheduler {
         }
     }
 
+    private void closeElevatorDoors(final int id) {
+        final byte reply[] =
+                { Globals.FROM_SCHEDULER, (byte) id, (byte) ElevatorAction.CLOSE_DOORS.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+        this.send(packet);
+    }
+
+    private void moveElevator(final int id, final int floor) {
+        final BestElevator bestElevator = this.getBestElevator(id, floor);
+        final ElevatorAction direction =
+                bestElevator.direction == FloorData.ButtonState.UP ? ElevatorAction.MOVE_UP
+                        : ElevatorAction.MOVE_DOWN;
+
+        final byte reply[] = { Globals.FROM_SCHEDULER, bestElevator.id, (byte) direction.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+        this.send(packet);
+    }
+
     /**
-     * Registers an {@link Elevator} with the {@link Scheduler}, so that the
-     * {@link Scheduler} can use it.
+     * Registers an {@link Elevator} with the {@link Scheduler}.
      *
      * @param id the {@link Elevator}'s id
      */
