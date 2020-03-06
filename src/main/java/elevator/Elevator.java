@@ -39,10 +39,9 @@ public class Elevator {
     public void processData(byte[] receiveData) {
         // Parse action and destination floor from receiveData.
         final ElevatorAction action = ElevatorAction.values[receiveData[3]];
-        final int destinationFloor = (int) receiveData[4];
 
         // Update ElevatorSubsystem state.
-        final ElevatorResponse response = this.elevatorSubsystem.updateState(action, destinationFloor);
+        final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
 
         // Construct response message.
         final byte[] sendData = new byte[4];

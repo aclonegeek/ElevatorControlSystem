@@ -101,7 +101,6 @@ public class ElevatorSystem {
         System.arraycopy(receivePacket.getData(), receivePacket.getOffset(), trimmedData, 0,
                 receivePacket.getLength());
 
-        // TODO: Extract origin at index 0, currently assumes all come from Scheduler.
         // trimmedData[1] is an elevatorId. Forward data to the corresponding elevator.
         this.elevators.get(trimmedData[1]).processData(trimmedData);
     }

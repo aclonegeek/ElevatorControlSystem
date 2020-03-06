@@ -44,8 +44,9 @@ public class ElevatorSubsystem implements Runnable {
         }
     }
 
-    // TODO: Set elevator lights based on selected destinationFloor(s).
-    public ElevatorResponse updateState(final ElevatorAction elevatorAction, final int destinationFloor) {
+    // TODO: Light up elevator lamps.
+    // TODO: OPEN_DOORS and CLOSE_DOORS should take time.
+    public ElevatorResponse updateState(final ElevatorAction elevatorAction) {
         switch (elevatorAction) {
         case DESTINATION_REACHED:
             return ElevatorResponse.DESTINATION_REACHED;
