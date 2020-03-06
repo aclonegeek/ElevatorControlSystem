@@ -49,7 +49,7 @@ public class Scheduler {
         System.out.println("Running scheduler...\n");
 
         while (true) {
-            DatagramPacket packet = this.receive();
+            final DatagramPacket packet = this.receive();
             this.handleMessage(packet.getData(), packet.getPort());
         }
     }
@@ -101,8 +101,9 @@ public class Scheduler {
             final ElevatorAction direction =
                     closestElevator.direction == FloorData.ButtonState.UP ? ElevatorAction.MOVE_UP
                             : ElevatorAction.MOVE_DOWN;
-            byte reply[] = { Globals.FROM_SCHEDULER, closestElevator.id, (byte) direction.ordinal(), data[3] };
-            DatagramPacket packet =
+            final byte reply[] =
+                    { Globals.FROM_SCHEDULER, closestElevator.id, (byte) direction.ordinal(), data[3] };
+            final DatagramPacket packet =
                     new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
             break;
         case INVALID:
@@ -117,8 +118,8 @@ public class Scheduler {
         case REGISTER:
             this.registerElevator(data[1]);
             // Reply with success.
-            byte reply[] = { 0 };
-            DatagramPacket packet =
+            final byte reply[] = { 0 };
+            final DatagramPacket packet =
                     new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
             this.send(packet);
             break;
@@ -141,10 +142,9 @@ public class Scheduler {
             return;
         }
 
-        byte reply[] = { Globals.FROM_SCHEDULER, data[1], (byte) ElevatorAction.STOP_MOVING.ordinal() };
-
-        DatagramPacket packet =
-            new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+        final byte reply[] = { Globals.FROM_SCHEDULER, data[1], (byte) ElevatorAction.STOP_MOVING.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
 
         this.send(packet);
     }
