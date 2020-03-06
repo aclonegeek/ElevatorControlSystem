@@ -67,7 +67,6 @@ class FloorSystem {
     }
 
     // Send data to Scheduler.
-    // This method is called by a Floor after reading in the data from a file.
     public void sendData(byte[] sendData) {
         final DatagramPacket sendPacket =
                 new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
