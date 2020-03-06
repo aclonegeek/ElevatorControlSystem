@@ -122,10 +122,10 @@ public class Scheduler {
         case REGISTER:
             this.registerElevator(data[1]);
             // Reply with success.
-            final byte reply[] = { 0 };
-            final DatagramPacket packet =
-                    new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
-            this.send(packet);
+            // final byte reply[] = { 0 };
+            // final DatagramPacket packet =
+            //         new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+            // this.send(packet);
             break;
         case READY:
             final int id = data[1];
