@@ -84,9 +84,10 @@ public class ElevatorSubsystem implements Runnable {
      * sendData[2] is the current floor.
      */
     public void sendCurrentFloor() {
-        final byte[] sendData = new byte[3];
+        final byte[] sendData = new byte[4];
         sendData[0] = Globals.FROM_ELEVATOR;
         sendData[1] = (byte) this.elevatorId;
+        sendData[2] = (byte) Elevator.Request.UPDATE_LOCATION.ordinal();
         sendData[2] = (byte) this.currentFloor;
         
         this.elevatorSystem.sendData(sendData);
