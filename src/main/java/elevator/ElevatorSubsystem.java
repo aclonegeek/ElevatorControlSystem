@@ -12,7 +12,7 @@ public class ElevatorSubsystem implements Runnable {
     public ElevatorSubsystem(final int elevatorId, final ElevatorSystem elevatorSystem) {
         this.elevatorId = elevatorId;
         this.currentHeight = 0;
-        this.state = ElevatorState.MOVING_UP;
+        this.state = ElevatorState.IDLE_DOOR_OPEN;
         this.elevatorSystem = elevatorSystem;
     }
 
