@@ -7,26 +7,26 @@ public class Elevator {
     private final ElevatorSystem elevatorSystem;
 
     public static enum Request {
-        REGISTER, STATE_CHANGED, INVALID;
+        REGISTER, READY, STATE_CHANGED, INVALID;
 
         public static final Request[] values = Request.values();
     }
 
     public Elevator(final int elevatorId, final ElevatorSystem elevatorSystem) {
         this.elevatorSystem = elevatorSystem;
-        this.elevatorSubsystem = new ElevatorSubsystem(elevatorId);
-        
+        this.elevatorSubsystem = new ElevatorSubsystem(elevatorId, elevatorSystem);
+
         // Create arrival sensors for each floor.
-        for  (int i = 0; i < Globals.MAX_FLOORS; i++) {
+        for (int i = 0; i < Globals.MAX_FLOORS; i++) {
             new Thread(new ArrivalSensor(i, elevatorSubsystem)).start();
         }
-        
+
         new Thread(elevatorSubsystem).start();
     }
 
     /*
      * Parse data and update ElevatorSystem state:
-     * receiveData[0] signifies the data is from the Scheduler..
+     * receiveData[0] signifies the data is from the Scheduler.
      * receiveData[1] is the id of the elevator.
      * receiveData[2] is the serialized ElevatorAction.
      * receiveData[3] is the destination floor (used to set the button state).
