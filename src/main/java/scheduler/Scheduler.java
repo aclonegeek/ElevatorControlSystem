@@ -1,204 +1,209 @@
 package scheduler;
 
-import java.util.ArrayDeque;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import elevator.Elevator;
 import elevator.ElevatorAction;
-import elevator.ElevatorData;
-import elevator.ElevatorEvent;
-import elevator.ElevatorResponse;
 import elevator.ElevatorState;
-import floor.FloorData;
+import floor.Floor;
 import floor.FloorData.ButtonState;
+import global.Globals;
 
 /**
  * Coordinates the elevator and floor subsystems.
  */
-public class Scheduler implements Runnable {
+public class Scheduler {
     public static enum SchedulerState {
-        WAITING, SCHEDULING_ELEVATOR, WAITING_FOR_ELEVATOR_RESPONSE, HANDLING_ELEVATOR_RESPONSE,
+        WAITING, HANDLING_MESSAGE,
     }
-
-    private final HashMap<Integer, ArrayDeque<ElevatorEvent>> elevatorEvents;
-
-    private final HashMap<Integer, Integer> elevatorLocations;
 
     private final HashMap<Integer, ElevatorStatus> elevatorStatuses;
 
     private SchedulerState state;
 
+    private DatagramSocket receiveSocket;
+    private DatagramSocket sendSocket;
+
+    public static void main(String args[]) {
+        new Scheduler().run();
+    }
+
     public Scheduler() {
         this.elevatorStatuses = new HashMap<>();
-        this.elevatorEvents = new HashMap<>();
-        this.elevatorLocations = new HashMap<>();
+        this.state = SchedulerState.WAITING;
+
+        try {
+            this.receiveSocket = new DatagramSocket(Globals.SCHEDULER_PORT);
+            this.sendSocket = new DatagramSocket();
+        } catch (SocketException e) {
+            System.err.println(e);
+            System.exit(1);
+        }
+    }
+
+    private void run() {
+        System.out.println("Running scheduler...\n");
+
+        while (true) {
+            final DatagramPacket packet = this.receive();
+            this.handleMessage(packet.getData(), packet.getPort());
+        }
+    }
+
+    private DatagramPacket receive() {
+        byte data[] = new byte[10]; // TODO: Magic # (MAX_DATA?).
+        DatagramPacket packet = new DatagramPacket(data, data.length);
+
+        try {
+            this.receiveSocket.receive(packet);
+        } catch (IOException e) {
+            System.err.println(e);
+            System.exit(1);
+        }
+
+        return packet;
+    }
+
+    private void handleMessage(final byte[] data, final int port) {
+        if (data.length == 0) {
+            System.out.println("Received empty message.");
+            return;
+        }
+
+        this.state = SchedulerState.HANDLING_MESSAGE;
+
+        System.out.println("Received: " + Arrays.toString(data));
+
+        switch (data[0]) {
+        case Globals.FROM_FLOOR:
+            this.handleFloorMessage(data, port);
+            break;
+        case Globals.FROM_ELEVATOR:
+            this.handleElevatorMessage(data, port);
+            break;
+        case Globals.FROM_ARRIVAL_SENSOR:
+            this.handleArrivalSensorMessage(data);
+            break;
+        default:
+            System.err.println("Received invalid bytes.");
+            break;
+        }
+
         this.state = SchedulerState.WAITING;
     }
 
-    @Override
-    public void run() {
+    private void handleFloorMessage(final byte[] data, final int port) {
+        System.out.println("Handling a floor message.");
+
+        switch (Floor.Request.values[data[2]]) {
+        case REQUEST:
+            final ElevatorState direction = ElevatorState.values[data[4]];
+            final BestElevator bestElevator = this.getBestElevator(data[1], direction);
+            this.moveElevator(bestElevator.id, bestElevator.direction);
+            break;
+        case INVALID:
+            break;
+        default:
+            System.out.println("Unknown floor message received.");
+            break;
+        }
+    }
+
+    private void handleElevatorMessage(final byte[] data, final int port) {
+        System.out.println("Handling an elevator message.");
+
+        switch (Elevator.Request.values[data[2]]) {
+        case REGISTER:
+            this.registerElevator(data[1]);
+            // Reply with success.
+            final byte reply[] = { 0 };
+            final DatagramPacket packet =
+                    new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+            this.send(packet);
+            break;
+        case READY:
+            final int id = data[1];
+            this.closeElevatorDoors(id);
+
+            // TODO: Tidy this up.
+            final int currentFloor = this.elevatorStatuses.get(id).getCurrentFloor();
+            final int destination = this.elevatorStatuses.get(id).getDestinations().get(0);
+            final int distance = currentFloor - destination;
+
+            final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
+
+            this.moveElevator(id, direction);
+            break;
+        case INVALID:
+            break;
+        default:
+            System.out.println("Unknown elevator message received.");
+            break;
+        }
+    }
+
+    private void handleArrivalSensorMessage(final byte[] data) {
+        System.out.println("Handling an arrival sensor message.");
+
+        final int id = data[1];
+        final int floor = data[2];
+
+        this.elevatorStatuses.get(id).setCurrentFloor(floor);
+
+        if (!this.elevatorStatuses.get(id).getDestinations().contains(floor)) {
+            return;
+        }
+
+        final byte reply[] = { Globals.FROM_SCHEDULER, data[1], (byte) ElevatorAction.STOP_MOVING.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+
+        this.send(packet);
+    }
+
+    // TODO: Move this to a utility class?
+    private void send(final DatagramPacket packet) {
+        System.out.println(
+                "Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()) + "\n");
+
+        try {
+            this.sendSocket.send(packet);
+        } catch (IOException e) {
+            System.err.println(e);
+            System.exit(1);
+        }
+    }
+
+    private void closeElevatorDoors(final int id) {
+        final byte reply[] =
+                { Globals.FROM_SCHEDULER, (byte) id, (byte) ElevatorAction.CLOSE_DOORS.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+        this.send(packet);
+    }
+
+    private void moveElevator(final int id, final ElevatorAction direction) {
+        final byte reply[] = { Globals.FROM_SCHEDULER, (byte) id, (byte) direction.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+        this.send(packet);
     }
 
     /**
-     * Registers an {@link Elevator} with the {@link Scheduler}, so that the
-     * {@link Scheduler} can use it.
+     * Registers an {@link Elevator} with the {@link Scheduler}.
      *
      * @param id the {@link Elevator}'s id
      */
     public void registerElevator(final int id) {
-        this.elevatorEvents.put(id, new ArrayDeque<>());
-        this.elevatorLocations.put(id, 0); // All elevators start at the ground floor.
-    }
-
-    public synchronized void addElevatorEvent(final ElevatorEvent event) {
-        this.elevatorEvents.get(event.getData().getElevatorId()).add(event);
-        this.notifyAll();
-    }
-
-    /**
-     * Adds an {@link ElevatorEvent} to the {@link Scheduler}'s queue.
-     *
-     * @param floorData the floor information from where the request came
-     */
-    public synchronized void scheduleElevator(final FloorData floorData) {
-        while (this.state != SchedulerState.WAITING) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
-        }
-
-        this.state = SchedulerState.SCHEDULING_ELEVATOR;
-
-        // Get the best elevator for the job.
-        final BestElevator bestElevator =
-                this.getBestElevator(floorData.getFloor(), checkDirection(floorData.getButtonState()));
-        final int elevatorId = bestElevator.elevatorId;
-        int numFloorsToTravel = bestElevator.numFloors;
-        int currentLocation = this.elevatorLocations.get(elevatorId);
-
-        // Move the elevator to the floor if necessary.
-        if (numFloorsToTravel > 0) {
-            this.createEventsToMoveElevatorToFloor(elevatorId, currentLocation, floorData.getFloor(),
-                    numFloorsToTravel);
-        }
-
-        // Determine the elevator's location after it moves to the floor.
-        if (currentLocation > floorData.getFloor()) {
-            currentLocation -= numFloorsToTravel;
-        } else {
-            currentLocation += numFloorsToTravel;
-        }
-
-        numFloorsToTravel = Math.abs(floorData.getDestination() - currentLocation);
-
-        // Move the elevator to the destination if we're not already there.
-        if (numFloorsToTravel > 0) {
-            this.createEventsToMoveElevatorToFloor(elevatorId, currentLocation, floorData.getDestination(),
-                    numFloorsToTravel);
-        }
-
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(
-                new ElevatorData(elevatorId, currentLocation, null), ElevatorAction.DESTINATION_REACHED));
-
-        this.notifyAll();
-    }
-
-    /**
-     * Adds the events to the queue that will move the {@link Elevator} to the
-     * desired floor.
-     *
-     * @param elevatorId        the ID of the {@link Elevator}
-     * @param currentFloor      the current floor of the {@link Elevator}
-     * @param floor             the floor to go to
-     * @param numFloorsToTravel the number of floors to travel
-     */
-    private void createEventsToMoveElevatorToFloor(final int elevatorId, final int currentFloor,
-            final int floor, final int numFloorsToTravel) {
-        final ElevatorData elevatorData = new ElevatorData(elevatorId, currentFloor, null);
-        final ElevatorAction action =
-                currentFloor > floor ? ElevatorAction.MOVE_DOWN : ElevatorAction.MOVE_UP;
-
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.CLOSE_DOORS));
-
-        // Add the events to move the elevator.
-        for (int i = 0; i < numFloorsToTravel; i++) {
-            this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, action));
-        }
-
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.STOP_MOVING));
-        this.elevatorEvents.get(elevatorId).add(new ElevatorEvent(elevatorData, ElevatorAction.OPEN_DOORS));
-    }
-
-    /**
-     * Gets the first {@link ElevatorAction} from the queue.
-     *
-     * @return the first {@link ElevatorAction} in the queue
-     */
-    public synchronized ElevatorAction getElevatorAction(final int id) {
-        while (this.elevatorEvents.get(id).isEmpty()) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
-        }
-
-        ElevatorAction action = this.elevatorEvents.get(id).getFirst().getAction();
-        this.state = SchedulerState.WAITING_FOR_ELEVATOR_RESPONSE;
-
-        this.notifyAll();
-        return action;
-    }
-
-    /**
-     * Handles an {@link ElevatorResponse}.
-     *
-     * @param elevatorId the ID of the {@link Elevator}
-     * @param response   success or failure
-     */
-    public synchronized void handleElevatorResponse(final int elevatorId, final ElevatorResponse response) {
-        this.state = SchedulerState.HANDLING_ELEVATOR_RESPONSE;
-
-        switch (response) {
-        case DESTINATION_REACHED:
-            this.state = SchedulerState.WAITING;
-            break;
-        // There are still more floors to travel until destination.
-        case SUCCESS:
-            this.state = SchedulerState.WAITING_FOR_ELEVATOR_RESPONSE;
-            break;
-        case FAILURE:
-            return;
-        }
-
-        this.elevatorEvents.get(elevatorId).removeFirst();
-        this.notifyAll();
-    }
-
-    /**
-     * Updates an {@link Elevator}'s location.
-     *
-     * @param elevatorId the ID of the {@link Elevator} to update
-     * @param floor      the floor the {@link Elevator} is on
-     */
-    public synchronized void updateElevatorLocation(final int elevatorId, final int floor) {
-        this.elevatorLocations.put(elevatorId, floor);
-        this.notifyAll();
-    }
-
-    public HashMap<Integer, ElevatorStatus> getElevatorStatuses() {
-        return this.elevatorStatuses;
-    }
-
-    public void addElevatorStatus(final int elevatorID, final ElevatorStatus elevatorStatus) {
-        this.elevatorStatuses.put(elevatorID, elevatorStatus);
-    }
-
-    public SchedulerState getState() {
-        return this.state;
+        System.out.println("Registering elevator " + id + ".");
+        // All elevators start at the ground floor.
+        this.elevatorStatuses.put(id, new ElevatorStatus(ElevatorState.IDLE_DOOR_OPEN, 0));
     }
 
     /**
@@ -217,11 +222,12 @@ public class Scheduler implements Runnable {
         }
     }
 
+    // TODO: Change ElevatorState to ElevatorAction.
     public BestElevator getBestElevator(final int floor, final ElevatorState state) {
         int bestElevatorID = -1;
         int tempElevatorID;
         ElevatorStatus tempElevatorStatus;
-        Boolean anotherElevatorOnRoute = false;
+        boolean anotherElevatorOnRoute = false;
 
         for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
             tempElevatorID = entry.getKey();
@@ -273,9 +279,10 @@ public class Scheduler implements Runnable {
         System.out.println(floor);
         this.elevatorStatuses.get(bestElevatorID).addDestination(floor);
 
-        int distance = Math.abs(this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor);
+        final int distance = this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor;
+        final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
 
-        return new BestElevator(bestElevatorID, distance);
+        return new BestElevator(bestElevatorID, Math.abs(distance), direction);
     }
 
     private int getStopsBetween(final ElevatorStatus elevatorStatus, final int floor) {
@@ -289,6 +296,18 @@ public class Scheduler implements Runnable {
         }
         return floorsBetween;
     }
+
+    public HashMap<Integer, ElevatorStatus> getElevatorStatuses() {
+        return this.elevatorStatuses;
+    }
+
+    public void addElevatorStatus(final int elevatorID, final ElevatorStatus elevatorStatus) {
+        this.elevatorStatuses.put(elevatorID, elevatorStatus);
+    }
+
+    public SchedulerState getState() {
+        return this.state;
+    }
 }
 
 /**
@@ -296,11 +315,13 @@ public class Scheduler implements Runnable {
  * floors it must travel to reach it.
  */
 final class BestElevator {
-    public final int elevatorId;
+    public final int id;
     public final int numFloors;
+    public final ElevatorAction direction;
 
-    public BestElevator(final int elevatorId, final int numFloors) {
-        this.elevatorId = elevatorId;
+    public BestElevator(final int id, final int numFloors, final ElevatorAction direction) {
+        this.id = id;
         this.numFloors = numFloors;
+        this.direction = direction;
     }
 }
