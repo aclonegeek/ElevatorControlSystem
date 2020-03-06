@@ -49,7 +49,7 @@ public class ElevatorSystem {
         for (final Elevator elevator : this.elevators) {
             // Send packet to Scheduler to register Elevator.
             final byte[] sendData = new byte[3];
-            sendData[0] = 2;
+            sendData[0] = Globals.FROM_ELEVATOR;
             sendData[1] = (byte) elevator.getSubsystem().getElevatorId();
             sendData[2] = (byte) Elevator.Request.REGISTER.ordinal();
             final DatagramPacket sendPacket =
