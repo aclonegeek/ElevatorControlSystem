@@ -33,4 +33,12 @@ public class Globals {
             System.exit(1);
         }
     }
+    
+    public static void sleep(final int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            System.err.print(e);
+        }
+    }
 }

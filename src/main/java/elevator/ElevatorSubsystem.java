@@ -22,16 +22,16 @@ public class ElevatorSubsystem implements Runnable {
             // If MOVING_UP or MOVING_DOWN, move one floor per second.
             case MOVING_UP:
                 currentHeight += Globals.FLOOR_HEIGHT / 10;
-                this.sleep(100);
+                Globals.sleep(100);
                 break;
             case MOVING_DOWN:
                 currentHeight -= Globals.FLOOR_HEIGHT / 10;
-                this.sleep(100);
+                Globals.sleep(100);
                 break;
             // If IDLE_DOOR_OPEN, wait for two seconds to let people in/out then send the
             // Scheduler a READY request, signifying the Elevator is ready to move again.
             case IDLE_DOOR_OPEN:
-                this.sleep(2000);
+                Globals.sleep(2000);
                 final byte[] sendData = new byte[3];
                 sendData[0] = Globals.FROM_ELEVATOR;
                 sendData[1] = (byte) this.elevatorId;
@@ -81,13 +81,5 @@ public class ElevatorSubsystem implements Runnable {
 
     public ElevatorState getState() {
         return this.state;
-    }
-
-    private void sleep(final int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            System.err.print(e);
-        }
     }
 }
