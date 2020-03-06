@@ -69,7 +69,7 @@ public class ArrivalSensor implements Runnable {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-
+                System.err.println(e);
             }
         }
     }
