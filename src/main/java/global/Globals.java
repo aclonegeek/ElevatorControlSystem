@@ -16,9 +16,11 @@ public class Globals {
     public static final int FROM_FLOOR = 1;
     public static final int FROM_ELEVATOR = 2;
     public static final int FROM_SCHEDULER = 3;
+    public static final int FROM_ARRIVAL_SENSOR = 4;
 
     // Floor globals.
     public static final int MAX_FLOORS = 22;
+    public static final int FLOOR_HEIGHT = 260; // centimetres
 
     // Elevator globals.
     public static final int MAX_ELEVATORS = 4;

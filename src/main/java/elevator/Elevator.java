@@ -14,7 +14,13 @@ public class Elevator {
 
     public Elevator(final int elevatorId, final ElevatorSystem elevatorSystem) {
         this.elevatorSystem = elevatorSystem;
-        this.elevatorSubsystem = new ElevatorSubsystem(elevatorId, elevatorSystem);
+        this.elevatorSubsystem = new ElevatorSubsystem(elevatorId);
+        
+        // Create arrival sensors for each floor.
+        for  (int i = 0; i < Globals.MAX_FLOORS; i++) {
+            new Thread(new ArrivalSensor(i, elevatorSubsystem)).start();
+        }
+        
         new Thread(elevatorSubsystem).start();
     }
 

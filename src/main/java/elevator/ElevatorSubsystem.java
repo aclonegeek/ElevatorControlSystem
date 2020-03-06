@@ -6,29 +6,29 @@ import global.Globals;
 
 public class ElevatorSubsystem implements Runnable {
     private final int elevatorId;
-    private final ElevatorSystem elevatorSystem;
+    private int currentHeight;
     private int currentFloor;
     private ElevatorState state;
 
-    public ElevatorSubsystem(final int elevatorId, final ElevatorSystem elevatorSystem) {
+    public ElevatorSubsystem(final int elevatorId) {
         this.elevatorId = elevatorId;
-        this.elevatorSystem = elevatorSystem;
         this.currentFloor = 0;
-        this.state = ElevatorState.IDLE_DOOR_OPEN;
+        this.state = ElevatorState.MOVING_UP;
     }
 
     public void run() {
         while (true) {
+            // For now, move up/down one floor per second.
             if (this.state == ElevatorState.MOVING_UP) {
-                currentFloor++;
-                this.sendCurrentFloor();
+                currentHeight += Globals.FLOOR_HEIGHT / 10;
             } else if (this.state == ElevatorState.MOVING_DOWN) {
-                currentFloor--;
-                this.sendCurrentFloor();
+                currentHeight -= Globals.FLOOR_HEIGHT / 10;
             }
 
+            currentFloor = currentHeight / Globals.FLOOR_HEIGHT;
+
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
 
             }
@@ -65,6 +65,10 @@ public class ElevatorSubsystem implements Runnable {
         return this.elevatorId;
     }
 
+    public int getCurrentHeight() {
+        return this.currentHeight;
+    }
+
     public int getCurrentFloor() {
         return this.currentFloor;
     }
@@ -75,21 +79,5 @@ public class ElevatorSubsystem implements Runnable {
 
     public ElevatorData getElevatorData() {
         return new ElevatorData(this.elevatorId, this.currentFloor, LocalTime.now());
-    }
-
-    /*
-     * Send the elevator's updated currentFloor to the Scheduler:
-     * sendData[0] signifies the data is from an Elevator.
-     * sendData[1] is the id of the Elevator.
-     * sendData[2] is the current floor.
-     */
-    public void sendCurrentFloor() {
-        final byte[] sendData = new byte[4];
-        sendData[0] = Globals.FROM_ELEVATOR;
-        sendData[1] = (byte) this.elevatorId;
-        sendData[2] = (byte) Elevator.Request.UPDATE_LOCATION.ordinal();
-        sendData[2] = (byte) this.currentFloor;
-        
-        this.elevatorSystem.sendData(sendData);
     }
 }

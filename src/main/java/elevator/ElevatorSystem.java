@@ -16,7 +16,7 @@ public class ElevatorSystem {
     private boolean sendingData;
 
     public static void main(String args[]) {
-        final ElevatorSystem elevatorSystem = new ElevatorSystem(3);
+        final ElevatorSystem elevatorSystem = new ElevatorSystem(4);
         elevatorSystem.registerElevators();
 
         while (true) {
@@ -48,9 +48,10 @@ public class ElevatorSystem {
     private void registerElevators() {
         for (final Elevator elevator : this.elevators) {
             // Send packet to Scheduler to register Elevator.
-            final byte[] sendData = new byte[2];
+            final byte[] sendData = new byte[3];
             sendData[0] = 2;
             sendData[1] = (byte) elevator.getSubsystem().getElevatorId();
+            sendData[2] = (byte) Elevator.Request.REGISTER.ordinal();
             final DatagramPacket sendPacket =
                     new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
