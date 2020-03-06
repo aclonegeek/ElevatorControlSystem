@@ -70,16 +70,16 @@ public class ElevatorSystem {
 
             // Block until Scheduler responds signifying the elevator has been registered.
             // TODO: Handle success/failure cases.
-            final byte[] receiveData = new byte[1];
-            final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            try {
-                this.receiveSocket.receive(receivePacket);
-            } catch (IOException e) {
-                System.err.println(e);
-                System.exit(1);
-            }
-
-            System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
+//            final byte[] receiveData = new byte[1];
+//            final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+//            try {
+//                this.receiveSocket.receive(receivePacket);
+//            } catch (IOException e) {
+//                System.err.println(e);
+//                System.exit(1);
+//            }
+//
+//            System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
         }
     }
 
@@ -121,7 +121,7 @@ public class ElevatorSystem {
 
             System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
             try {
-                this.receiveSocket.send(sendPacket);
+                this.sendSocket.send(sendPacket);
             } catch (IOException e) {
                 System.err.println(e);
                 System.exit(1);
@@ -129,16 +129,16 @@ public class ElevatorSystem {
 
             // Block until receive response from Scheduler.
             // TODO: Handle success/failure cases.
-            final byte[] receiveData = new byte[1];
-            final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-            try {
-                this.receiveSocket.receive(receivePacket);
-            } catch (IOException e) {
-                System.err.println(e);
-                System.exit(1);
-            }
-
-            System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
+//            final byte[] receiveData = new byte[1];
+//            final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+//            try {
+//                this.receiveSocket.receive(receivePacket);
+//            } catch (IOException e) {
+//                System.err.println(e);
+//                System.exit(1);
+//            }
+//
+//            System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
 
             this.sendingData = false;
             this.notifyAll();

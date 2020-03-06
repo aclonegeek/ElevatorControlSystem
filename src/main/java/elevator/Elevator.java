@@ -39,6 +39,8 @@ public class Elevator {
     public void processData(byte[] receiveData) {
         // Parse action and destination floor from receiveData.
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
+        
+        System.out.println("action: " + action);
 
         // Update ElevatorSubsystem state.
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);

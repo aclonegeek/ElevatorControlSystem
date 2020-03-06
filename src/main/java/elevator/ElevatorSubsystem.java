@@ -8,12 +8,14 @@ public class ElevatorSubsystem implements Runnable {
     private int currentHeight;
     private ElevatorState state;
     private ElevatorSystem elevatorSystem;
+    private boolean initialState;
 
     public ElevatorSubsystem(final int elevatorId, final ElevatorSystem elevatorSystem) {
         this.elevatorId = elevatorId;
         this.currentHeight = 0;
         this.state = ElevatorState.IDLE_DOOR_OPEN;
         this.elevatorSystem = elevatorSystem;
+        this.initialState = true;
     }
 
     public void run() {
@@ -31,6 +33,7 @@ public class ElevatorSubsystem implements Runnable {
             // If IDLE_DOOR_OPEN, wait for two seconds to let people in/out then send the
             // Scheduler a READY request, signifying the Elevator is ready to move again.
             case IDLE_DOOR_OPEN:
+                if (initialState) break;
                 Globals.sleep(2000);
                 final byte[] sendData = new byte[3];
                 sendData[0] = Globals.FROM_ELEVATOR;
@@ -47,6 +50,8 @@ public class ElevatorSubsystem implements Runnable {
     // TODO: Light up elevator lamps.
     // TODO: OPEN_DOORS and CLOSE_DOORS should take time.
     public ElevatorResponse updateState(final ElevatorAction elevatorAction) {
+        initialState = false;
+        
         switch (elevatorAction) {
         case DESTINATION_REACHED:
             return ElevatorResponse.DESTINATION_REACHED;
