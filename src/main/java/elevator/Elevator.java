@@ -7,7 +7,7 @@ public class Elevator {
     private final ElevatorSystem elevatorSystem;
 
     public static enum Request {
-        REGISTER, UPDATE_STATE, UPDATE_LOCATION, INVALID;
+        REGISTER, STATE_CHANGED, INVALID;
 
         public static final Request[] values = Request.values();
     }
@@ -48,7 +48,7 @@ public class Elevator {
         final byte[] sendData = new byte[4];
         sendData[0] = Globals.FROM_ELEVATOR;
         sendData[1] = (byte) elevatorSubsystem.getElevatorId();
-        sendData[2] = (byte) Request.UPDATE_STATE.ordinal();
+        sendData[2] = (byte) Request.STATE_CHANGED.ordinal();
         sendData[3] = (byte) response.ordinal();
 
         // Send response message.
