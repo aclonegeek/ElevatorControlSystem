@@ -5,7 +5,9 @@ import java.time.LocalTime;
 
 public class FloorData implements Serializable {
     public static enum ButtonState {
-        UP, DOWN, UNPRESSED
+        UP, DOWN, UNPRESSED;
+
+        public static final ButtonState[] values = ButtonState.values();
     }
 
     private static final long serialVersionUID = 1L;

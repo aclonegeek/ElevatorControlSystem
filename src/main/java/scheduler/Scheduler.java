@@ -103,7 +103,7 @@ public class Scheduler {
 
         switch (Floor.Request.values[data[2]]) {
         case REQUEST:
-            final ElevatorState direction = ElevatorState.values[data[4]];
+            final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
             this.moveElevator(bestElevator.id, bestElevator.direction);
             break;
@@ -129,6 +129,11 @@ public class Scheduler {
             break;
         case READY:
             final int id = data[1];
+
+            if (this.elevatorStatuses.get(id).getDestinations().isEmpty()) {
+                break;
+            }
+
             this.closeElevatorDoors(id);
 
             // TODO: Tidy this up.
