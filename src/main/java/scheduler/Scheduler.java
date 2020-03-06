@@ -74,10 +74,6 @@ public class Scheduler implements Runnable {
         this.state = SchedulerState.SCHEDULING_ELEVATOR;
 
         // Get the best elevator for the job.
-
-        // **************** Hard coded direction the floor wishes to go to get rid of
-        // error please change **************************
-
         final BestElevator bestElevator =
                 this.getBestElevator(floorData.getFloor(), checkDirection(floorData.getButtonState()));
         final int elevatorId = bestElevator.elevatorId;
@@ -212,17 +208,6 @@ public class Scheduler implements Runnable {
      * @return the ID and number of floors to travel for the {@link Elevator}
      *         closest to the specified floor.
      */
-    /*
-     * private ClosestElevator getClosestElevatorToFloor(final int floor) { int
-     * closestElevator = 1; int closestDistance = FloorSubsystem.MAX_FLOORS; for
-     * (final Entry<Integer, Integer> entry : this.elevatorLocations.entrySet()) {
-     * final int distance = Math.abs(entry.getValue() - floor);
-     * 
-     * if (distance < closestDistance) { closestDistance = distance; closestElevator
-     * = entry.getKey(); } }
-     * 
-     * return new ClosestElevator(closestElevator, closestDistance); }
-     */
     public ElevatorState checkDirection(ButtonState state) {
         if (state == ButtonState.UP) {
             return ElevatorState.MOVING_UP;
@@ -243,7 +228,7 @@ public class Scheduler implements Runnable {
             tempElevatorID = entry.getKey();
             tempElevatorStatus = entry.getValue();
 
-            // init the bestId to the first ID
+            // Init the bestId to the first ID.
             if (bestElevatorID == -1) {
                 bestElevatorID = tempElevatorID;
             }
@@ -251,14 +236,14 @@ public class Scheduler implements Runnable {
             int tempStopsBetween = getStopsBetween(tempElevatorStatus, floor);
             int bestStopsBetween = getStopsBetween(this.elevatorStatuses.get(bestElevatorID), floor);
 
-            // Best elevator is idle
+            // Best elevator is idle.
             if (tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_CLOSED ||
                     tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
                 bestElevatorID = tempElevatorID;
                 break;
             }
 
-            // Best elevator is one moving with the floor on its path going upwards
+            // Best elevator is one moving with the floor on its path going upwards.
             if (tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_UP) {
                 if (tempElevatorStatus.getCurrentFloor() < floor) {
                     if (tempStopsBetween <= bestStopsBetween) {
@@ -268,7 +253,7 @@ public class Scheduler implements Runnable {
                 }
             }
 
-            // Best elevator is one moving with the floor on its path going downwards
+            // Best elevator is one moving with the floor on its path going downwards.
             else if (tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_DOWN) {
                 if (tempElevatorStatus.getCurrentFloor() > floor) {
                     if (tempStopsBetween <= bestStopsBetween) {
@@ -278,14 +263,14 @@ public class Scheduler implements Runnable {
                 }
             }
 
-            //// Best elevator is one the one with least stops between
+            // Best elevator is one the one with least stops between.
             if (tempElevatorStatus.getDestinations().size() <= this.elevatorStatuses.get(bestElevatorID)
                     .getDestinations().size() && !anotherElevatorOnRoute) {
                 bestElevatorID = tempElevatorID;
             }
         }
 
-        // add destination to best elevators destinations
+        // Add destination to best elevators destinations.
         System.out.println(floor);
         this.elevatorStatuses.get(bestElevatorID).addDestination(floor);
 
