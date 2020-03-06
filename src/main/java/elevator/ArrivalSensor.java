@@ -39,18 +39,18 @@ public class ArrivalSensor implements Runnable {
         int lastDetectedFloor = 0;
 
         while (true) {
-            final int elevatorFloor = elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
-            if (elevatorFloor == floor && elevatorFloor != lastDetectedFloor) {
+            final int elevatorFloor = this.elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
+            if (elevatorFloor == this.floor && elevatorFloor != lastDetectedFloor) {
                 // System.out.println("Floor " + floor + " arrival sensor has detected elevator: "
                 //         + elevator.getElevatorId());
-                lastDetectedFloor = floor;
+                lastDetectedFloor = this.floor;
 
                 // Send data to Scheduler. If the Elevator should stop at this floor, the
                 // Scheduler will then notify the ElevatorSystem.
                 final byte[] sendData = new byte[3];
                 sendData[0] = Globals.FROM_ARRIVAL_SENSOR;
-                sendData[1] = (byte) elevator.getElevatorId();
-                sendData[2] = (byte) floor;
+                sendData[1] = (byte) this.elevator.getElevatorId();
+                sendData[2] = (byte) this.floor;
                 final DatagramPacket sendPacket =
                         new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 

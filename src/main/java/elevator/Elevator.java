@@ -18,10 +18,10 @@ public class Elevator {
 
         // Create arrival sensors for each floor.
         for (int i = 0; i < Globals.MAX_FLOORS; i++) {
-            new Thread(new ArrivalSensor(i, elevatorSubsystem)).start();
+            new Thread(new ArrivalSensor(i, this.elevatorSubsystem)).start();
         }
 
-        new Thread(elevatorSubsystem).start();
+        new Thread(this.elevatorSubsystem).start();
     }
 
     /*

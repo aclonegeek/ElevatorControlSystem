@@ -19,7 +19,7 @@ public class ElevatorSubsystem implements Runnable {
     }
 
     public void run() {
-        while (true) {
+        while (true) {           
             switch (this.state) {
             // If MOVING_UP or MOVING_DOWN, move one floor per second.
             case MOVING_UP:
