@@ -1,18 +1,15 @@
 package elevator;
 
-import java.time.LocalTime;
-
 import global.Globals;
 
 public class ElevatorSubsystem implements Runnable {
     private final int elevatorId;
     private int currentHeight;
-    private int currentFloor;
     private ElevatorState state;
 
     public ElevatorSubsystem(final int elevatorId) {
         this.elevatorId = elevatorId;
-        this.currentFloor = 0;
+        this.currentHeight = 0;
         this.state = ElevatorState.MOVING_UP;
     }
 
@@ -24,8 +21,6 @@ public class ElevatorSubsystem implements Runnable {
             } else if (this.state == ElevatorState.MOVING_DOWN) {
                 currentHeight -= Globals.FLOOR_HEIGHT / 10;
             }
-
-            currentFloor = currentHeight / Globals.FLOOR_HEIGHT;
 
             try {
                 Thread.sleep(100);
@@ -69,15 +64,7 @@ public class ElevatorSubsystem implements Runnable {
         return this.currentHeight;
     }
 
-    public int getCurrentFloor() {
-        return this.currentFloor;
-    }
-
     public ElevatorState getState() {
         return this.state;
-    }
-
-    public ElevatorData getElevatorData() {
-        return new ElevatorData(this.elevatorId, this.currentFloor, LocalTime.now());
     }
 }
