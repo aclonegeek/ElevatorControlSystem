@@ -30,7 +30,7 @@ public class Elevator {
      * receiveData[1] is the id of the elevator.
      * receiveData[2] is the serialized ElevatorAction.
      * receiveData[3] is the destination floor (used to set the button state).
-     * 
+     *
      * Then return a response:
      * sendData[0] signifies the data is from an Elevator.
      * sendData[1] is the id of the Elevator.
@@ -38,7 +38,7 @@ public class Elevator {
      */
     public void processData(byte[] receiveData) {
         // Parse action and destination floor from receiveData.
-        final ElevatorAction action = ElevatorAction.values[receiveData[3]];
+        final ElevatorAction action = ElevatorAction.values[receiveData[2]];
 
         // Update ElevatorSubsystem state.
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
