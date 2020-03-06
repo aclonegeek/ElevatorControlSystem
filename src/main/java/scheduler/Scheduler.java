@@ -99,7 +99,7 @@ public class Scheduler {
 
         final int floor = data[1];
 
-        switch (this.parseFloorMessage(data)) {
+        switch (Floor.Request.values[data[2]]) {
         case REQUEST:
             break;
         case INVALID:
@@ -112,7 +112,7 @@ public class Scheduler {
 
         final int id = data[1];
 
-        switch (this.parseElevatorMessage(data)) { // TODO: Don't need a method for this.
+        switch (Elevator.Request.values[data[2]]) {
         case REGISTER:
             this.registerElevator(id);
             // Reply with success.
@@ -121,21 +121,11 @@ public class Scheduler {
                     new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
             this.send(packet);
             break;
+        case UPDATE_LOCATION:
+            break;
         case INVALID:
             break;
         }
-    }
-
-    private FloorMessageType parseFloorMessage(final byte[] data) {
-        return FloorMessageType.REQUEST;
-    }
-
-    private Elevator.Request parseElevatorMessage(final byte[] data) {
-        if (Elevator.Request.values()[data[2]] == Elevator.Request.REGISTER) {
-            return Elevator.Request.REGISTER;
-        }
-
-        return Elevator.Request.INVALID;
     }
 
     // TODO: Move this to a utility class?
