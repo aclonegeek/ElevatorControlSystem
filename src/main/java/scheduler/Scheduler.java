@@ -9,7 +9,7 @@ import elevator.ElevatorAction;
 import elevator.ElevatorData;
 import elevator.ElevatorEvent;
 import elevator.ElevatorResponse;
-import elevator.ElevatorStatus;
+import elevator.ElevatorState;
 import floor.FloorData;
 import floor.FloorSubsystem;
 
@@ -33,6 +33,7 @@ public class Scheduler implements Runnable {
     private SchedulerState state;
 
     public Scheduler() {
+        this.elevatorStatuses = new HashMap<>();
         this.elevatorEvents = new HashMap<>();
         this.elevatorLocations = new HashMap<>();
         this.state = SchedulerState.WAITING;
@@ -74,10 +75,13 @@ public class Scheduler implements Runnable {
 
         this.state = SchedulerState.SCHEDULING_ELEVATOR;
 
-        // Get the elevator for the job.
-        final ClosestElevator closestElevator = this.getClosestElevatorToFloor(floorData.getFloor());
-        final int elevatorId = closestElevator.elevatorId;
-        int numFloorsToTravel = closestElevator.numFloors;
+        // Get the best elevator for the job. 
+        
+        //**************** Hard coded direction the floor wishes to go to get rid of error please change **************************
+        
+        final BestElevator bestElevator = this.getBestElevator(floorData.getFloor(), ElevatorState.IDLE_DOOR_CLOSED);
+        final int elevatorId = bestElevator.elevatorId;
+        int numFloorsToTravel = bestElevator.numFloors;
         int currentLocation = this.elevatorLocations.get(elevatorId);
 
         // Move the elevator to the floor if necessary.
@@ -207,7 +211,7 @@ public class Scheduler implements Runnable {
      * @return the ID and number of floors to travel for the {@link Elevator}
      *         closest to the specified floor.
      */
-    private ClosestElevator getClosestElevatorToFloor(final int floor) {
+    /*private ClosestElevator getClosestElevatorToFloor(final int floor) {
         int closestElevator = 1;
         int closestDistance = FloorSubsystem.MAX_FLOORS;
         for (final Entry<Integer, Integer> entry : this.elevatorLocations.entrySet()) {
@@ -220,57 +224,74 @@ public class Scheduler implements Runnable {
         }
 
         return new ClosestElevator(closestElevator, closestDistance);
-    }
+    }*/
     
     
-    private int getSexiestElevator(final int floor, Direction direction) {
-        int finalElevatorId;
-        
-        int tempElevatorId;
+    private BestElevator getBestElevator(final int floor, final ElevatorState state) {
+        int bestElevatorID = -1;
+        int tempElevatorID;
         ElevatorStatus tempElevatorStatus;
         Boolean anotherElevatorOnRoute = false;
         
         for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
             
-            tempElevatorId = entry.getKey();
+            tempElevatorID = entry.getKey();
             tempElevatorStatus = entry.getValue();
             
-            if(tempElevatorStatus.getDirection() == NONE) {
-                finalElevatorId = tempElevatorId;
+            int tempStopsBetween = getStopsBetween(tempElevatorStatus, floor);
+            int bestStopsBetween = getStopsBetween(this.elevatorStatuses.get(tempElevatorID), floor);
+            
+            //Best elevator is idle
+            if(tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_CLOSED ||  tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
+                bestElevatorID = tempElevatorID;
                 break;
             }
             
-            if(tempElevatorStatus.getDirection() == direction && direction == UP) {
+            //Best elevator is one moving with the floor on its path going upwards
+            if(tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_UP) {
                 if(tempElevatorStatus.getCurrentFloor() < floor) {
-                    if(tempElevatorStatus.getStopsBefore(floor) < this.elevatorStatuses.get(elevatorId).getStopsBefore(floor)) {
-                        int elevatorId = tempElevatorId;
+                    if(tempStopsBetween < bestStopsBetween) {
+                        bestElevatorID = tempElevatorID;
                         anotherElevatorOnRoute = true;
                     }
                 }
             }
             
-            else if(tempElevatorStatus.getDirection() == direction && direction == DOWN) {
+          //Best elevator is one moving with the floor on its path going downwards
+            else if(tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_DOWN) {
                 if(tempElevatorStatus.getCurrentFloor() > floor) {
-                    if(tempElevatorStatus.getStopsBefore(floor) < this.elevatorStatuses.get(elevatorId).getStopsBefore(floor)) {
-                        int elevatorId = tempElevatorId;
+                    if(tempStopsBetween < bestStopsBetween) {
+                        bestElevatorID = tempElevatorID;
                         anotherElevatorOnRoute = true;
                     }
                 }     
             }
             
-           
-            if(tempElevatorStatus.getStopsBefore(floor) < this.elevatorStatuses.get(elevatorId).getStopsBefore() && !anotherElevatorOnRoute) {
-                int elevatorId = tempElevatorId;
+            ////Best elevator is one the one with least stops between
+            if(tempStopsBetween < bestStopsBetween && !anotherElevatorOnRoute) {
+                int elevatorId = tempElevatorID;
             }
         
         }
 
-        this.elevatorStatuses.get(finalElevatorId).addStop(floor);
+        //add destination to best elevators destinations
+        this.elevatorStatuses.get(bestElevatorID).addDestination(floor);
         
-        return finalElevatorId;
+        int distance = Math.abs(this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor);
+        
+        return new BestElevator(bestElevatorID, distance);
     }
     
-    
+    private int getStopsBetween(final ElevatorStatus elevatorStatus,final int floor) {
+        int floorsBetween=0;
+        for (int destination : elevatorStatus.getDestinations()) {
+            if (destination < floor && destination > elevatorStatus.getCurrentFloor() || 
+                    destination > floor && destination < elevatorStatus.getCurrentFloor()) {
+                floorsBetween++;
+            }
+        }
+        return floorsBetween;
+    }
     
     
     
@@ -280,11 +301,11 @@ public class Scheduler implements Runnable {
  * Represents the elevator that is closest to a specific floor, and how many
  * floors it must travel to reach it.
  */
-final class ClosestElevator {
+final class BestElevator {
     public final int elevatorId;
     public final int numFloors;
 
-    public ClosestElevator(final int elevatorId, final int numFloors) {
+    public BestElevator(final int elevatorId, final int numFloors) {
         this.elevatorId = elevatorId;
         this.numFloors = numFloors;
     }
