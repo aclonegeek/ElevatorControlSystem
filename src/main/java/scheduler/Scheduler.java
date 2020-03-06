@@ -11,6 +11,7 @@ import elevator.ElevatorEvent;
 import elevator.ElevatorResponse;
 import elevator.ElevatorState;
 import floor.FloorData;
+import floor.FloorData.ButtonState;
 import floor.FloorSubsystem;
 
 /**
@@ -79,7 +80,7 @@ public class Scheduler implements Runnable {
         
         //**************** Hard coded direction the floor wishes to go to get rid of error please change **************************
         
-        final BestElevator bestElevator = this.getBestElevator(floorData.getFloor(), ElevatorState.IDLE_DOOR_CLOSED);
+        final BestElevator bestElevator = this.getBestElevator(floorData.getFloor(), checkDirection(floorData.getButtonState()));
         final int elevatorId = bestElevator.elevatorId;
         int numFloorsToTravel = bestElevator.numFloors;
         int currentLocation = this.elevatorLocations.get(elevatorId);
@@ -233,7 +234,16 @@ public class Scheduler implements Runnable {
 
         return new ClosestElevator(closestElevator, closestDistance);
     }*/
-    
+    public ElevatorState checkDirection(ButtonState state) {
+        if(state == ButtonState.UP) {
+            return ElevatorState.MOVING_UP;
+        }
+        else if(state == ButtonState.DOWN) {
+            return ElevatorState.MOVING_DOWN;
+        } else {
+            return ElevatorState.IDLE_DOOR_CLOSED;
+        }
+    }
     
     public BestElevator getBestElevator(final int floor, final ElevatorState state) {
         int bestElevatorID = -1;
@@ -288,6 +298,7 @@ public class Scheduler implements Runnable {
         }
 
         //add destination to best elevators destinations
+        System.out.println(floor);
         this.elevatorStatuses.get(bestElevatorID).addDestination(floor);
         
         int distance = Math.abs(this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor);
