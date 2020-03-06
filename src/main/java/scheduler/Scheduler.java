@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import elevator.Elevator;
+import elevator.ElevatorAction;
+import floor.Floor;
+import floor.FloorData;
 import global.Globals;
 
 /**
@@ -16,11 +19,6 @@ import global.Globals;
 public class Scheduler {
     public static enum SchedulerState {
         WAITING, SCHEDULING_ELEVATOR, WAITING_FOR_ELEVATOR_RESPONSE, HANDLING_ELEVATOR_RESPONSE,
-    }
-
-    // TODO: Grab these from Floor?
-    private static enum FloorMessageType {
-        REQUEST, INVALID,
     }
 
     private final HashMap<Integer, Integer> elevatorLocations;
@@ -97,10 +95,15 @@ public class Scheduler {
     private void handleFloorMessage(final byte[] data, final int port) {
         System.out.println("Handling a floor message.");
 
-        final int floor = data[1];
-
         switch (Floor.Request.values[data[2]]) {
         case REQUEST:
+            final ClosestElevator closestElevator = this.getClosestElevator(data[1], data[4]);
+            final ElevatorAction direction =
+                    closestElevator.direction == FloorData.ButtonState.UP ? ElevatorAction.MOVE_UP
+                            : ElevatorAction.MOVE_DOWN;
+            byte reply[] = { Globals.FROM_SCHEDULER, closestElevator.id, (byte) direction.ordinal(), data[3] };
+            DatagramPacket packet =
+                    new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
             break;
         case INVALID:
             break;
@@ -110,11 +113,9 @@ public class Scheduler {
     private void handleElevatorMessage(final byte[] data, final int port) {
         System.out.println("Handling an elevator message.");
 
-        final int id = data[1];
-
         switch (Elevator.Request.values[data[2]]) {
         case REGISTER:
-            this.registerElevator(id);
+            this.registerElevator(data[1]);
             // Reply with success.
             byte reply[] = { 0 };
             DatagramPacket packet =
