@@ -44,7 +44,12 @@ public class ElevatorSystem {
         this.sendingData = false;
     }
 
-    // Register Elevators to Scheduler.
+    /*
+     * Register Elevators to Scheduler:
+     * sendData[0] signifies the data is from an Elevator.
+     * sendData[1] is the id of the elevator.
+     * sendData[2] is the Request type.
+     */
     private void registerElevators() {
         for (final Elevator elevator : this.elevators) {
             // Send packet to Scheduler to register Elevator.
