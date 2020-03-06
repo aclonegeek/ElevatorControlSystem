@@ -12,7 +12,7 @@ import global.Globals;
  * Continually checks to see if the Elevator is in range.
  * If so, sends data to the Scheduler to check whether it should stop at this floor.
  * If the Elevator is scheduled to stop here, the Scheduler will notify the ElevatorSystem.
- * 
+ *
  * sendData format is as follows:
  * sendData[0] signifies the data is from an ArrivalSensor.
  * sendData[1] is the id of the Elevator.
@@ -39,12 +39,11 @@ public class ArrivalSensor implements Runnable {
     public void run() {
         int lastDetectedFloor = 0;
 
-        // TODO: Remove sysouts because they'll spam the ElevatorSystem console.
         while (true) {
             final int elevatorFloor = elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
             if (elevatorFloor == floor && elevatorFloor != lastDetectedFloor) {
-                System.out.println("Floor " + floor + " arrival sensor has detected elevator: "
-                        + elevator.getElevatorId());
+                // System.out.println("Floor " + floor + " arrival sensor has detected elevator: "
+                //         + elevator.getElevatorId());
                 lastDetectedFloor = floor;
 
                 // Send data to Scheduler. If the Elevator should stop at this floor, the
@@ -56,8 +55,8 @@ public class ArrivalSensor implements Runnable {
                 final DatagramPacket sendPacket =
                         new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
-                System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": "
-                        + Arrays.toString(sendData));
+                // System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": "
+                //         + Arrays.toString(sendData));
                 try {
                     this.sendSocket.send(sendPacket);
                 } catch (IOException e) {
