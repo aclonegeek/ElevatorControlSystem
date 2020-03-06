@@ -1,5 +1,6 @@
 package scheduler;
 
+import elevator.ElevatorAction;
 import elevator.ElevatorState;
 import junit.framework.TestCase;
 
@@ -32,9 +33,9 @@ public class BestElevatorTest extends TestCase {
         scheduler.addElevatorStatus(4, elevatorStatus4);
 
         // assert we get the idle Elevator first
-        BestElevator target = new BestElevator(1, 3);
+        BestElevator target = new BestElevator(1, 3, ElevatorAction.MOVE_DOWN);
         BestElevator predicted = scheduler.getBestElevator(6, ElevatorState.MOVING_DOWN);
-        assertEquals(target.elevatorId, predicted.elevatorId);
+        assertEquals(target.id, predicted.id);
         assertEquals(target.numFloors, predicted.numFloors);
 
         // remove the first elevator because it has priority
@@ -42,17 +43,16 @@ public class BestElevatorTest extends TestCase {
 
         // assert we find an elevator going the same direction with the least stops
         // before
-        target = new BestElevator(3, 5);
+        target = new BestElevator(3, 5, ElevatorAction.MOVE_UP);
         predicted = scheduler.getBestElevator(6, ElevatorState.MOVING_UP);
-        assertEquals(target.elevatorId, predicted.elevatorId);
+        assertEquals(target.id, predicted.id);
         assertEquals(target.numFloors, predicted.numFloors);
 
         // assert we find the elevator with least total stops if there is no elevator
         // going same direction
-        target = new BestElevator(4, 1);
+        target = new BestElevator(4, 1, ElevatorAction.MOVE_DOWN);
         predicted = scheduler.getBestElevator(9, ElevatorState.MOVING_DOWN);
-        assertEquals(target.elevatorId, predicted.elevatorId);
+        assertEquals(target.id, predicted.id);
         assertEquals(target.numFloors, predicted.numFloors);
-
     }
 }
