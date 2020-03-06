@@ -69,7 +69,6 @@ public class Scheduler {
     }
 
     private void handleMessage(final byte[] data, final int port) {
-        // Empty message.
         if (data.length == 0) {
             System.out.println("Received empty message.");
             return;
@@ -78,13 +77,14 @@ public class Scheduler {
         System.out.println("Received: " + Arrays.toString(data));
 
         switch (data[0]) {
-        // Floor message.
         case Globals.FROM_FLOOR:
             this.handleFloorMessage(data, port);
             break;
-        // Elevator message.
         case Globals.FROM_ELEVATOR:
             this.handleElevatorMessage(data, port);
+            break;
+        case Globals.FROM_ARRIVAL_SENSOR:
+            this.handleArrivalSensorMessage(data);
             break;
         default:
             System.err.println("Received invalid bytes.");
@@ -127,6 +127,26 @@ public class Scheduler {
         case INVALID:
             break;
         }
+    }
+
+    private void handleArrivalSensorMessage(final byte[] data) {
+        System.out.println("Handling an arrival sensor message.");
+
+        final int id = data[1];
+        final int floor = data[2];
+
+        this.elevatorStatuses.put(id, floor);
+
+        if (!this.elevatorStatuses.get(id).destinations.contains(floor)) {
+            return;
+        }
+
+        byte reply[] = { Globals.FROM_SCHEDULER, data[1], (byte) ElevatorAction.STOP_MOVING.ordinal() };
+
+        DatagramPacket packet =
+            new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+
+        this.send(packet);
     }
 
     // TODO: Move this to a utility class?
