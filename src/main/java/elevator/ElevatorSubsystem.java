@@ -1,29 +1,60 @@
 package elevator;
 
-import java.time.LocalTime;
+import elevator.Elevator.Request;
+import global.Globals;
 
-public class ElevatorSubsystem {
+public class ElevatorSubsystem implements Runnable {
     private final int elevatorId;
-    private int currentFloor;
+    private int currentHeight;
     private ElevatorState state;
+    private ElevatorSystem elevatorSystem;
 
-    public ElevatorSubsystem(final int elevatorId) {
+    public ElevatorSubsystem(final int elevatorId, final ElevatorSystem elevatorSystem) {
         this.elevatorId = elevatorId;
-        this.currentFloor = 0;
-        this.state = ElevatorState.IDLE_DOOR_OPEN;
+        this.currentHeight = 0;
+        this.state = ElevatorState.MOVING_UP;
+        this.elevatorSystem = elevatorSystem;
     }
 
+    public void run() {
+        while (true) {
+            switch (this.state) {
+            // If MOVING_UP or MOVING_DOWN, move one floor per second.
+            case MOVING_UP:
+                currentHeight += Globals.FLOOR_HEIGHT / 10;
+                Globals.sleep(100);
+                break;
+            case MOVING_DOWN:
+                currentHeight -= Globals.FLOOR_HEIGHT / 10;
+                Globals.sleep(100);
+                break;
+            // If IDLE_DOOR_OPEN, wait for two seconds to let people in/out then send the
+            // Scheduler a READY request, signifying the Elevator is ready to move again.
+            case IDLE_DOOR_OPEN:
+                Globals.sleep(2000);
+                final byte[] sendData = new byte[3];
+                sendData[0] = Globals.FROM_ELEVATOR;
+                sendData[1] = (byte) this.elevatorId;
+                sendData[2] = (byte) Request.READY.ordinal();
+                this.elevatorSystem.sendData(sendData);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    // TODO: Light up elevator lamps.
+    // TODO: OPEN_DOORS and CLOSE_DOORS should take time.
     public ElevatorResponse updateState(final ElevatorAction elevatorAction) {
         switch (elevatorAction) {
         case DESTINATION_REACHED:
             return ElevatorResponse.DESTINATION_REACHED;
         case MOVE_UP:
             this.state = ElevatorState.MOVING_UP;
-            currentFloor++;
             break;
         case MOVE_DOWN:
             this.state = ElevatorState.MOVING_DOWN;
-            currentFloor--;
             break;
         case STOP_MOVING:
             this.state = ElevatorState.IDLE_DOOR_CLOSED;
@@ -44,15 +75,11 @@ public class ElevatorSubsystem {
         return this.elevatorId;
     }
 
-    public int getCurrentFloor() {
-        return this.currentFloor;
+    public int getCurrentHeight() {
+        return this.currentHeight;
     }
 
     public ElevatorState getState() {
         return this.state;
-    }
-
-    public ElevatorData getElevatorData() {
-        return new ElevatorData(this.elevatorId, this.currentFloor, LocalTime.now());
     }
 }
