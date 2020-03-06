@@ -12,7 +12,6 @@ import elevator.ElevatorResponse;
 import elevator.ElevatorState;
 import floor.FloorData;
 import floor.FloorData.ButtonState;
-import floor.FloorSubsystem;
 
 /**
  * Coordinates the elevator and floor subsystems.
