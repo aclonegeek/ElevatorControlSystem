@@ -126,6 +126,7 @@ public class Scheduler {
             // final DatagramPacket packet =
             //         new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
             // this.send(packet);
+            System.out.println();
             break;
         case READY:
             final int id = data[1];
