@@ -53,8 +53,6 @@ public class ElevatorSubsystem implements Runnable {
         initialState = false;
         
         switch (elevatorAction) {
-        case DESTINATION_REACHED:
-            return ElevatorResponse.DESTINATION_REACHED;
         case MOVE_UP:
             this.state = ElevatorState.MOVING_UP;
             break;
