@@ -69,7 +69,7 @@ public class ArrivalSensor implements Runnable {
                 Globals.sleep(1000);
             }
 
-            Globals.sleep(100);
+            Globals.sleep(50);
         }
     }
 }
