@@ -36,9 +36,7 @@ public class FloorReader {
                         LocalTime.parse(data[0], DateTimeFormatter.ofPattern("HH:mm:ss.S"));
                 final int floorNumber = Integer.parseInt(data[1]);
                 final ButtonState buttonState = ButtonState.valueOf(data[2]);
-                final int destination = buttonState == ButtonState.UP ?
-                    floorNumber + Integer.parseInt(data[3]) :
-                    floorNumber - Integer.parseInt(data[3]);
+                final int destination = Integer.parseInt(data[3]);
 
                 floorRequests.add(new FloorData(floorNumber, buttonState, localTime, destination));
             }
