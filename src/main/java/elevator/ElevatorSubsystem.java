@@ -19,7 +19,10 @@ public class ElevatorSubsystem implements Runnable {
     }
 
     public void run() {
-        while (true) {           
+        boolean waitingForDoorsToOpen = false;
+        boolean sentReady = false;
+
+        while (true) {
             switch (this.state) {
             // If MOVING_UP or MOVING_DOWN, move one floor per second.
             case MOVING_UP:
@@ -33,6 +36,16 @@ public class ElevatorSubsystem implements Runnable {
             // If IDLE_DOOR_OPEN, wait for two seconds to let people in/out then send the
             // Scheduler a READY request, signifying the Elevator is ready to move again.
             case IDLE_DOOR_OPEN:
+                // We already sent a READY, no need to do it again.
+                if (sentReady) {
+                    Globals.sleep(5);
+                    continue;
+                }
+
+                if (waitingForDoorsToOpen) {
+                    waitingForDoorsToOpen = false;
+                }
+
                 if (initialState) {
                     // Running this loop is heavy, so we sleep for a tiny bit to give other threads
                     // a chance to run.
@@ -40,14 +53,34 @@ public class ElevatorSubsystem implements Runnable {
                     break;
                 }
 
+                sentReady = true;
+
                 Globals.sleep(2000);
                 final byte[] sendData = new byte[3];
                 sendData[0] = Globals.FROM_ELEVATOR;
                 sendData[1] = (byte) this.elevatorId;
                 sendData[2] = (byte) Request.READY.ordinal();
                 this.elevatorSystem.sendData(sendData);
+
                 break;
-            default:
+            case IDLE_DOOR_CLOSED:
+                sentReady = false;
+
+                // Don't send another request to open the doors.
+                if (waitingForDoorsToOpen) {
+                    Globals.sleep(5);
+                    break;
+                }
+
+                final byte[] data = new byte[3];
+                data[0] = Globals.FROM_ELEVATOR;
+                data[1] = (byte) this.elevatorId;
+                data[2] = (byte) Request.OPEN_DOORS.ordinal();
+                this.elevatorSystem.sendData(data);
+                waitingForDoorsToOpen = true;
+
+                break;
+            case MOVING_DOOR_CLOSED:
                 break;
             }
         }
@@ -57,7 +90,7 @@ public class ElevatorSubsystem implements Runnable {
     // TODO: OPEN_DOORS and CLOSE_DOORS should take time.
     public ElevatorResponse updateState(final ElevatorAction elevatorAction) {
         initialState = false;
-        
+
         switch (elevatorAction) {
         case MOVE_UP:
             this.state = ElevatorState.MOVING_UP;
@@ -72,7 +105,7 @@ public class ElevatorSubsystem implements Runnable {
             this.state = ElevatorState.IDLE_DOOR_OPEN;
             break;
         case CLOSE_DOORS:
-            this.state = ElevatorState.IDLE_DOOR_CLOSED;
+            this.state = ElevatorState.MOVING_DOOR_CLOSED;
             break;
         }
 
