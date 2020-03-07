@@ -10,7 +10,6 @@ import java.util.Arrays;
 import global.Globals;
 
 public class FloorSystem {
-    private DatagramSocket receiveSocket;
     private DatagramSocket sendSocket;
     private FloorReader floorReader;
     private ArrayList<Floor> floors;
@@ -25,7 +24,6 @@ public class FloorSystem {
         this.sleepTime = sleepTime;
         
         try {
-            this.receiveSocket = new DatagramSocket(Globals.FLOOR_PORT);
             this.sendSocket = new DatagramSocket();
             this.floorReader = new FloorReader();
 
@@ -38,7 +36,7 @@ public class FloorSystem {
             // Read in FloorData from file.
             this.floorReader = new FloorReader();
             this.requests = this.floorReader.readFile(this.getClass().getResource(filename).getFile());
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             System.err.println(e);
             System.exit(1);
         }
@@ -48,7 +46,7 @@ public class FloorSystem {
         // Simulate a Floor handling the next request.
         // TODO: Handle requests in order based on their timestamp.
         while (requests.size() > 0) {
-            FloorData request = requests.remove(0);
+            final FloorData request = requests.remove(0);
 
             // Update Floor state.
             floors.get(request.getFloor()).setButtonState(request.getButtonState());
@@ -67,7 +65,7 @@ public class FloorSystem {
     }
 
     // Send data to Scheduler.
-    public void sendData(byte[] sendData) {
+    public void sendData(final byte[] sendData) {
         final DatagramPacket sendPacket =
                 new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
@@ -75,7 +73,7 @@ public class FloorSystem {
 
         try {
             this.sendSocket.send(sendPacket);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.err.println(e);
             System.exit(1);
         }

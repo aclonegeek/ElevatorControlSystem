@@ -10,7 +10,7 @@ public class Floor {
     private final int floor;
 
     public static enum Request {
-        REQUEST, INVALID;
+        REQUEST;
 
         public static final Request[] values = Request.values();
     }

@@ -31,7 +31,7 @@ public class ArrivalSensor implements Runnable {
 
         try {
             this.sendSocket = new DatagramSocket();
-        } catch (SocketException se) {
+        } catch (final SocketException se) {
             System.err.println(se);
             System.exit(1);
         }
@@ -63,11 +63,11 @@ public class ArrivalSensor implements Runnable {
                         + Arrays.toString(sendData));
                 try {
                     this.sendSocket.send(sendPacket);
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     System.err.println(e);
                     System.exit(1);
                 }
-                
+
                 // Sleep longer here so it doesn't keep sending data to Scheduler.
                 Globals.sleep(1000);
             }

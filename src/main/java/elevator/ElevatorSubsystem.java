@@ -7,7 +7,7 @@ public class ElevatorSubsystem implements Runnable {
     private final int elevatorId;
     private int currentHeight;
     private ElevatorState state;
-    private ElevatorSystem elevatorSystem;
+    private final ElevatorSystem elevatorSystem;
     private boolean initialState;
 
     public ElevatorSubsystem(final int elevatorId, final ElevatorSystem elevatorSystem) {
@@ -108,7 +108,7 @@ public class ElevatorSubsystem implements Runnable {
             this.state = ElevatorState.DOOR_CLOSED_FOR_MOVING;
             break;
         }
-        
+
         System.out.println("Elevator " + this.elevatorId + " state updated: " + this.state);
 
         // For now, there are no errors.

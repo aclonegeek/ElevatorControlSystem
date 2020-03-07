@@ -9,21 +9,21 @@ public class BestElevatorTest extends TestCase {
         final Scheduler scheduler = new Scheduler();
 
         // idle elevator on floor 9
-        ElevatorStatus elevatorStatus1 = new ElevatorStatus(ElevatorState.IDLE_DOOR_OPEN, 9);
+        final ElevatorStatus elevatorStatus1 = new ElevatorStatus(ElevatorState.IDLE_DOOR_OPEN, 9);
 
         // upward Moving elevator on floor 2 stopping at floors 3 and 4
-        ElevatorStatus elevatorStatus2 = new ElevatorStatus(ElevatorState.MOVING_UP, 2);
+        final ElevatorStatus elevatorStatus2 = new ElevatorStatus(ElevatorState.MOVING_UP, 2);
         elevatorStatus2.addDestination(3);
         elevatorStatus2.addDestination(4);
         elevatorStatus2.addDestination(10);
 
         // upward moving elevator on floor 2 stopping at floor 5
-        ElevatorStatus elevatorStatus3 = new ElevatorStatus(ElevatorState.MOVING_UP, 1);
+        final ElevatorStatus elevatorStatus3 = new ElevatorStatus(ElevatorState.MOVING_UP, 1);
         elevatorStatus3.addDestination(5);
         elevatorStatus3.addDestination(10);
 
         // downward moving elevator on floor 8 moving to floor 2
-        ElevatorStatus elevatorStatus4 = new ElevatorStatus(ElevatorState.MOVING_DOWN, 8);
+        final ElevatorStatus elevatorStatus4 = new ElevatorStatus(ElevatorState.MOVING_DOWN, 8);
         elevatorStatus4.addDestination(6);
 
         // add ElevatorStatus to ElevatorStatus HashMap

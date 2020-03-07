@@ -24,20 +24,20 @@ public class Globals {
 
     // Elevator globals.
     public static final int MAX_ELEVATORS = 4;
-   
+
     static {
         try {
             IP = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             System.out.println(e);
             System.exit(1);
         }
     }
-    
+
     public static void sleep(final int ms) {
         try {
             Thread.sleep(ms);
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             System.err.print(e);
         }
     }

@@ -31,7 +31,7 @@ public class ElevatorSystem {
         try {
             this.receiveSocket = new DatagramSocket(Globals.ELEVATOR_PORT);
             this.sendSocket = new DatagramSocket();
-        } catch (SocketException se) {
+        } catch (final SocketException se) {
             System.err.println(se);
             System.exit(1);
         }
@@ -66,7 +66,7 @@ public class ElevatorSystem {
             System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
             try {
                 this.sendSocket.send(sendPacket);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 System.err.println(e);
                 System.exit(1);
             }
@@ -94,7 +94,7 @@ public class ElevatorSystem {
         final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
         try {
             this.receiveSocket.receive(receivePacket);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.err.println(e);
             System.exit(1);
         }
@@ -121,7 +121,7 @@ public class ElevatorSystem {
             System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData) + "\n");
             try {
                 this.sendSocket.send(sendPacket);
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 System.err.println(e);
                 System.exit(1);
             }
@@ -141,7 +141,7 @@ public class ElevatorSystem {
 
             this.sendingData = false;
             this.notifyAll();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             System.err.println(e);
         }
     }

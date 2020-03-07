@@ -36,7 +36,7 @@ public class FloorDataTest extends TestCase {
             // Delete file.
             final File file = new File("floorDataTest.txt");
             file.delete();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             System.err.println(e);
 
             // Force a test failure if fall into catch block.

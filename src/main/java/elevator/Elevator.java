@@ -10,7 +10,7 @@ public class Elevator {
     private ArrayList<ArrivalSensor> arrivalSensors;
 
     public static enum Request {
-        REGISTER, READY, OPEN_DOORS, STATE_CHANGED, INVALID;
+        REGISTER, READY, OPEN_DOORS, STATE_CHANGED;
 
         public static final Request[] values = Request.values();
     }
@@ -35,37 +35,29 @@ public class Elevator {
      * receiveData[0] signifies the data is from the Scheduler.
      * receiveData[1] is the id of the elevator.
      * receiveData[2] is the serialized ElevatorAction.
-     * receiveData[3] is the destination floor (used to set the button state).
      *
      * Then return a response:
      * sendData[0] signifies the data is from an Elevator.
      * sendData[1] is the id of the Elevator.
      * sendData[2] is the serialized ElevatorResponse.
-     * 
-     * Return sendData for testing purposes.
+     * sendData[3] is the serialized ElevatorState.
+     * sendData[4] is the serialized ElevatorResponse.
      */
-    public byte[] processData(final byte[] receiveData) {
-        // Parse action and destination floor from receiveData.
+    public void processData(final byte[] receiveData) {
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
-
         final ElevatorState previousState = this.elevatorSubsystem.getState();
-
-        // Update ElevatorSubsystem state.
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
 
         if (previousState != this.elevatorSubsystem.getState()) {
-            final byte[] data = new byte[5];
-            data[0] = Globals.FROM_ELEVATOR;
-            data[1] = (byte) elevatorSubsystem.getElevatorId();
-            data[2] = (byte) Request.STATE_CHANGED.ordinal();
-            data[3] = (byte) this.elevatorSubsystem.getState().ordinal();
-            data[4] = (byte) response.ordinal();
+            final byte[] sendData = new byte[5];
+            sendData[0] = Globals.FROM_ELEVATOR;
+            sendData[1] = (byte) elevatorSubsystem.getElevatorId();
+            sendData[2] = (byte) Request.STATE_CHANGED.ordinal();
+            sendData[3] = (byte) this.elevatorSubsystem.getState().ordinal();
+            sendData[4] = (byte) response.ordinal();
 
-            this.elevatorSystem.sendData(data);
-            return data;
+            this.elevatorSystem.sendData(sendData);
         }
-        
-        return null;
     }
 
     public ElevatorSubsystem getSubsystem() {
