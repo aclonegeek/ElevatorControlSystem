@@ -122,14 +122,9 @@ public class Scheduler {
         switch (Elevator.Request.values[data[2]]) {
         case REGISTER:
             this.registerElevator(data[1]);
-            // Reply with success.
-            // final byte reply[] = { 0 };
-            // final DatagramPacket packet =
-            //         new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
-            // this.send(packet);
             System.out.println();
             break;
-        case READY:
+        case READY: {
             final int id = data[1];
 
             if (this.elevatorStatuses.get(id).getDestinations().isEmpty()) {
@@ -146,11 +141,16 @@ public class Scheduler {
             final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
 
             this.moveElevator(id, direction);
+        }
             break;
         case OPEN_DOORS:
             this.openElevatorDoors(data[1]);
             break;
-        case STATE_CHANGED:
+        case STATE_CHANGED: {
+            final int id = data[1];
+            final ElevatorState state = ElevatorState.values[data[3]];
+            this.elevatorStatuses.get(id).setState(state);
+        }
             break;
         case INVALID:
             break;
@@ -177,7 +177,7 @@ public class Scheduler {
                 new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
 
         this.send(packet);
-        
+
         this.elevatorStatuses.get(id).getDestinations().remove(0);
     }
 
@@ -252,7 +252,6 @@ public class Scheduler {
         boolean anotherElevatorOnRoute = false;
         boolean idleElevator = false;
 
-        
         for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
             tempElevatorID = entry.getKey();
             tempElevatorStatus = entry.getValue();
@@ -272,8 +271,8 @@ public class Scheduler {
                     bestElevatorID = tempElevatorID;
                     idleElevator = true;
                 }
-            }   
-            
+            }
+
             // Best elevator is one moving with the floor on its path going upwards.
             if (tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_UP) {
                 if (tempElevatorStatus.getCurrentFloor() < floor && !idleElevator) {
@@ -302,19 +301,18 @@ public class Scheduler {
         }
 
         // Add destination to best elevators destinations.
-        System.out.println(floor);
         this.elevatorStatuses.get(bestElevatorID).addDestination(floor);
-        
+
         final int distance = this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor;
         final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
 
         return new BestElevator(bestElevatorID, Math.abs(distance), direction);
     }
-    
+
     private int getDistanceBetween(int bestElevatorID, final int floor) {
         return Math.abs(this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor);
     }
-    
+
     private int getStopsBetween(final ElevatorStatus elevatorStatus, final int floor) {
         int floorsBetween = 0;
 
