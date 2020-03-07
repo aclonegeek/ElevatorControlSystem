@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.util.Arrays;
 
 import global.Globals;
 
@@ -41,8 +42,8 @@ public class ArrivalSensor implements Runnable {
         while (true) {
             final int elevatorFloor = this.elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
             if (elevatorFloor == this.floor && elevatorFloor != lastDetectedFloor) {
-                // System.out.println("Floor " + floor + " arrival sensor has detected elevator: "
-                //         + elevator.getElevatorId());
+                System.out.println("Floor " + floor + " arrival sensor has detected elevator: "
+                        + elevator.getElevatorId());
                 lastDetectedFloor = this.floor;
 
                 // Send data to Scheduler. If the Elevator should stop at this floor, the
@@ -54,8 +55,8 @@ public class ArrivalSensor implements Runnable {
                 final DatagramPacket sendPacket =
                         new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
-                // System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": "
-                //         + Arrays.toString(sendData));
+                System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": "
+                                   + Arrays.toString(sendData));
                 try {
                     this.sendSocket.send(sendPacket);
                 } catch (IOException e) {
