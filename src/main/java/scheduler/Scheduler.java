@@ -19,13 +19,13 @@ import global.Globals;
  * Coordinates elevators and floors.
  */
 public class Scheduler {
-    public static enum SchedulerState {
+    public static enum State {
         WAITING, HANDLING_MESSAGE,
     }
 
     private final HashMap<Integer, ElevatorStatus> elevatorStatuses;
 
-    private SchedulerState state;
+    private State state;
 
     private DatagramSocket receiveSocket;
     private DatagramSocket sendSocket;
@@ -36,7 +36,7 @@ public class Scheduler {
 
     public Scheduler() {
         this.elevatorStatuses = new HashMap<>();
-        this.state = SchedulerState.WAITING;
+        this.state = State.WAITING;
 
         try {
             this.receiveSocket = new DatagramSocket(Globals.SCHEDULER_PORT);
@@ -76,7 +76,7 @@ public class Scheduler {
             return;
         }
 
-        this.state = SchedulerState.HANDLING_MESSAGE;
+        this.state = State.HANDLING_MESSAGE;
 
         System.out.println("Received: " + Arrays.toString(data));
 
@@ -95,7 +95,7 @@ public class Scheduler {
             break;
         }
 
-        this.state = SchedulerState.WAITING;
+        this.state = State.WAITING;
     }
 
     private void handleFloorMessage(final byte[] data) {
@@ -319,7 +319,7 @@ public class Scheduler {
     }
 
     /* METHODS USED FOR TESTING */
-    public SchedulerState getState() {
+    public State getState() {
         return this.state;
     }
 
