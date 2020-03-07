@@ -96,6 +96,8 @@ public class ElevatorSystem {
             System.exit(1);
         }
 
+        System.out.println("Received: " + Arrays.toString(receiveData));
+
         this.elevators.get(receiveData[1] - 1).processData(receiveData);
     }
 
@@ -113,7 +115,7 @@ public class ElevatorSystem {
             final DatagramPacket sendPacket =
                     new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
-            System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
+            System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData) + "\n");
             try {
                 this.sendSocket.send(sendPacket);
             } catch (IOException e) {
