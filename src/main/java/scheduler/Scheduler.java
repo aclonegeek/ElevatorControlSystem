@@ -57,8 +57,8 @@ public class Scheduler {
     }
 
     private DatagramPacket receive() {
-        byte data[] = new byte[10]; // TODO: Magic # (MAX_DATA?).
-        DatagramPacket packet = new DatagramPacket(data, data.length);
+        final byte data[] = new byte[5];
+        final DatagramPacket packet = new DatagramPacket(data, data.length);
 
         try {
             this.receiveSocket.receive(packet);
