@@ -108,8 +108,6 @@ public class Scheduler {
             this.elevatorStatuses.get(bestElevator.id).addDestination(data[3]);
             this.sendElevatorAction(bestElevator.id, bestElevator.direction);
             break;
-        case INVALID:
-            break;
         default:
             System.out.println("Unknown floor message received.");
             break;
@@ -151,8 +149,6 @@ public class Scheduler {
             final ElevatorState state = ElevatorState.values[data[3]];
             this.elevatorStatuses.get(id).setState(state);
         }
-            break;
-        case INVALID:
             break;
         default:
             System.out.println("Unknown elevator message received.");

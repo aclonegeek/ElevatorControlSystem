@@ -7,7 +7,7 @@ public class Elevator {
     private final ElevatorSystem elevatorSystem;
 
     public static enum Request {
-        REGISTER, READY, OPEN_DOORS, STATE_CHANGED, INVALID;
+        REGISTER, READY, OPEN_DOORS, STATE_CHANGED;
 
         public static final Request[] values = Request.values();
     }
