@@ -7,7 +7,7 @@ public class Elevator {
     private final ElevatorSystem elevatorSystem;
 
     public static enum Request {
-        REGISTER, READY, STATE_CHANGED, INVALID;
+        REGISTER, READY, OPEN_DOORS, STATE_CHANGED, INVALID;
 
         public static final Request[] values = Request.values();
     }
@@ -39,7 +39,7 @@ public class Elevator {
     public void processData(final byte[] receiveData) {
         // Parse action and destination floor from receiveData.
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
-        
+
         System.out.println("action: " + action);
 
         // Update ElevatorSubsystem state.
