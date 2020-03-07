@@ -105,6 +105,7 @@ public class Scheduler {
         case REQUEST:
             final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
+            this.elevatorStatuses.get(bestElevator.id).addDestination(data[3]);
             this.moveElevator(bestElevator.id, bestElevator.direction);
             break;
         case INVALID:
