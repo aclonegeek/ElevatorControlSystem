@@ -35,6 +35,8 @@ class FloorSystem {
             // Read in FloorData from file.
             this.floorReader = new FloorReader();
             this.requests = this.floorReader.readFile(this.getClass().getResource(filename).getFile());
+            
+            System.out.println(requests);
         } catch (SocketException e) {
             System.err.println(e);
             System.exit(1);
@@ -59,11 +61,7 @@ class FloorSystem {
             sendData[4] = (byte) request.getButtonState().ordinal();
             this.sendData(sendData);
             
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
+            Globals.sleep(1000);
         }
     }
 
@@ -83,15 +81,15 @@ class FloorSystem {
 
         // Block until receive response from Scheduler.
         // TODO: Handle success/failure cases.
-        final byte[] receiveData = new byte[1];
-        final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-        try {
-            this.receiveSocket.receive(receivePacket);
-        } catch (IOException e) {
-            System.err.println(e);
-            System.exit(1);
-        }
-
-        System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
+//        final byte[] receiveData = new byte[1];
+//        final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+//        try {
+//            this.receiveSocket.receive(receivePacket);
+//        } catch (IOException e) {
+//            System.err.println(e);
+//            System.exit(1);
+//        }
+//
+//        System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
     }
 }
