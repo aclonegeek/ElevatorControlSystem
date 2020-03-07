@@ -33,7 +33,13 @@ public class ElevatorSubsystem implements Runnable {
             // If IDLE_DOOR_OPEN, wait for two seconds to let people in/out then send the
             // Scheduler a READY request, signifying the Elevator is ready to move again.
             case IDLE_DOOR_OPEN:
-                if (initialState) break;
+                if (initialState) {
+                    // Running this loop is heavy, so we sleep for a tiny bit to give other threads
+                    // a chance to run.
+                    Globals.sleep(5);
+                    break;
+                }
+
                 Globals.sleep(2000);
                 final byte[] sendData = new byte[3];
                 sendData[0] = Globals.FROM_ELEVATOR;
