@@ -24,6 +24,14 @@ public class ElevatorSystemTest extends TestCase {
         elevators.get(1).getSubsystem().setCurrentHeight(Globals.FLOOR_HEIGHT * 5);
         elevators.get(2).getSubsystem().setCurrentHeight(Globals.FLOOR_HEIGHT * 10);
         elevators.get(3).getSubsystem().setCurrentHeight(Globals.FLOOR_HEIGHT * 15);
+        
+        Globals.sleep(1000);
+        
+        final Scheduler scheduler = runnableScheduler.getScheduler();
+        scheduler.setElevatorStatusFloor(elevators.get(0).getSubsystem().getElevatorId(), 0);
+        scheduler.setElevatorStatusFloor(elevators.get(1).getSubsystem().getElevatorId(), 5);
+        scheduler.setElevatorStatusFloor(elevators.get(2).getSubsystem().getElevatorId(), 10);
+        scheduler.setElevatorStatusFloor(elevators.get(3).getSubsystem().getElevatorId(), 15);
 
         // Create FloorSystem (this will begin sending requests).
         final RunnableFloorSystem runnableFloorSystem =
@@ -48,6 +56,10 @@ public class ElevatorSystemTest extends TestCase {
 
         public void run() {
             this.scheduler.run();
+        }
+        
+        public Scheduler getScheduler() {
+            return this.scheduler;
         }
     }
 
@@ -76,6 +88,10 @@ public class ElevatorSystemTest extends TestCase {
 
         public void run() {
             this.floorSystem.run();
+        }
+        
+        public FloorSystem getFloorSystem() {
+            return this.floorSystem;
         }
     }
 }

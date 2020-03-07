@@ -319,6 +319,10 @@ public class Scheduler {
     public void addElevatorStatus(final int elevatorID, final ElevatorStatus elevatorStatus) {
         this.elevatorStatuses.put(elevatorID, elevatorStatus);
     }
+    
+    public void setElevatorStatusFloor(final int elevatorID, final int floor) {
+        this.elevatorStatuses.get(elevatorID).setCurrentFloor(floor);
+    }
 
     public SchedulerState getState() {
         return this.state;
