@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import global.Globals;
 
@@ -38,7 +37,7 @@ public class ElevatorSystem {
 
         this.sendingData = false;
     }
-    
+
     public void run() {
         this.registerElevators();
 
@@ -146,7 +145,7 @@ public class ElevatorSystem {
             System.err.println(e);
         }
     }
-    
+
     public ArrayList<Elevator> getElevators() {
         return this.elevators;
     }
@@ -155,7 +154,7 @@ public class ElevatorSystem {
     public void closeSockets() {
         this.receiveSocket.close();
         this.sendSocket.close();
-        
+
         for (Elevator elevator : this.elevators) {
             for (ArrivalSensor arrivalSensor : elevator.getArrivalSensors()) {
                 arrivalSensor.closeSockets();
