@@ -10,7 +10,6 @@ import java.util.Arrays;
 import global.Globals;
 
 class FloorSystem {
-    private DatagramSocket receiveSocket;
     private DatagramSocket sendSocket;
     private FloorReader floorReader;
     private ArrayList<Floor> floors;
@@ -22,7 +21,6 @@ class FloorSystem {
 
     public FloorSystem(final String filename) {
         try {
-            this.receiveSocket = new DatagramSocket(Globals.FLOOR_PORT);
             this.sendSocket = new DatagramSocket();
             this.floorReader = new FloorReader();
 
