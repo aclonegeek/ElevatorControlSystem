@@ -7,7 +7,7 @@ public class ElevatorSubsystem implements Runnable {
     private final int elevatorId;
     private int currentHeight;
     private ElevatorState state;
-    private ElevatorSystem elevatorSystem;
+    private final ElevatorSystem elevatorSystem;
     private boolean initialState;
 
     public ElevatorSubsystem(final int elevatorId, final ElevatorSystem elevatorSystem) {

@@ -40,9 +40,9 @@ public class FloorReader {
 
                 floorRequests.add(new FloorData(floorNumber, buttonState, localTime, destination));
             }
-        } catch (FileNotFoundException f) {
+        } catch (final FileNotFoundException f) {
             System.err.println(f);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.err.println(e);
         }
 

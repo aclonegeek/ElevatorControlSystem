@@ -30,7 +30,7 @@ public class Scheduler {
     private DatagramSocket receiveSocket;
     private DatagramSocket sendSocket;
 
-    public static void main(String args[]) {
+    public static void main(final String args[]) {
         new Scheduler().run();
     }
 
@@ -41,7 +41,7 @@ public class Scheduler {
         try {
             this.receiveSocket = new DatagramSocket(Globals.SCHEDULER_PORT);
             this.sendSocket = new DatagramSocket();
-        } catch (SocketException e) {
+        } catch (final SocketException e) {
             System.err.println(e);
             System.exit(1);
         }
@@ -62,7 +62,7 @@ public class Scheduler {
 
         try {
             this.receiveSocket.receive(packet);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.err.println(e);
             System.exit(1);
         }
@@ -188,7 +188,7 @@ public class Scheduler {
 
         try {
             this.sendSocket.send(packet);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.err.println(e);
             System.exit(1);
         }
@@ -234,7 +234,7 @@ public class Scheduler {
      * @return the ID and number of floors to travel for the {@link Elevator}
      *         closest to the specified floor.
      */
-    public ElevatorState checkDirection(ButtonState state) {
+    public ElevatorState checkDirection(final ButtonState state) {
         if (state == ButtonState.UP) {
             return ElevatorState.MOVING_UP;
         } else if (state == ButtonState.DOWN) {
@@ -261,8 +261,8 @@ public class Scheduler {
                 bestElevatorID = tempElevatorID;
             }
 
-            int tempStopsBetween = getStopsBetween(tempElevatorStatus, floor);
-            int bestStopsBetween = getStopsBetween(this.elevatorStatuses.get(bestElevatorID), floor);
+            final int tempStopsBetween = getStopsBetween(tempElevatorStatus, floor);
+            final int bestStopsBetween = getStopsBetween(this.elevatorStatuses.get(bestElevatorID), floor);
 
             // Best elevator is idle.
             if (tempElevatorStatus.getState() == ElevatorState.DOOR_CLOSED_FOR_IDLING ||
@@ -309,14 +309,14 @@ public class Scheduler {
         return new BestElevator(bestElevatorID, Math.abs(distance), direction);
     }
 
-    private int getDistanceBetween(int bestElevatorID, final int floor) {
+    private int getDistanceBetween(final int bestElevatorID, final int floor) {
         return Math.abs(this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor);
     }
 
     private int getStopsBetween(final ElevatorStatus elevatorStatus, final int floor) {
         int floorsBetween = 0;
 
-        for (int destination : elevatorStatus.getDestinations()) {
+        for (final int destination : elevatorStatus.getDestinations()) {
             if (destination < floor && destination > elevatorStatus.getCurrentFloor() ||
                     destination > floor && destination < elevatorStatus.getCurrentFloor()) {
                 floorsBetween++;
