@@ -16,12 +16,7 @@ public class ElevatorSystem {
     private boolean sendingData;
 
     public static void main(String args[]) {
-        final ElevatorSystem elevatorSystem = new ElevatorSystem(4);
-        elevatorSystem.registerElevators();
-
-        while (true) {
-            elevatorSystem.receiveData();
-        }
+         new ElevatorSystem(Globals.MAX_ELEVATORS).run();
     }
 
     public ElevatorSystem(final int numOfElevators) {
@@ -43,6 +38,14 @@ public class ElevatorSystem {
 
         this.sendingData = false;
     }
+    
+    public void run() {
+        this.registerElevators();
+
+        while (true) {
+            this.receiveData();
+        }
+    }
 
     /*
      * Register Elevators to Scheduler:
@@ -50,7 +53,7 @@ public class ElevatorSystem {
      * sendData[1] is the id of the elevator.
      * sendData[2] is the Request type.
      */
-    private void registerElevators() {
+    public void registerElevators() {
         for (final Elevator elevator : this.elevators) {
             // Send packet to Scheduler to register Elevator.
             final byte[] sendData = new byte[3];
@@ -85,7 +88,7 @@ public class ElevatorSystem {
 
     // Receive data from Scheduler.
     // Forward this event to the corresponding Elevator.
-    private void receiveData() {
+    public void receiveData() {
         // Receive data back from Scheduler.
         final byte receiveData[] = new byte[4];
         final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -141,5 +144,9 @@ public class ElevatorSystem {
         } catch (InterruptedException e) {
             System.err.println(e);
         }
+    }
+    
+    public ArrayList<Elevator> getElevators() {
+        return this.elevators;
     }
 }

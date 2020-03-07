@@ -126,6 +126,10 @@ public class ElevatorSubsystem implements Runnable {
     public int getCurrentHeight() {
         return this.currentHeight;
     }
+    
+    public int getCurrentFloor() {
+        return  this.currentHeight / Globals.FLOOR_HEIGHT;
+    }
 
     public ElevatorState getState() {
         return this.state;
