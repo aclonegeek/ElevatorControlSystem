@@ -91,4 +91,12 @@ public class FloorSystem {
 //
 //        System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
     }
+    
+    public ArrayList<Floor> getFloors() {
+        return this.floors;
+    }
+    
+    public ArrayList<FloorData> getRequests() {
+        return this.requests;
+    }
 }
