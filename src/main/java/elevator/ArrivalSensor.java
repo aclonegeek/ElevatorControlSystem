@@ -37,14 +37,15 @@ public class ArrivalSensor implements Runnable {
 
     @Override
     public void run() {
-        int lastDetectedFloor = 0;
 
         while (true) {
             final int elevatorFloor = this.elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
-            if (elevatorFloor == this.floor && elevatorFloor != lastDetectedFloor) {
+            final boolean elevatorMoving = elevator.getState() == ElevatorState.MOVING_UP
+                    || elevator.getState() == ElevatorState.MOVING_DOWN;
+
+            if (elevatorMoving && elevatorFloor == this.floor) {
                 System.out.println("Floor " + floor + " arrival sensor has detected elevator: "
                         + elevator.getElevatorId());
-                lastDetectedFloor = this.floor;
 
                 // Send data to Scheduler. If the Elevator should stop at this floor, the
                 // Scheduler will then notify the ElevatorSystem.
@@ -56,20 +57,19 @@ public class ArrivalSensor implements Runnable {
                         new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
                 System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": "
-                                   + Arrays.toString(sendData));
+                        + Arrays.toString(sendData));
                 try {
                     this.sendSocket.send(sendPacket);
                 } catch (IOException e) {
                     System.err.println(e);
                     System.exit(1);
                 }
+                
+                // Wait longer here so it doesn't keep sending data to Scheduler.
+                Globals.sleep(1000);
             }
 
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                System.err.println(e);
-            }
+            Globals.sleep(100);
         }
     }
 }
