@@ -99,4 +99,9 @@ public class FloorSystem {
     public ArrayList<FloorData> getRequests() {
         return this.requests;
     }
+    
+    /* METHODS USED FOR TESTING */
+    public void closeSockets() {
+        this.sendSocket.close();
+    }
 }

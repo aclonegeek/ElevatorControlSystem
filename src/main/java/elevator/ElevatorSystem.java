@@ -149,4 +149,16 @@ public class ElevatorSystem {
     public ArrayList<Elevator> getElevators() {
         return this.elevators;
     }
+
+    /* METHODS USED FOR TESTING */
+    public void closeSockets() {
+        this.receiveSocket.close();
+        this.sendSocket.close();
+        
+        for (Elevator elevator : this.elevators) {
+            for (ArrivalSensor arrivalSensor : elevator.getArrivalSensors()) {
+                arrivalSensor.closeSockets();
+            }
+        }
+    }
 }

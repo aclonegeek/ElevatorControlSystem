@@ -47,5 +47,10 @@ public class ElevatorSystemTest extends TestCase {
         assertEquals(7, elevators.get(1).getSubsystem().getCurrentFloor());
         assertEquals(12, elevators.get(2).getSubsystem().getCurrentFloor());
         assertEquals(9, elevators.get(3).getSubsystem().getCurrentFloor());
+        
+        runnableFloorSystem.getFloorSystem().closeSockets();
+        runnableElevatorSystem.getElevatorSystem().closeSockets();
+        runnableScheduler.getScheduler().closeSockets();
+        Globals.sleep(500);
     }
 }

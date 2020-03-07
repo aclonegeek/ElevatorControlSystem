@@ -28,6 +28,9 @@ public class ElevatorSubsystemTest extends TestCase {
         // Verify state after opening doors.
         elevatorSubsystem.updateState(ElevatorAction.OPEN_DOORS);
         assertEquals(ElevatorState.IDLE_DOOR_OPEN, elevatorSubsystem.getState());
+        
+        elevatorSystem.closeSockets();
+        Globals.sleep(500);
     }
 
     public void testMovement() {
@@ -53,5 +56,8 @@ public class ElevatorSubsystemTest extends TestCase {
         final int height2 = elevatorSubsystem.getCurrentHeight();
         Globals.sleep(1000);
         assertTrue(elevatorSubsystem.getCurrentHeight() < height2);
+        
+        elevatorSystem.closeSockets();
+        Globals.sleep(500);
     }
 }

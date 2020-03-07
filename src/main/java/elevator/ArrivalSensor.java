@@ -87,4 +87,8 @@ public class ArrivalSensor implements Runnable {
     public boolean hasDetectedElevator() {
         return this.detectedElevator;
     }
+    
+    public void closeSockets() {
+        this.sendSocket.close();
+    }
 }

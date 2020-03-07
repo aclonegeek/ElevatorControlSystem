@@ -26,5 +26,8 @@ public class ArrivalSensorTest extends TestCase {
         for (int i = 10; i < 15; i++) {
             assertTrue(arrivalSensors.get(i).hasDetectedElevator());
         }
+        
+        elevatorSystem.closeSockets();
+        Globals.sleep(500);
     }
 }

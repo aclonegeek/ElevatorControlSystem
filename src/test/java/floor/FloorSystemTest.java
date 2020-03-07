@@ -20,5 +20,7 @@ public class FloorSystemTest extends TestCase {
         
         // Verify all requests are sent to the Scheduler.
         assertEquals(0, floorSystem.getRequests().size());
+        
+        floorSystem.closeSockets();
     }
 }

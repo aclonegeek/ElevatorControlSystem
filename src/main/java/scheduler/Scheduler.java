@@ -334,6 +334,11 @@ public class Scheduler {
     public void setElevatorStatusFloor(final int elevatorID, final int floor) {
         this.elevatorStatuses.get(elevatorID).setCurrentFloor(floor);
     }
+    
+    public void closeSockets() {
+        this.receiveSocket.close();
+        this.sendSocket.close();
+    }
 }
 
 /**

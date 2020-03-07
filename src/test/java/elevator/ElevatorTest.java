@@ -22,6 +22,9 @@ public class ElevatorTest extends TestCase {
         assertEquals(Elevator.Request.STATE_CHANGED.ordinal(), outputData[2]);
         assertEquals(ElevatorState.MOVING_UP.ordinal(), outputData[3]);
         assertEquals(ElevatorResponse.SUCCESS.ordinal(), outputData[4]);
+        
+        elevatorSystem.closeSockets();
+        Globals.sleep(500);
     }
     
     public void testProcessDataWithoutStateChange() {
@@ -37,5 +40,8 @@ public class ElevatorTest extends TestCase {
         byte[] outputData = elevator.processData(inputData);
         
         assertEquals(null, outputData);
+        
+        elevatorSystem.closeSockets();
+        Globals.sleep(500);
     }
 }
