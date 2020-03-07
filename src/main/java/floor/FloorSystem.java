@@ -17,7 +17,7 @@ public class FloorSystem {
     private int sleepTime;
 
     public static void main(String args[]) {
-        new FloorSystem("/floorData.txt", 5000).run();
+        new FloorSystem("/data.txt", 5000).run();
     }
 
     public FloorSystem(final String filename, final int sleepTime) {

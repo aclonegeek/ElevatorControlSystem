@@ -24,12 +24,11 @@ Important notes:
 ===============
 === RUNNING ===
 ===============
-- Program:
-  - Open src/main/java/core/Main.java and Run.
-  - Alternatively:
-    - Open src/main/java/core/Scheduler.java and Run.
-    - Open src/main/java/core/ElevatorSystem.java and Run.
-    - Open src/main/java/core/FloorSystem.java and Run.
+- To run, launch the following programs in order:
+    1. Scheduler.java (src/main/scheduler/Scheduler.java)
+    2. ElevatorSystem.java (src/main/elevator/ElevatorSystem.java)
+    3. FloorSystem.java (src/main/floor/FloorSystem.java)
+    This will run through the data specified in data.txt.
 - Tests: In Eclipse, right click on the /src/test/java folder on the Package Explorer pane and click Run As > JUnit Test.
   - Note: Each test must be run individually (right click on the test file in Eclipse and click Run As > JUnit Test).
 
@@ -74,7 +73,7 @@ Important notes:
 - src/test/java/scheduler/
     - BestElevatorTest.java
     - SchedulerTest.java
-- src/main/resources/floorData.txt and src/test/resources/floorData.txt
+- src/main/resources/data.txt and src/test/resources/data.txt
   - This contains the test data (a sample floor input file) used by the floor subsystem and floor reader.
 - src/main/resources/floorSystemTestData.txt and src/test/resources/floorSystemTestData.txt
 - src/main/resources/elevatorSystemTestData.txt and src/test/resources/elevatorSystemTestData.txt
