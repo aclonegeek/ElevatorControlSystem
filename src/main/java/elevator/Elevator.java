@@ -1,10 +1,13 @@
 package elevator;
 
+import java.util.ArrayList;
+
 import global.Globals;
 
 public class Elevator {
     private final ElevatorSubsystem elevatorSubsystem;
     private final ElevatorSystem elevatorSystem;
+    private ArrayList<ArrivalSensor> arrivalSensors;
 
     public static enum Request {
         REGISTER, READY, OPEN_DOORS, STATE_CHANGED;
@@ -15,10 +18,13 @@ public class Elevator {
     public Elevator(final int elevatorId, final ElevatorSystem elevatorSystem) {
         this.elevatorSystem = elevatorSystem;
         this.elevatorSubsystem = new ElevatorSubsystem(elevatorId, elevatorSystem);
+        this.arrivalSensors = new ArrayList<>();
 
         // Create arrival sensors for each floor.
         for (int i = 0; i < Globals.MAX_FLOORS; i++) {
-            new Thread(new ArrivalSensor(i, this.elevatorSubsystem)).start();
+            final ArrivalSensor arrivalSensor = new ArrivalSensor(i, this.elevatorSubsystem);
+            this.arrivalSensors.add(arrivalSensor);
+            new Thread(arrivalSensor).start();
         }
 
         new Thread(this.elevatorSubsystem).start();
@@ -33,10 +39,11 @@ public class Elevator {
      * Then return a response:
      * sendData[0] signifies the data is from an Elevator.
      * sendData[1] is the id of the Elevator.
+     * sendData[2] is the serialized ElevatorResponse.
      * sendData[3] is the serialized ElevatorState.
      * sendData[4] is the serialized ElevatorResponse.
      */
-    public void processData(final byte[] receiveData) {
+    public byte[] processData(final byte[] receiveData) {
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
         final ElevatorState previousState = this.elevatorSubsystem.getState();
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
@@ -50,10 +57,17 @@ public class Elevator {
             sendData[4] = (byte) response.ordinal();
 
             this.elevatorSystem.sendData(sendData);
+            return sendData;
         }
+        
+        return null;
     }
 
     public ElevatorSubsystem getSubsystem() {
         return this.elevatorSubsystem;
+    }
+    
+    public ArrayList<ArrivalSensor> getArrivalSensors() {
+        return this.arrivalSensors;
     }
 }

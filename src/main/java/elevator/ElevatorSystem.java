@@ -15,13 +15,8 @@ public class ElevatorSystem {
     private DatagramSocket receiveSocket, sendSocket;
     private boolean sendingData;
 
-    public static void main(final String args[]) {
-        final ElevatorSystem elevatorSystem = new ElevatorSystem(4);
-        elevatorSystem.registerElevators();
-
-        while (true) {
-            elevatorSystem.receiveData();
-        }
+    public static void main(String args[]) {
+         new ElevatorSystem(Globals.MAX_ELEVATORS).run();
     }
 
     public ElevatorSystem(final int numOfElevators) {
@@ -42,6 +37,14 @@ public class ElevatorSystem {
         }
 
         this.sendingData = false;
+    }
+    
+    public void run() {
+        this.registerElevators();
+
+        while (true) {
+            this.receiveData();
+        }
     }
 
     /*
@@ -141,5 +144,9 @@ public class ElevatorSystem {
         } catch (final InterruptedException e) {
             System.err.println(e);
         }
+    }
+    
+    public ArrayList<Elevator> getElevators() {
+        return this.elevators;
     }
 }

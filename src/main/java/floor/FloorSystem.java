@@ -9,17 +9,20 @@ import java.util.Arrays;
 
 import global.Globals;
 
-class FloorSystem {
+public class FloorSystem {
     private DatagramSocket sendSocket;
     private FloorReader floorReader;
     private ArrayList<Floor> floors;
     private ArrayList<FloorData> requests;
+    private int sleepTime;
 
-    public static void main(final String args[]) {
-        new FloorSystem("/floorData.txt").run();
+    public static void main(String args[]) {
+        new FloorSystem("/floorData.txt", 5000).run();
     }
 
-    public FloorSystem(final String filename) {
+    public FloorSystem(final String filename, final int sleepTime) {
+        this.sleepTime = sleepTime;
+        
         try {
             this.sendSocket = new DatagramSocket();
             this.floorReader = new FloorReader();
@@ -39,7 +42,7 @@ class FloorSystem {
         }
     }
 
-    private void run() {
+    public void run() {
         // Simulate a Floor handling the next request.
         // TODO: Handle requests in order based on their timestamp.
         while (requests.size() > 0) {
@@ -56,8 +59,8 @@ class FloorSystem {
             sendData[3] = (byte) request.getDestination();
             sendData[4] = (byte) request.getButtonState().ordinal();
             this.sendData(sendData);
-
-            Globals.sleep(5000);
+            
+            Globals.sleep(sleepTime);
         }
     }
 

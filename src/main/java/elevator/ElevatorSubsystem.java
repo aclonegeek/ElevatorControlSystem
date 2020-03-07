@@ -114,6 +114,10 @@ public class ElevatorSubsystem implements Runnable {
         // For now, there are no errors.
         return ElevatorResponse.SUCCESS;
     }
+    
+    public void setCurrentHeight(final int height) {
+        this.currentHeight = height;
+    }
 
     public int getElevatorId() {
         return this.elevatorId;
@@ -121,6 +125,10 @@ public class ElevatorSubsystem implements Runnable {
 
     public int getCurrentHeight() {
         return this.currentHeight;
+    }
+    
+    public int getCurrentFloor() {
+        return  this.currentHeight / Globals.FLOOR_HEIGHT;
     }
 
     public ElevatorState getState() {
