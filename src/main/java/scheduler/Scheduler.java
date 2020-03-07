@@ -176,6 +176,8 @@ public class Scheduler {
                 new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
 
         this.send(packet);
+        
+        this.elevatorStatuses.get(id).getDestinations().remove(0);
     }
 
     // TODO: Move this to a utility class?

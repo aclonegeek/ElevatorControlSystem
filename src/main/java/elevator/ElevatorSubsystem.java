@@ -108,6 +108,8 @@ public class ElevatorSubsystem implements Runnable {
             this.state = ElevatorState.MOVING_DOOR_CLOSED;
             break;
         }
+        
+        System.out.println("Elevator " + this.elevatorId + " state updated: " + this.state);
 
         // For now, there are no errors.
         return ElevatorResponse.SUCCESS;

@@ -35,8 +35,6 @@ class FloorSystem {
             // Read in FloorData from file.
             this.floorReader = new FloorReader();
             this.requests = this.floorReader.readFile(this.getClass().getResource(filename).getFile());
-            
-            System.out.println(requests);
         } catch (SocketException e) {
             System.err.println(e);
             System.exit(1);
@@ -61,7 +59,7 @@ class FloorSystem {
             sendData[4] = (byte) request.getButtonState().ordinal();
             this.sendData(sendData);
             
-            Globals.sleep(1000);
+            Globals.sleep(5000);
         }
     }
 
