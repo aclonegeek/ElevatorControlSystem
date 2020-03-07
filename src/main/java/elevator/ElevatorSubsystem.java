@@ -63,7 +63,7 @@ public class ElevatorSubsystem implements Runnable {
                 this.elevatorSystem.sendData(sendData);
 
                 break;
-            case IDLE_DOOR_CLOSED:
+            case DOOR_CLOSED_FOR_IDLING:
                 sentReady = false;
 
                 // Don't send another request to open the doors.
@@ -80,7 +80,7 @@ public class ElevatorSubsystem implements Runnable {
                 waitingForDoorsToOpen = true;
 
                 break;
-            case MOVING_DOOR_CLOSED:
+            case DOOR_CLOSED_FOR_MOVING:
                 break;
             }
         }
@@ -99,13 +99,13 @@ public class ElevatorSubsystem implements Runnable {
             this.state = ElevatorState.MOVING_DOWN;
             break;
         case STOP_MOVING:
-            this.state = ElevatorState.IDLE_DOOR_CLOSED;
+            this.state = ElevatorState.DOOR_CLOSED_FOR_IDLING;
             break;
         case OPEN_DOORS:
             this.state = ElevatorState.IDLE_DOOR_OPEN;
             break;
         case CLOSE_DOORS:
-            this.state = ElevatorState.MOVING_DOOR_CLOSED;
+            this.state = ElevatorState.DOOR_CLOSED_FOR_MOVING;
             break;
         }
         

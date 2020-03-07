@@ -240,7 +240,7 @@ public class Scheduler {
         } else if (state == ButtonState.DOWN) {
             return ElevatorState.MOVING_DOWN;
         } else {
-            return ElevatorState.IDLE_DOOR_CLOSED;
+            return ElevatorState.DOOR_CLOSED_FOR_IDLING;
         }
     }
 
@@ -264,7 +264,7 @@ public class Scheduler {
             int bestStopsBetween = getStopsBetween(this.elevatorStatuses.get(bestElevatorID), floor);
 
             // Best elevator is idle.
-            if (tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_CLOSED ||
+            if (tempElevatorStatus.getState() == ElevatorState.DOOR_CLOSED_FOR_IDLING ||
                     tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
                 bestElevatorID = tempElevatorID;
                 break;
