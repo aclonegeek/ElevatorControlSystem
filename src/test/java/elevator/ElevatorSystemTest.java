@@ -5,7 +5,9 @@ import scheduler.Scheduler;
 
 import java.util.ArrayList;
 
-import floor.FloorSystem;
+import classes.RunnableElevatorSystem;
+import classes.RunnableFloorSystem;
+import classes.RunnableScheduler;
 import global.Globals;
 
 public class ElevatorSystemTest extends TestCase {
@@ -45,53 +47,5 @@ public class ElevatorSystemTest extends TestCase {
         assertEquals(7, elevators.get(1).getSubsystem().getCurrentFloor());
         assertEquals(12, elevators.get(2).getSubsystem().getCurrentFloor());
         assertEquals(9, elevators.get(3).getSubsystem().getCurrentFloor());
-    }
-
-    private class RunnableScheduler implements Runnable {
-        final Scheduler scheduler;
-
-        public RunnableScheduler() {
-            this.scheduler = new Scheduler();
-        }
-
-        public void run() {
-            this.scheduler.run();
-        }
-        
-        public Scheduler getScheduler() {
-            return this.scheduler;
-        }
-    }
-
-    private class RunnableElevatorSystem implements Runnable {
-        final ElevatorSystem elevatorSystem;
-
-        public RunnableElevatorSystem(final int numOfElevators) {
-            this.elevatorSystem = new ElevatorSystem(numOfElevators);
-        }
-
-        public void run() {
-            this.elevatorSystem.run();
-        }
-
-        public ElevatorSystem getElevatorSystem() {
-            return this.elevatorSystem;
-        }
-    }
-
-    private class RunnableFloorSystem implements Runnable {
-        final FloorSystem floorSystem;
-
-        public RunnableFloorSystem(final String filename, final int sleepTime) {
-            this.floorSystem = new FloorSystem(filename, sleepTime);
-        }
-
-        public void run() {
-            this.floorSystem.run();
-        }
-        
-        public FloorSystem getFloorSystem() {
-            return this.floorSystem;
-        }
     }
 }
