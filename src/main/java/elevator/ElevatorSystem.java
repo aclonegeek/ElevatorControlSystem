@@ -53,7 +53,7 @@ public class ElevatorSystem {
      * sendData[1] is the id of the elevator.
      * sendData[2] is the Request type.
      */
-    public void registerElevators() {
+    private void registerElevators() {
         for (final Elevator elevator : this.elevators) {
             // Send packet to Scheduler to register Elevator.
             final byte[] sendData = new byte[3];
@@ -88,7 +88,7 @@ public class ElevatorSystem {
 
     // Receive data from Scheduler.
     // Forward this event to the corresponding Elevator.
-    public void receiveData() {
+    private void receiveData() {
         // Receive data back from Scheduler.
         final byte receiveData[] = new byte[4];
         final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
