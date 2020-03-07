@@ -16,7 +16,7 @@ import floor.FloorData.ButtonState;
 import global.Globals;
 
 /**
- * Coordinates the elevator and floor subsystems.
+ * Coordinates elevators and floors.
  */
 public class Scheduler {
     public static enum SchedulerState {
@@ -180,7 +180,11 @@ public class Scheduler {
         this.elevatorStatuses.get(id).getDestinations().remove(0);
     }
 
-    // TODO: Move this to a utility class?
+    /**
+     * Send a {@link DatagramPacket} to a port.
+     *
+     * @param packet the {@link DatagramPacket} to send.
+     */
     private void send(final DatagramPacket packet) {
         System.out.println(
                 "Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()) + "\n");
@@ -212,26 +216,10 @@ public class Scheduler {
      *
      * @param id the {@link Elevator}'s id
      */
-    public void registerElevator(final int id) {
+    private void registerElevator(final int id) {
         System.out.println("Registering elevator " + id + ".");
         // All elevators start at the ground floor.
         this.elevatorStatuses.put(id, new ElevatorStatus(ElevatorState.IDLE_DOOR_OPEN, 0));
-    }
-
-    /**
-     * Returns the closest elevator to the specified floor.
-     *
-     * @return the ID and number of floors to travel for the {@link Elevator}
-     *         closest to the specified floor.
-     */
-    public ElevatorState checkDirection(final ButtonState state) {
-        if (state == ButtonState.UP) {
-            return ElevatorState.MOVING_UP;
-        } else if (state == ButtonState.DOWN) {
-            return ElevatorState.MOVING_DOWN;
-        } else {
-            return ElevatorState.DOOR_CLOSED_FOR_IDLING;
-        }
     }
 
     // TODO: Change ElevatorState to ElevatorAction.
@@ -299,6 +287,21 @@ public class Scheduler {
         return new BestElevator(bestElevatorID, Math.abs(distance), direction);
     }
 
+    /**
+     * Returns the corresponding {@link ElevatorState} for a given {@link ButtonState}.
+     *
+     * @return the corresponding {@link ElevatorState} for a given {@link ButtonState}
+     */
+    private ElevatorState checkDirection(final ButtonState state) {
+        if (state == ButtonState.UP) {
+            return ElevatorState.MOVING_UP;
+        } else if (state == ButtonState.DOWN) {
+            return ElevatorState.MOVING_DOWN;
+        } else {
+            return ElevatorState.DOOR_CLOSED_FOR_IDLING;
+        }
+    }
+
     private int getDistanceBetween(final int bestElevatorID, final int floor) {
         return Math.abs(this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor);
     }
@@ -315,6 +318,11 @@ public class Scheduler {
         return floorsBetween;
     }
 
+    /* METHODS USED FOR TESTING */
+    public SchedulerState getState() {
+        return this.state;
+    }
+
     public HashMap<Integer, ElevatorStatus> getElevatorStatuses() {
         return this.elevatorStatuses;
     }
@@ -322,13 +330,9 @@ public class Scheduler {
     public void addElevatorStatus(final int elevatorID, final ElevatorStatus elevatorStatus) {
         this.elevatorStatuses.put(elevatorID, elevatorStatus);
     }
-    
+
     public void setElevatorStatusFloor(final int elevatorID, final int floor) {
         this.elevatorStatuses.get(elevatorID).setCurrentFloor(floor);
-    }
-
-    public SchedulerState getState() {
-        return this.state;
     }
 }
 
