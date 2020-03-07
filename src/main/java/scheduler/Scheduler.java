@@ -146,6 +146,11 @@ public class Scheduler {
 
             this.moveElevator(id, direction);
             break;
+        case OPEN_DOORS:
+            this.openElevatorDoors(data[1]);
+            break;
+        case STATE_CHANGED:
+            break;
         case INVALID:
             break;
         default:
@@ -184,6 +189,14 @@ public class Scheduler {
             System.err.println(e);
             System.exit(1);
         }
+    }
+
+    private void openElevatorDoors(final int id) {
+        final byte reply[] =
+                { Globals.FROM_SCHEDULER, (byte) id, (byte) ElevatorAction.OPEN_DOORS.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+        this.send(packet);
     }
 
     private void closeElevatorDoors(final int id) {
