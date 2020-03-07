@@ -36,7 +36,7 @@ public class Elevator {
      * sendData[1] is the id of the Elevator.
      * sendData[2] is the serialized ElevatorResponse.
      */
-    public void processData(byte[] receiveData) {
+    public void processData(final byte[] receiveData) {
         // Parse action and destination floor from receiveData.
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
         

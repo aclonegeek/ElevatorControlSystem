@@ -102,7 +102,7 @@ public class ElevatorSystem {
     // Send data back to Scheduler.
     // This method is called by an Elevator thread after processing the data.
     // Synchronized so only one Elevator thread can interact with socket at a time.
-    public synchronized void sendData(byte[] sendData) {
+    public synchronized void sendData(final byte[] sendData) {
         try {
             // If another thread is currently sending data, then wait until it is done
             while (this.sendingData) {
