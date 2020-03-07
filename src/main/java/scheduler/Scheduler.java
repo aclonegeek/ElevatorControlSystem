@@ -52,7 +52,7 @@ public class Scheduler {
 
         while (true) {
             final DatagramPacket packet = this.receive();
-            this.handleMessage(packet.getData(), packet.getPort());
+            this.handleMessage(packet.getData());
         }
     }
 
@@ -70,7 +70,7 @@ public class Scheduler {
         return packet;
     }
 
-    private void handleMessage(final byte[] data, final int port) {
+    private void handleMessage(final byte[] data) {
         if (data.length == 0) {
             System.out.println("Received empty message.");
             return;
@@ -82,10 +82,10 @@ public class Scheduler {
 
         switch (data[0]) {
         case Globals.FROM_FLOOR:
-            this.handleFloorMessage(data, port);
+            this.handleFloorMessage(data);
             break;
         case Globals.FROM_ELEVATOR:
-            this.handleElevatorMessage(data, port);
+            this.handleElevatorMessage(data);
             break;
         case Globals.FROM_ARRIVAL_SENSOR:
             this.handleArrivalSensorMessage(data);
@@ -98,7 +98,7 @@ public class Scheduler {
         this.state = SchedulerState.WAITING;
     }
 
-    private void handleFloorMessage(final byte[] data, final int port) {
+    private void handleFloorMessage(final byte[] data) {
         System.out.println("Handling a floor message.");
 
         switch (Floor.Request.values[data[2]]) {
@@ -116,7 +116,7 @@ public class Scheduler {
         }
     }
 
-    private void handleElevatorMessage(final byte[] data, final int port) {
+    private void handleElevatorMessage(final byte[] data) {
         System.out.println("Handling an elevator message.");
 
         switch (Elevator.Request.values[data[2]]) {
