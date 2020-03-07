@@ -43,7 +43,7 @@ public class Elevator {
      * sendData[3] is the serialized ElevatorState.
      * sendData[4] is the serialized ElevatorResponse.
      */
-    public void processData(final byte[] receiveData) {
+    public byte[] processData(final byte[] receiveData) {
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
         final ElevatorState previousState = this.elevatorSubsystem.getState();
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
@@ -57,7 +57,10 @@ public class Elevator {
             sendData[4] = (byte) response.ordinal();
 
             this.elevatorSystem.sendData(sendData);
+            return sendData;
         }
+        
+        return null;
     }
 
     public ElevatorSubsystem getSubsystem() {
