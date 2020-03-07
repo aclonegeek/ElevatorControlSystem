@@ -88,8 +88,13 @@ Important notes:
 === ITERATION 3 ===
 ===================
 Code:
-    - Networking: Randy and Layne
+    - Scheduler Networking: Randy
+    - ElevatorSystem Networking: Layne
+    - FloorSystem Networking: Layne and Randy
+    - Elevator Movement and ArrivalSensor: Layne
+      - Scheduler Counterpart: Randy
     - Scheduler Algorithm: Tan and Galen
+    - Testing: Layne, Randy, and Galen
 Diagrams:
     - Class Diagram: Mike
     - Sequence Diagram: Mike
