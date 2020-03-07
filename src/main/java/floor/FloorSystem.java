@@ -22,7 +22,7 @@ public class FloorSystem {
 
     public FloorSystem(final String filename, final int sleepTime) {
         this.sleepTime = sleepTime;
-        
+
         try {
             this.sendSocket = new DatagramSocket();
             this.floorReader = new FloorReader();
@@ -59,7 +59,10 @@ public class FloorSystem {
             sendData[3] = (byte) request.getDestination();
             sendData[4] = (byte) request.getButtonState().ordinal();
             this.sendData(sendData);
-            
+
+            System.out.println("Floor " + request.getFloor() + ": sent request to go " + request.getButtonState()
+                    + " to floor " + request.getDestination());
+
             Globals.sleep(sleepTime);
         }
     }
@@ -69,7 +72,8 @@ public class FloorSystem {
         final DatagramPacket sendPacket =
                 new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
-        System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
+        // System.out.println("Sending to port " + sendPacket.getPort() + ": " +
+        // Arrays.toString(sendData));
 
         try {
             this.sendSocket.send(sendPacket);
@@ -91,15 +95,15 @@ public class FloorSystem {
 //
 //        System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
     }
-    
+
     public ArrayList<Floor> getFloors() {
         return this.floors;
     }
-    
+
     public ArrayList<FloorData> getRequests() {
         return this.requests;
     }
-    
+
     /* METHODS USED FOR TESTING */
     public void closeSockets() {
         this.sendSocket.close();

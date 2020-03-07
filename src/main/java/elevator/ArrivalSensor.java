@@ -48,12 +48,11 @@ public class ArrivalSensor implements Runnable {
     public void run() {
         while (true) {
             final int elevatorFloor = this.elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
-            final boolean elevatorMoving = elevator.getState() == ElevatorState.MOVING_UP ||
-                    elevator.getState() == ElevatorState.MOVING_DOWN;
+            final boolean elevatorMoving = elevator.getState() == ElevatorState.MOVING_UP
+                    || elevator.getState() == ElevatorState.MOVING_DOWN;
 
             if (elevatorMoving && elevatorFloor == this.floor) {
-                System.out.println("Floor " + floor + " arrival sensor has detected elevator: " +
-                        elevator.getElevatorId());
+                System.out.println("Floor " + floor + ": detected elevator " + elevator.getElevatorId());
 
                 this.detectedElevator = true;
 
@@ -66,8 +65,9 @@ public class ArrivalSensor implements Runnable {
                 final DatagramPacket sendPacket =
                         new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
-                System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": " +
-                        Arrays.toString(sendData));
+                // System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() +
+                // ": " +
+                // Arrays.toString(sendData));
                 try {
                     this.sendSocket.send(sendPacket);
                 } catch (final IOException e) {
@@ -87,7 +87,7 @@ public class ArrivalSensor implements Runnable {
     public boolean hasDetectedElevator() {
         return this.detectedElevator;
     }
-    
+
     public void closeSockets() {
         this.sendSocket.close();
     }
