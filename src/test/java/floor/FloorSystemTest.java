@@ -1,5 +1,7 @@
 package floor;
 
-public class FloorSystemTest {
+import junit.framework.TestCase;
 
+public class FloorSystemTest extends TestCase {
+    // TODO
 }
