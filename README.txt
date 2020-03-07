@@ -24,10 +24,14 @@ Important notes:
 ===============
 === RUNNING ===
 ===============
-- Program: Open src/main/java/core/Main.java and Run.
+- Program:
+  - Open src/main/java/core/Main.java and Run.
+  - Alternatively:
+    - Open src/main/java/core/Scheduler.java and Run.
+    - Open src/main/java/core/ElevatorSystem.java and Run.
+    - Open src/main/java/core/FloorSystem.java and Run.
 - Tests: In Eclipse, right click on the /src/test/java folder on the Package Explorer pane and click Run As > JUnit Test.
-
-Each of the subsystem tests (FloorSubsystemTest, ElevatorSubsystemTest, SchedulerTest) showcase the entire system in action.
+  - Note: Each test must be run individually (right click on the test file in Eclipse and click Run As > JUnit Test).
 
 =============
 === FILES ===
@@ -35,39 +39,61 @@ Each of the subsystem tests (FloorSubsystemTest, ElevatorSubsystemTest, Schedule
 - src/main/java/core/
     - Main.java
 - src/main/java/elevator/
+    - ArrivalSensor.java
     - Elevator.java
     - ElevatorAction.java
-    - ElevatorData.java
-    - ElevatorEvent.java
     - ElevatorResponse.java
     - ElevatorState.java
+    - ElevatorSystem.java
     - ElevatorSubsystem.java
 - src/main/java/floor/
     - FloorData.java
       - Represents one entry in the floor subsystem input file as an object.
     - FloorReader.java
       - Handles reading the floor subsystem input files.
-    - FloorSubsystem.java
+    - Floor.java
+    - FloorSystem.java
 - src/main/java/scheduler/
+    - ElevatorStatus.java
     - Scheduler.java
+- src/main/java/global/
+    - Globals.java
+- src/test/java/classes/
+    - RunnableElevatorSystem.java
+    - RunnableFloorSystem.java
+    - RunnableScheduler.java
 - src/test/java/elevator/
-    - ElevatorDataTest.java
+    - ArrivalSensorTest.java
+    - ElevatorTest.java
+    - ElevatorSystem.java
     - ElevatorSubsystemTest.java
 - src/test/java/floor/
     - FloorDataTest.java
     - FloorReaderTest.java
-    - FloorSubsystemTest.java
+    - FloorSystemTest.java
 - src/test/java/scheduler/
+    - BestElevatorTest.java
     - SchedulerTest.java
 - src/main/resources/floorData.txt and src/test/resources/floorData.txt
   - This contains the test data (a sample floor input file) used by the floor subsystem and floor reader.
+- src/main/resources/floorSystemTestData.txt and src/test/resources/floorSystemTestData.txt
+- src/main/resources/elevatorSystemTestData.txt and src/test/resources/elevatorSystemTestData.txt
 - uml/ClassDiagram.pdf
 - uml/SequenceDiagram.pdf
-- uml/StateMachineDiagram.pdf
 
 ======================
 === WORK BREAKDOWN ===
 ======================
+===================
+=== ITERATION 3 ===
+===================
+Code:
+    - Networking: Randy and Layne
+    - Scheduler Algorithm: Tan and Galen
+Diagrams:
+    - Class Diagram: Mike
+    - Sequence Diagram: Mike
+
 ===================
 === ITERATION 2 ===
 ===================
