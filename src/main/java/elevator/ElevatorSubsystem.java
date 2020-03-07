@@ -109,7 +109,10 @@ public class ElevatorSubsystem implements Runnable {
             break;
         }
 
-        System.out.println("Elevator " + this.elevatorId + " state updated: " + this.state);
+        System.out.println("Elevator " + this.elevatorId + ": state changed to " + this.state);
+        if (this.state == ElevatorState.DOOR_CLOSED_FOR_IDLING) {
+            System.out.println("Elevator " + this.elevatorId + ": arrived at floor " + this.getCurrentFloor());
+        }
 
         // For now, there are no errors.
         return ElevatorResponse.SUCCESS;
