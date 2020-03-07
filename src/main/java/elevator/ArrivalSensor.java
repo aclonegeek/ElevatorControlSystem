@@ -65,7 +65,7 @@ public class ArrivalSensor implements Runnable {
                     System.exit(1);
                 }
                 
-                // Wait longer here so it doesn't keep sending data to Scheduler.
+                // Sleep longer here so it doesn't keep sending data to Scheduler.
                 Globals.sleep(1000);
             }
 
