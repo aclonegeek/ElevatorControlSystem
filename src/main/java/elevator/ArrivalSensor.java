@@ -22,10 +22,12 @@ public class ArrivalSensor implements Runnable {
     private final int floor;
     private final ElevatorSubsystem elevator;
     private DatagramSocket sendSocket;
+    private boolean detectedElevator;
 
     public ArrivalSensor(final int floor, final ElevatorSubsystem elevator) {
         this.floor = floor;
         this.elevator = elevator;
+        this.detectedElevator = false;
 
         try {
             this.sendSocket = new DatagramSocket();
@@ -37,7 +39,6 @@ public class ArrivalSensor implements Runnable {
 
     @Override
     public void run() {
-
         while (true) {
             final int elevatorFloor = this.elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
             final boolean elevatorMoving = elevator.getState() == ElevatorState.MOVING_UP
@@ -46,6 +47,8 @@ public class ArrivalSensor implements Runnable {
             if (elevatorMoving && elevatorFloor == this.floor) {
                 System.out.println("Floor " + floor + " arrival sensor has detected elevator: "
                         + elevator.getElevatorId());
+                
+                this.detectedElevator = true;
 
                 // Send data to Scheduler. If the Elevator should stop at this floor, the
                 // Scheduler will then notify the ElevatorSystem.
@@ -71,5 +74,9 @@ public class ArrivalSensor implements Runnable {
 
             Globals.sleep(50);
         }
+    }
+    
+    public boolean hasDetectedElevator() {
+        return this.detectedElevator;
     }
 }
