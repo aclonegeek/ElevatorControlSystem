@@ -1,12 +1,7 @@
 package elevator;
 
-import java.time.LocalTime;
-
-import floor.FloorData;
-import floor.FloorSubsystem;
 import global.Globals;
 import junit.framework.TestCase;
-import scheduler.Scheduler;
 
 public class ElevatorSubsystemTest extends TestCase {
     public void testStates() {
