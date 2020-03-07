@@ -8,20 +8,27 @@ import java.util.Arrays;
 
 import global.Globals;
 
-/*
- * Continually checks to see if the Elevator is in range.
- * If so, sends data to the Scheduler to check whether it should stop at this floor.
- * If the Elevator is scheduled to stop here, the Scheduler will notify the ElevatorSystem.
+/**
+ * Determines if an {@link Elevator} is within range.
+ *
+ * Continually checks to see if the {@link Elevator} is in range. If so, sends
+ * data to the {@link Scheduler} to check whether it should stop at this floor.
+ * If the {@link Elevator} is scheduled to stop here, the {@link Scheduler} will
+ * notify the {@link ElevatorSystem}.
  *
  * sendData format is as follows:
- * sendData[0] signifies the data is from an ArrivalSensor.
- * sendData[1] is the id of the Elevator.
+ * sendData[0] signifies the data is from an {@link ArrivalSensor}.
+ * sendData[1] is the id of the {@link Elevator}.
  * sendData[2] is the floor.
  */
 public class ArrivalSensor implements Runnable {
     private final int floor;
     private final ElevatorSubsystem elevator;
     private DatagramSocket sendSocket;
+
+    // Used for testing purposes. It denotes if an ArrivalSensor has detected an
+    // elevator - if so, it stays true, even when the elevator moves out of
+    // detection range.
     private boolean detectedElevator;
 
     public ArrivalSensor(final int floor, final ElevatorSubsystem elevator) {
@@ -41,13 +48,13 @@ public class ArrivalSensor implements Runnable {
     public void run() {
         while (true) {
             final int elevatorFloor = this.elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
-            final boolean elevatorMoving = elevator.getState() == ElevatorState.MOVING_UP
-                    || elevator.getState() == ElevatorState.MOVING_DOWN;
+            final boolean elevatorMoving = elevator.getState() == ElevatorState.MOVING_UP ||
+                    elevator.getState() == ElevatorState.MOVING_DOWN;
 
             if (elevatorMoving && elevatorFloor == this.floor) {
-                System.out.println("Floor " + floor + " arrival sensor has detected elevator: "
-                        + elevator.getElevatorId());
-                
+                System.out.println("Floor " + floor + " arrival sensor has detected elevator: " +
+                        elevator.getElevatorId());
+
                 this.detectedElevator = true;
 
                 // Send data to Scheduler. If the Elevator should stop at this floor, the
@@ -59,8 +66,8 @@ public class ArrivalSensor implements Runnable {
                 final DatagramPacket sendPacket =
                         new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
-                System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": "
-                        + Arrays.toString(sendData));
+                System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": " +
+                        Arrays.toString(sendData));
                 try {
                     this.sendSocket.send(sendPacket);
                 } catch (final IOException e) {
@@ -75,7 +82,8 @@ public class ArrivalSensor implements Runnable {
             Globals.sleep(50);
         }
     }
-    
+
+    /* METHODS USED FOR TESTING */
     public boolean hasDetectedElevator() {
         return this.detectedElevator;
     }
