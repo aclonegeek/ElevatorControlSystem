@@ -96,13 +96,7 @@ public class ElevatorSystem {
             System.exit(1);
         }
 
-        // Remove trailing buffer 0s from receiveData.
-        final byte trimmedData[] = new byte[receivePacket.getLength()];
-        System.arraycopy(receivePacket.getData(), receivePacket.getOffset(), trimmedData, 0,
-                receivePacket.getLength());
-
-        // trimmedData[1] is an elevatorId. Forward data to the corresponding elevator.
-        this.elevators.get(trimmedData[1]).processData(trimmedData);
+        this.elevators.get(receiveData[1] - 1).processData(receiveData);
     }
 
     // Send data back to Scheduler.
