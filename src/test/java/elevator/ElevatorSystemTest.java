@@ -43,13 +43,16 @@ public class ElevatorSystemTest extends TestCase {
         Globals.sleep(10000);
 
         // Verify each Elevator ends up at the correct floor and in the correct state.
+        // Elevator at floor 0 moved UP to floor 2, then UP to its destination at floor 4.
         assertEquals(4, elevators.get(0).getSubsystem().getCurrentFloor());
-        assertEquals(7, elevators.get(1).getSubsystem().getCurrentFloor());
-        assertEquals(12, elevators.get(2).getSubsystem().getCurrentFloor());
-        assertEquals(9, elevators.get(3).getSubsystem().getCurrentFloor());
         
-        runnableFloorSystem.getFloorSystem().closeSockets();
-        runnableElevatorSystem.getElevatorSystem().closeSockets();
-        runnableScheduler.getScheduler().closeSockets();
+        // Elevator at floor 5 moved DOWN to floor 4, then UP to its destination at floor 6.
+        assertEquals(6, elevators.get(1).getSubsystem().getCurrentFloor());
+        
+        // Elevator at floor 10 moved UP to floor 12, then DOWN to its destination at floor 9.
+        assertEquals(9, elevators.get(2).getSubsystem().getCurrentFloor());
+        
+        // Elevator at floor 15 moved DOWN to floor 13, then DOWN to its destination at floor 10.
+        assertEquals(10, elevators.get(3).getSubsystem().getCurrentFloor());
     }
 }
