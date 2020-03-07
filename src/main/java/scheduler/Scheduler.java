@@ -106,7 +106,7 @@ public class Scheduler {
             final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
             this.elevatorStatuses.get(bestElevator.id).addDestination(data[3]);
-            this.moveElevator(bestElevator.id, bestElevator.direction);
+            this.sendElevatorAction(bestElevator.id, bestElevator.direction);
             break;
         case INVALID:
             break;
@@ -131,7 +131,7 @@ public class Scheduler {
                 break;
             }
 
-            this.closeElevatorDoors(id);
+            this.sendElevatorAction(id, ElevatorAction.CLOSE_DOORS);
 
             // TODO: Tidy this up.
             final int currentFloor = this.elevatorStatuses.get(id).getCurrentFloor();
@@ -140,11 +140,11 @@ public class Scheduler {
 
             final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
 
-            this.moveElevator(id, direction);
+            this.sendElevatorAction(id, direction);
         }
             break;
         case OPEN_DOORS:
-            this.openElevatorDoors(data[1]);
+            this.sendElevatorAction(data[1], ElevatorAction.OPEN_DOORS);
             break;
         case STATE_CHANGED: {
             final int id = data[1];
@@ -194,24 +194,15 @@ public class Scheduler {
         }
     }
 
-    private void openElevatorDoors(final int id) {
+    /**
+     * Sends an {@link Elevator} an {@link ElevatorAction}.
+     *
+     * @param id     the {@link Elevator}'s id
+     * @param action the {@link ElevatorAction} for the {@link Elevator} to perform
+     */
+    private void sendElevatorAction(final int id, final ElevatorAction action) {
         final byte reply[] =
-                { Globals.FROM_SCHEDULER, (byte) id, (byte) ElevatorAction.OPEN_DOORS.ordinal() };
-        final DatagramPacket packet =
-                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
-        this.send(packet);
-    }
-
-    private void closeElevatorDoors(final int id) {
-        final byte reply[] =
-                { Globals.FROM_SCHEDULER, (byte) id, (byte) ElevatorAction.CLOSE_DOORS.ordinal() };
-        final DatagramPacket packet =
-                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
-        this.send(packet);
-    }
-
-    private void moveElevator(final int id, final ElevatorAction direction) {
-        final byte reply[] = { Globals.FROM_SCHEDULER, (byte) id, (byte) direction.ordinal() };
+                { Globals.FROM_SCHEDULER, (byte) id, (byte) action.ordinal() };
         final DatagramPacket packet =
                 new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
         this.send(packet);
