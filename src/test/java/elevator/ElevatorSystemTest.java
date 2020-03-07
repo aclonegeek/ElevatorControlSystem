@@ -51,6 +51,5 @@ public class ElevatorSystemTest extends TestCase {
         runnableFloorSystem.getFloorSystem().closeSockets();
         runnableElevatorSystem.getElevatorSystem().closeSockets();
         runnableScheduler.getScheduler().closeSockets();
-        Globals.sleep(500);
     }
 }

@@ -28,6 +28,5 @@ public class ArrivalSensorTest extends TestCase {
         }
         
         elevatorSystem.closeSockets();
-        Globals.sleep(500);
     }
 }

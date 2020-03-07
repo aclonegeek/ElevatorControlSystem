@@ -24,7 +24,6 @@ public class ElevatorTest extends TestCase {
         assertEquals(ElevatorResponse.SUCCESS.ordinal(), outputData[4]);
         
         elevatorSystem.closeSockets();
-        Globals.sleep(500);
     }
     
     public void testProcessDataWithoutStateChange() {
@@ -42,6 +41,5 @@ public class ElevatorTest extends TestCase {
         assertEquals(null, outputData);
         
         elevatorSystem.closeSockets();
-        Globals.sleep(500);
     }
 }
