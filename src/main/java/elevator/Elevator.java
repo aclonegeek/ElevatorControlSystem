@@ -30,18 +30,22 @@ public class Elevator {
         new Thread(this.elevatorSubsystem).start();
     }
 
-    /*
-     * Parse data and update ElevatorSystem state:
-     * receiveData[0] signifies the data is from the Scheduler.
+    /**
+     * Parses data and updates the {@link ElevatorSystem} state.
+     *
+     * @param receiveData the data sent from the {@link Scheduler}
+     * receiveData[0] signifies the data is from the {@link Scheduler}.
      * receiveData[1] is the id of the elevator.
-     * receiveData[2] is the serialized ElevatorAction.
+     * receiveData[2] is the serialized {@link ElevatorAction}.
      *
      * Then return a response:
-     * sendData[0] signifies the data is from an Elevator.
-     * sendData[1] is the id of the Elevator.
-     * sendData[2] is the serialized ElevatorResponse.
-     * sendData[3] is the serialized ElevatorState.
-     * sendData[4] is the serialized ElevatorResponse.
+     * sendData[0] signifies the data is from an {@link Elevator}.
+     * sendData[1] is the id of the {@link Elevator}.
+     * sendData[2] is the serialized Elevator.Request.
+     * sendData[3] is the serialized {@link ElevatorState}.
+     * sendData[4] is the serialized {@link ElevatorResponse}.
+     *
+     * @return the data sent back, or null if nothing sent back
      */
     public byte[] processData(final byte[] receiveData) {
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
@@ -59,14 +63,15 @@ public class Elevator {
             this.elevatorSystem.sendData(sendData);
             return sendData;
         }
-        
+
         return null;
     }
 
     public ElevatorSubsystem getSubsystem() {
         return this.elevatorSubsystem;
     }
-    
+
+    /* METHODS USED FOR TESTING */
     public ArrayList<ArrivalSensor> getArrivalSensors() {
         return this.arrivalSensors;
     }
