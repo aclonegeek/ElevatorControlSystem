@@ -12,7 +12,7 @@ public class FloorReaderTest extends TestCase {
     // Tests that the floor reader creates FloorData objects with the correct data.
     public void testFloorReader() {
         final FloorReader floorReader = new FloorReader();
-        final String path = this.getClass().getResource("/floorData.txt").getFile();
+        final String path = this.getClass().getResource("/data.txt").getFile();
         final ArrayList<FloorData> floorData = floorReader.readFile(path);
 
         assertEquals(2, floorData.get(0).getFloor());

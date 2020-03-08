@@ -96,7 +96,7 @@ Code:
     - Testing: Layne, Randy, and Galen
 Diagrams:
     - Class Diagram: Mike
-    - Sequence Diagram: Mike
+    - Sequence Diagram: Layne
 
 ===================
 === ITERATION 2 ===
