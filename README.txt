@@ -39,8 +39,6 @@ Important notes:
 =============
 === FILES ===
 =============
-- src/main/java/core/
-    - Main.java
 - src/main/java/elevator/
     - ArrivalSensor.java
     - Elevator.java
@@ -79,8 +77,7 @@ Important notes:
     - SchedulerTest.java
 - src/main/resources/data.txt and src/test/resources/data.txt
   - This contains the test data (a sample floor input file) used by the floor subsystem and floor reader.
-- src/main/resources/floorSystemTestData.txt and src/test/resources/floorSystemTestData.txt
-- src/main/resources/elevatorSystemTestData.txt and src/test/resources/elevatorSystemTestData.txt
+- src/test/resources/elevatorSystemTestData.txt
 - uml/ClassDiagram.pdf
 - uml/SequenceDiagram.pdf
 
