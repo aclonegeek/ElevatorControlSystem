@@ -46,8 +46,8 @@ public class SchedulerTest extends TestCase {
 
         // Verify each Elevator ends up at the correct floor and in the correct state.
         assertEquals(4, elevators.get(0).getSubsystem().getCurrentFloor());
-        assertEquals(7, elevators.get(1).getSubsystem().getCurrentFloor());
-        assertEquals(12, elevators.get(2).getSubsystem().getCurrentFloor());
-        assertEquals(9, elevators.get(3).getSubsystem().getCurrentFloor());
+        assertEquals(6, elevators.get(1).getSubsystem().getCurrentFloor());
+        assertEquals(9, elevators.get(2).getSubsystem().getCurrentFloor());
+        assertEquals(10, elevators.get(3).getSubsystem().getCurrentFloor());
     }
 }
