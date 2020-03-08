@@ -2,6 +2,10 @@
 === SYSC3303B PROJECT - GROUP 8 ===
 ===================================
 
+Reflection on how concurrency control at the scheduler changed from Iteration 2 to Iteration 3
+- Before, the Scheduler blocked on receiving an event from the Floor. After it did, the Elevator would take control to obtain the event, then free the Scheduler to receive more events from the floor.
+- Now, the Scheduler works in the same way, except that it blocks on the socket for receiving data. Once it obtains the data, it handles it, and then goes back to receiving.
+
 =========================
 === TABLE OF CONTENTS ===
 =========================
