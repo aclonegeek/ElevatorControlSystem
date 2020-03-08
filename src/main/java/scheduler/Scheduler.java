@@ -145,7 +145,6 @@ public class Scheduler {
 
             this.sendElevatorAction(id, ElevatorAction.CLOSE_DOORS);
 
-            // TODO: Tidy this up.
             final int currentFloor = this.elevatorStatuses.get(id).getCurrentFloor();
             final int destination = this.elevatorStatuses.get(id).getDestinations().get(0);
             final int distance = currentFloor - destination;
