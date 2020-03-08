@@ -29,8 +29,8 @@ Important notes:
     2. ElevatorSystem.java (src/main/elevator/ElevatorSystem.java)
     3. FloorSystem.java (src/main/floor/FloorSystem.java)
     This will run through the data specified in data.txt.
-- Tests: In Eclipse, right click on the /src/test/java folder on the Package Explorer pane and click Run As > JUnit Test.
-  - Note: Each test must be run individually (right click on the test file in Eclipse and click Run As > JUnit Test).
+- Tests (see IMPORTANT NOTE below): In Eclipse, right click on the /src/test/java folder on the Package Explorer pane and click Run As > JUnit Test.
+  - IMPORTANT NOTE: Each test (found in the src/test/java/ folder) must be run individually (right click on the test file in Eclipse and click Run As > JUnit Test) for the time being.
 
 =============
 === FILES ===
@@ -95,7 +95,7 @@ Code:
     - Scheduler Algorithm: Tan and Galen
     - Testing: Layne, Randy, and Galen
 Diagrams:
-    - Class Diagram: Mike
+    - Class Diagram: Mike and Randy
     - Sequence Diagram: Layne
 
 ===================
