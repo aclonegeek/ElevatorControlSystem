@@ -8,7 +8,9 @@ import java.util.ArrayList;
 
 import global.Globals;
 
-// Contains all Elevators/ElevatorSubsystems and handles networking with Scheduler.
+/**
+ * Contains all Elevators/ElevatorSubsystems and handles networking with {@link Scheduler}.
+ */
 public class ElevatorSystem {
     private final ArrayList<Elevator> elevators;
     private DatagramSocket receiveSocket, sendSocket;
@@ -26,7 +28,7 @@ public class ElevatorSystem {
             this.elevators.add(elevator);
         }
 
-        // Create sockets to send and receive data through.
+        // Create sockets to send and receive data.
         try {
             this.receiveSocket = new DatagramSocket(Globals.ELEVATOR_PORT);
             this.sendSocket = new DatagramSocket();
@@ -46,8 +48,9 @@ public class ElevatorSystem {
         }
     }
 
-    /*
-     * Register Elevators to Scheduler:
+    /**
+     * Register {@link Elevator}s with {@link Scheduler}
+     *
      * sendData[0] signifies the data is from an Elevator.
      * sendData[1] is the id of the elevator.
      * sendData[2] is the Request type.
@@ -86,8 +89,9 @@ public class ElevatorSystem {
         }
     }
 
-    // Receive data from Scheduler.
-    // Forward this event to the corresponding Elevator.
+    /**
+     * Receives data from Scheduler. Forward this event to the corresponding Elevator.
+     */
     private void receiveData() {
         // Receive data back from Scheduler.
         final byte receiveData[] = new byte[4];
@@ -104,9 +108,12 @@ public class ElevatorSystem {
         this.elevators.get(receiveData[1] - 1).processData(receiveData);
     }
 
-    // Send data back to Scheduler.
-    // This method is called by an Elevator thread after processing the data.
-    // Synchronized so only one Elevator thread can interact with socket at a time.
+    /**
+     * Sends data back to Scheduler.
+     *
+     * This method is called by an Elevator thread after processing the data.
+     * Synchronized so only one Elevator thread can interact with socket at a time.
+     */
     public synchronized void sendData(final byte[] sendData) {
         try {
             // If another thread is currently sending data, then wait until it is done
@@ -146,11 +153,11 @@ public class ElevatorSystem {
         }
     }
 
+    /* METHODS USED FOR TESTING */
     public ArrayList<Elevator> getElevators() {
         return this.elevators;
     }
 
-    /* METHODS USED FOR TESTING */
     public void closeSockets() {
         this.receiveSocket.close();
         this.sendSocket.close();

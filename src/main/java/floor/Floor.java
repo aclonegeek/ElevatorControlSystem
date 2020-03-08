@@ -2,9 +2,6 @@ package floor;
 
 import floor.FloorData.ButtonState;
 
-/**
- * Simulates the functionality of a particular floor.
- */
 public class Floor {
     private ButtonState buttonState;
     private final int floor;

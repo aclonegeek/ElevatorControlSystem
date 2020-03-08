@@ -70,6 +70,11 @@ public class Scheduler {
         return packet;
     }
 
+    /**
+     * Handles messages from the {@link Floor}, {@link Elevator}, and {@link ArrivalSensor}.
+     *
+     * @param data the message to parse
+     */
     private void handleMessage(final byte[] data) {
         if (data.length == 0) {
             System.out.println("Received empty message.");
@@ -102,6 +107,10 @@ public class Scheduler {
         System.out.println("Handling a floor message.");
 
         switch (Floor.Request.values[data[2]]) {
+        // data[1] - floor that made the request
+        // data[2] - floor request type
+        // data[3] - destination floor
+        // data[4] - button state (up or down)
         case REQUEST:
             final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
@@ -120,6 +129,8 @@ public class Scheduler {
     private void handleElevatorMessage(final byte[] data) {
         System.out.println("Handling an elevator message.");
 
+        // data[1] - elevator ID
+        // data[2] - Elevator.Request
         switch (Elevator.Request.values[data[2]]) {
         case REGISTER:
             this.registerElevator(data[1]);
@@ -147,6 +158,7 @@ public class Scheduler {
         case OPEN_DOORS:
             this.sendElevatorAction(data[1], ElevatorAction.OPEN_DOORS);
             break;
+        // data[3] - elevator state
         case STATE_CHANGED: {
             final int id = data[1];
             final ElevatorState state = ElevatorState.values[data[3]];
@@ -222,7 +234,14 @@ public class Scheduler {
         this.elevatorStatuses.put(id, new ElevatorStatus(ElevatorState.IDLE_DOOR_OPEN, 0));
     }
 
-    // TODO: Change ElevatorState to ElevatorAction.
+    /**
+     * Determines the best {@link Elevator} to travel to the specified {@link Floor}.
+     *
+     * @param floor the floor to go to
+     * @param state the direction to travel (up or down)
+     *
+     * @return the {@link BestElevator} for the job
+     */
     public BestElevator getBestElevator(final int floor, final ElevatorState state) {
         int bestElevatorID = -1;
         int tempElevatorID;
@@ -334,7 +353,7 @@ public class Scheduler {
     public void setElevatorStatusFloor(final int elevatorID, final int floor) {
         this.elevatorStatuses.get(elevatorID).setCurrentFloor(floor);
     }
-    
+
     public void closeSockets() {
         this.receiveSocket.close();
         this.sendSocket.close();
@@ -342,8 +361,8 @@ public class Scheduler {
 }
 
 /**
- * Represents the elevator that is closest to a specific floor, and how many
- * floors it must travel to reach it.
+ * Represents the elevator that the best to travel to a specific floor,
+ * how many floors it must travel to reach it, and in which direction.
  */
 final class BestElevator {
     public final int id;

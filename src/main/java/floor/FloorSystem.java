@@ -66,7 +66,11 @@ public class FloorSystem {
         }
     }
 
-    // Send data to Scheduler.
+    /**
+     * Sends data to the {@link Scheduler}.
+     *
+     * @param sendData the data to send
+     */
     public void sendData(final byte[] sendData) {
         final DatagramPacket sendPacket =
                 new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
@@ -95,6 +99,7 @@ public class FloorSystem {
 //        System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
     }
 
+    /* METHODS USED FOR TESTING */
     public ArrayList<Floor> getFloors() {
         return this.floors;
     }
@@ -103,7 +108,6 @@ public class FloorSystem {
         return this.requests;
     }
 
-    /* METHODS USED FOR TESTING */
     public void closeSockets() {
         this.sendSocket.close();
     }
