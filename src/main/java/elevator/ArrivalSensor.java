@@ -1,7 +1,5 @@
 package elevator;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
@@ -61,18 +59,11 @@ public class ArrivalSensor implements Runnable {
                 sendData[0] = Globals.FROM_ARRIVAL_SENSOR;
                 sendData[1] = (byte) this.elevator.getElevatorId();
                 sendData[2] = (byte) this.floor;
-                final DatagramPacket sendPacket =
-                        new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
-
-                // System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() +
-                // ": " +
+                
+                // System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": " +
                 // Arrays.toString(sendData));
-                try {
-                    this.sendSocket.send(sendPacket);
-                } catch (final IOException e) {
-                    System.err.println(e);
-                    System.exit(1);
-                }
+                
+                this.elevator.getElevatorSystem().sendData(sendData);
 
                 // Sleep longer here so it doesn't keep sending data to Scheduler.
                 Globals.sleep(1000);

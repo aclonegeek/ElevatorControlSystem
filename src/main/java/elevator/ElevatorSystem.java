@@ -62,18 +62,12 @@ public class ElevatorSystem {
             sendData[0] = Globals.FROM_ELEVATOR;
             sendData[1] = (byte) elevator.getSubsystem().getElevatorId();
             sendData[2] = (byte) Elevator.Request.REGISTER.ordinal();
-            final DatagramPacket sendPacket =
-                    new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
             // System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
             System.out.println("Elevator " + elevator.getSubsystem().getElevatorId() + ": sent registration request");
-            try {
-                this.sendSocket.send(sendPacket);
-            } catch (final IOException e) {
-                System.err.println(e);
-                System.exit(1);
-            }
-
+            
+            this.sendData(sendData);
+            
             // Block until Scheduler responds signifying the elevator has been registered.
             // TODO: Handle success/failure cases.
 //            final byte[] receiveData = new byte[1];

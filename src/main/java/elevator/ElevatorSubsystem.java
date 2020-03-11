@@ -137,4 +137,8 @@ public class ElevatorSubsystem implements Runnable {
     public ElevatorState getState() {
         return this.state;
     }
+    
+    public ElevatorSystem getElevatorSystem() {
+        return this.elevatorSystem;
+    }
 }
