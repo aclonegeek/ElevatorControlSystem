@@ -64,8 +64,7 @@ public class ArrivalSensor implements Runnable {
                 final DatagramPacket sendPacket =
                         new DatagramPacket(sendData, sendData.length, Globals.IP, Globals.SCHEDULER_PORT);
 
-                // System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() +
-                // ": " +
+                // System.out.println("ArrivalSensor sending to port " + sendPacket.getPort() + ": " +
                 // Arrays.toString(sendData));
                 try {
                     this.sendSocket.send(sendPacket);
