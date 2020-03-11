@@ -64,7 +64,7 @@ public class ElevatorSystem {
             sendData[2] = (byte) Elevator.Request.REGISTER.ordinal();
 
             // System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
-            System.out.println("Elevator " + elevator.getSubsystem().getElevatorId() + ": sent registration request");
+            System.out.println("Elevator " + elevator.getSubsystem().getElevatorId() + ": sending registration request");
             
             this.sendData(sendData);
             
