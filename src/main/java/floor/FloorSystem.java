@@ -52,14 +52,18 @@ public class FloorSystem {
             floors.get(request.getFloor()).setButtonState(request.getButtonState());
 
             // Construct byte array to send to Scheduler.
-            final byte[] sendData = new byte[7];
+            final byte[] sendData = new byte[request.getElevatorFault() != null ? 7 : 5];
             sendData[0] = Globals.FROM_FLOOR;
             sendData[1] = (byte) request.getFloor();
             sendData[2] = (byte) Floor.Request.REQUEST.ordinal();
             sendData[3] = (byte) request.getDestination();
             sendData[4] = (byte) request.getButtonState().ordinal();
-            sendData[5] = (byte) (request.getElevatorFault() == null ? -1 : request.getElevatorFault().ordinal());
-            sendData[6] = (byte) (request.getElevatorFaultFloor() == null ? -1 : request.getElevatorFaultFloor());
+            
+            if (request.getElevatorFault() != null) {
+                sendData[5] = (byte) request.getElevatorFault().ordinal();
+                sendData[6] = (byte) (int) request.getElevatorFaultFloor();
+            }
+            
             this.sendData(sendData);
 
             System.out.println("Floor " + request.getFloor() + ": sent request to go " + request.getButtonState()
