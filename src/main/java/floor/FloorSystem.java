@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import global.Globals;
 
@@ -57,13 +56,13 @@ public class FloorSystem {
             sendData[2] = (byte) Floor.Request.REQUEST.ordinal();
             sendData[3] = (byte) request.getDestination();
             sendData[4] = (byte) request.getButtonState().ordinal();
-            
+
             if (request.getElevatorFault() != null) {
                 // Add 1 to ordinal so it cannot be 0 (Scheduler will remove trailing 0s)
                 sendData[5] = (byte) (request.getElevatorFault().ordinal() + 1);
                 sendData[6] = (byte) (int) request.getElevatorFaultFloor();
             }
-            
+
             this.sendData(sendData);
 
             System.out.println("Floor " + request.getFloor() + ": sent request to go " + request.getButtonState()

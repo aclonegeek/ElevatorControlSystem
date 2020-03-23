@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import elevator.Elevator;
 import elevator.ElevatorAction;
+import elevator.ElevatorFault;
 import elevator.ElevatorState;
 import floor.Floor;
 import floor.FloorData.ButtonState;
@@ -57,7 +58,7 @@ public class Scheduler {
     }
 
     private DatagramPacket receive() {
-        final byte data[] = new byte[5];
+        final byte data[] = new byte[7];
         final DatagramPacket packet = new DatagramPacket(data, data.length);
 
         try {
@@ -111,7 +112,15 @@ public class Scheduler {
         // data[2] - floor request type
         // data[3] - destination floor
         // data[4] - button state (up or down)
+        // data[5] - optional, indicates a fault
+        // data[6] - optional, indicates floor the fault will occur
         case REQUEST:
+            // If there is a fault, send it off to the elevator system right away.
+            // Then we continue processing the rest of the message as normal.
+            if (data[5] != 0) {
+                this.sendElevatorFault(ElevatorFault.values()[data[5] - 1], data[6]);
+            }
+
             final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
 
@@ -150,7 +159,6 @@ public class Scheduler {
             final int distance = currentFloor - destination;
 
             final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
-
             this.sendElevatorAction(id, direction);
         }
             break;
@@ -176,9 +184,11 @@ public class Scheduler {
         final int id = data[1];
         final int floor = data[2];
 
+        this.elevatorStatuses.get(id).stopTimer();
         this.elevatorStatuses.get(id).setCurrentFloor(floor);
 
         if (!this.elevatorStatuses.get(id).getDestinations().contains(floor)) {
+            this.elevatorStatuses.get(id).startTimer();
             return;
         }
 
@@ -215,8 +225,27 @@ public class Scheduler {
      * @param action the {@link ElevatorAction} for the {@link Elevator} to perform
      */
     private void sendElevatorAction(final int id, final ElevatorAction action) {
+        if (action == ElevatorAction.MOVE_UP || action == ElevatorAction.MOVE_DOWN) {
+            this.elevatorStatuses.get(id).startTimer();
+        }
+
         final byte reply[] =
                 { Globals.FROM_SCHEDULER, (byte) id, (byte) action.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+        this.send(packet);
+    }
+
+    /**
+     * Sends an {@link ElevatorFault} to the {@link ElevatorSubsystem}.
+     *
+     * @param elevatorFault the {@link ElevatorFault}
+     * @param floor         the {@link Floor} to have a fault on
+     */
+    private void sendElevatorFault(final ElevatorFault elevatorFault, final int floor) {
+        // The reply is deliberately FROM_FLOOR.
+        final byte reply[] =
+                { Globals.FROM_FLOOR, (byte) elevatorFault.ordinal(), (byte) floor };
         final DatagramPacket packet =
                 new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
         this.send(packet);

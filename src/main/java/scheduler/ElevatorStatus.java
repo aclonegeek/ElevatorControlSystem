@@ -1,18 +1,42 @@
 package scheduler;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import elevator.ElevatorState;
 
 public class ElevatorStatus {
     private ElevatorState state;
-    private ArrayList<Integer> destinations;
+    private final ArrayList<Integer> destinations;
     private int currentFloor;
+
+    private Timer timer;
+    private TimerTask timerTask;
 
     public ElevatorStatus(final ElevatorState state, final int currentFloor) {
         this.destinations = new ArrayList<Integer>();
         this.state = state;
         this.currentFloor = currentFloor;
+        this.timer = new Timer();
+    }
+
+    public void startTimer() {
+        this.timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println("FAULT DETECTED");
+                    // TODO: Do stuff based on the fault.
+                }
+            };
+        // It takes 1 second for the elevator to move between floors.
+        // If the {@link TimerTask} isn't cancelled after 2 seconds
+        // (i.e. the arrival sensor hasn't notified us), then there's a fault.
+        this.timer.schedule(timerTask, 1500);
+    }
+
+    public void stopTimer() {
+        this.timerTask.cancel();
     }
 
     public void addDestination(final int floor) {
