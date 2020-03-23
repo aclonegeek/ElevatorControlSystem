@@ -159,7 +159,6 @@ public class Scheduler {
             final int distance = currentFloor - destination;
 
             final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
-
             this.sendElevatorAction(id, direction);
         }
             break;
@@ -185,9 +184,11 @@ public class Scheduler {
         final int id = data[1];
         final int floor = data[2];
 
+        this.elevatorStatuses.get(id).stopTimer();
         this.elevatorStatuses.get(id).setCurrentFloor(floor);
 
         if (!this.elevatorStatuses.get(id).getDestinations().contains(floor)) {
+            this.elevatorStatuses.get(id).startTimer();
             return;
         }
 
@@ -224,6 +225,10 @@ public class Scheduler {
      * @param action the {@link ElevatorAction} for the {@link Elevator} to perform
      */
     private void sendElevatorAction(final int id, final ElevatorAction action) {
+        if (action == ElevatorAction.MOVE_UP || action == ElevatorAction.MOVE_DOWN) {
+            this.elevatorStatuses.get(id).startTimer();
+        }
+
         final byte reply[] =
                 { Globals.FROM_SCHEDULER, (byte) id, (byte) action.ordinal() };
         final DatagramPacket packet =
