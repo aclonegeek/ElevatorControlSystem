@@ -21,15 +21,20 @@ public class ElevatorSubsystem implements Runnable {
     public void run() {
         boolean waitingForDoorsToOpen = false;
         boolean sentReady = false;
+        boolean stuck = false;
 
         while (true) {
+            int tempFloor = this.getCurrentFloor();
+
             switch (this.state) {
             // If MOVING_UP or MOVING_DOWN, move one floor per second.
             case MOVING_UP:
+                stuck = false;
                 currentHeight += Globals.FLOOR_HEIGHT / 10;
                 Globals.sleep(100);
                 break;
             case MOVING_DOWN:
+                stuck = false;
                 currentHeight -= Globals.FLOOR_HEIGHT / 10;
                 Globals.sleep(100);
                 break;
@@ -64,6 +69,8 @@ public class ElevatorSubsystem implements Runnable {
 
                 break;
             case DOOR_CLOSED_FOR_IDLING:
+                if (stuck) break;
+
                 sentReady = false;
 
                 // Don't send another request to open the doors.
@@ -82,6 +89,17 @@ public class ElevatorSubsystem implements Runnable {
                 break;
             case DOOR_CLOSED_FOR_MOVING:
                 break;
+            }
+
+            // Check if elevator has reached a new floor and if fault should occur here.
+            int currentFloor = this.getCurrentFloor();
+            if (currentFloor != tempFloor) {
+                ElevatorFault fault = this.elevatorSystem.getFault(currentFloor);
+                if (fault == ElevatorFault.ELEVATOR_STUCK) {
+                    System.out.println("FAULT: Elevator " + elevatorId + " is stuck!");
+                    this.state = ElevatorState.DOOR_CLOSED_FOR_IDLING;
+                    stuck = true;
+                }
             }
         }
     }
@@ -117,7 +135,7 @@ public class ElevatorSubsystem implements Runnable {
         // For now, there are no errors.
         return ElevatorResponse.SUCCESS;
     }
-    
+
     public void setCurrentHeight(final int height) {
         this.currentHeight = height;
     }
@@ -129,9 +147,9 @@ public class ElevatorSubsystem implements Runnable {
     public int getCurrentHeight() {
         return this.currentHeight;
     }
-    
+
     public int getCurrentFloor() {
-        return  this.currentHeight / Globals.FLOOR_HEIGHT;
+        return this.currentHeight / Globals.FLOOR_HEIGHT;
     }
 
     public ElevatorState getState() {
