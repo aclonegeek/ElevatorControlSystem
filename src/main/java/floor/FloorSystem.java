@@ -59,7 +59,7 @@ public class FloorSystem {
             sendData[3] = (byte) request.getDestination();
             sendData[4] = (byte) request.getButtonState().ordinal();
             sendData[5] = (byte) (request.getElevatorFault() == null ? -1 : request.getElevatorFault().ordinal());
-            sendData[6] = (byte) (int) (request.getElevatorFaultFloor() == null ? -1 : request.getElevatorFaultFloor());
+            sendData[6] = (byte) (request.getElevatorFaultFloor() == null ? -1 : request.getElevatorFaultFloor());
             this.sendData(sendData);
 
             System.out.println("Floor " + request.getFloor() + ": sent request to go " + request.getButtonState()
