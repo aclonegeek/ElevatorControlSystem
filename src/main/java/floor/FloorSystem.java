@@ -44,7 +44,6 @@ public class FloorSystem {
 
     public void run() {
         // Simulate a Floor handling the next request.
-        // TODO: Handle requests in order based on their timestamp.
         while (requests.size() > 0) {
             final FloorData request = requests.remove(0);
 
@@ -60,7 +59,8 @@ public class FloorSystem {
             sendData[4] = (byte) request.getButtonState().ordinal();
             
             if (request.getElevatorFault() != null) {
-                sendData[5] = (byte) request.getElevatorFault().ordinal();
+                // Add 1 to ordinal so it cannot be 0 (Scheduler will remove trailing 0s)
+                sendData[5] = (byte) (request.getElevatorFault().ordinal() + 1);
                 sendData[6] = (byte) (int) request.getElevatorFaultFloor();
             }
             
