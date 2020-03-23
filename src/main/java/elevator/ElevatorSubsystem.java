@@ -91,15 +91,12 @@ public class ElevatorSubsystem implements Runnable {
                 break;
             }
 
-            // Check if elevator has reached a new floor and if fault should occur here.
+            // Check if fault should occur here (ie. elevator gets stuck).
             int currentFloor = this.getCurrentFloor();
-            if (currentFloor != tempFloor) {
-                ElevatorFault fault = this.elevatorSystem.getFault(currentFloor);
-                if (fault == ElevatorFault.ELEVATOR_STUCK) {
-                    System.out.println("FAULT: Elevator " + elevatorId + " is stuck!");
-                    this.state = ElevatorState.DOOR_CLOSED_FOR_IDLING;
-                    stuck = true;
-                }
+            if (currentFloor != tempFloor && this.elevatorSystem.hasFault(currentFloor, ElevatorFault.ELEVATOR_STUCK)) {
+                System.out.println("FAULT: Elevator " + elevatorId + " is stuck!");
+                this.state = ElevatorState.DOOR_CLOSED_FOR_IDLING;
+                stuck = true;
             }
         }
     }
@@ -154,5 +151,9 @@ public class ElevatorSubsystem implements Runnable {
 
     public ElevatorState getState() {
         return this.state;
+    }
+    
+    public ElevatorSystem getElevatorSystem() {
+        return this.elevatorSystem;
     }
 }
