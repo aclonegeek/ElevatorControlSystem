@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 
 import elevator.Elevator;
 import elevator.ElevatorAction;
+import elevator.ElevatorFault;
 import elevator.ElevatorState;
 import floor.Floor;
 import floor.FloorData.ButtonState;
@@ -57,7 +58,7 @@ public class Scheduler {
     }
 
     private DatagramPacket receive() {
-        final byte data[] = new byte[5];
+        final byte data[] = new byte[7];
         final DatagramPacket packet = new DatagramPacket(data, data.length);
 
         try {
@@ -111,7 +112,15 @@ public class Scheduler {
         // data[2] - floor request type
         // data[3] - destination floor
         // data[4] - button state (up or down)
+        // data[5] - optional, indicates a fault
+        // data[6] - optional, indicates floor the fault will occur
         case REQUEST:
+            // If there is a fault, send it off to the elevator system right away.
+            // Then we continue processing the rest of the message as normal.
+            if (data[5] != 0) {
+                this.sendElevatorFault(ElevatorFault.values()[data[5] - 1], data[6]);
+            }
+
             final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
 
@@ -217,6 +226,21 @@ public class Scheduler {
     private void sendElevatorAction(final int id, final ElevatorAction action) {
         final byte reply[] =
                 { Globals.FROM_SCHEDULER, (byte) id, (byte) action.ordinal() };
+        final DatagramPacket packet =
+                new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
+        this.send(packet);
+    }
+
+    /**
+     * Sends an {@link ElevatorFault} to the {@link ElevatorSubsystem}.
+     *
+     * @param elevatorFault the {@link ElevatorFault}
+     * @param floor         the {@link Floor} to have a fault on
+     */
+    private void sendElevatorFault(final ElevatorFault elevatorFault, final int floor) {
+        // The reply is deliberately FROM_FLOOR.
+        final byte reply[] =
+                { Globals.FROM_FLOOR, (byte) elevatorFault.ordinal(), (byte) floor };
         final DatagramPacket packet =
                 new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
         this.send(packet);
