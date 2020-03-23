@@ -47,7 +47,7 @@ public class FloorReader {
                         elevatorFault = ElevatorFault.ELEVATOR_STUCK;
                         break;
                     case "SF":
-                        elevatorFault = ElevatorFault.SENSOR_ERROR;
+                        elevatorFault = ElevatorFault.SENSOR_FAULT;
                         break;
                     case "DSOF":
                         elevatorFault = ElevatorFault.DOOR_STUCK_OPEN;
