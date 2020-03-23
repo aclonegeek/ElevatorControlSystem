@@ -9,6 +9,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import elevator.ElevatorFault;
 import floor.FloorData;
 import floor.FloorData.ButtonState;
 
@@ -38,7 +39,30 @@ public class FloorReader {
                 final ButtonState buttonState = ButtonState.valueOf(data[2]);
                 final int destination = Integer.parseInt(data[3]);
 
-                floorRequests.add(new FloorData(floorNumber, buttonState, localTime, destination));
+                ElevatorFault elevatorFault = null;
+                Integer elevatorFaultFloor = null;
+                if (data.length > 4) {
+                    switch (data[4]) {
+                    case "ESF":
+                        elevatorFault = ElevatorFault.ELEVATOR_STUCK;
+                        break;
+                    case "SF":
+                        elevatorFault = ElevatorFault.SENSOR_FAULT;
+                        break;
+                    case "DSOF":
+                        elevatorFault = ElevatorFault.DOOR_STUCK_OPEN;
+                        break;
+                    case "DSCF":
+                        elevatorFault = ElevatorFault.DOOR_STUCK_CLOSED;
+                        break;
+                    default:
+                        break;
+                    }
+
+                    elevatorFaultFloor = Integer.parseInt(data[5]);
+                }
+
+                floorRequests.add(new FloorData(floorNumber, buttonState, localTime, destination, elevatorFault, elevatorFaultFloor));
             }
         } catch (final FileNotFoundException f) {
             System.err.println(f);
