@@ -65,9 +65,9 @@ public class ElevatorSystem {
 
             // System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
             System.out.println("Elevator " + elevator.getSubsystem().getElevatorId() + ": sending registration request");
-            
+
             this.sendData(sendData);
-            
+
             // Block until Scheduler responds signifying the elevator has been registered.
             // TODO: Handle success/failure cases.
 //            final byte[] receiveData = new byte[1];
@@ -99,7 +99,14 @@ public class ElevatorSystem {
 
         // System.out.println("Received: " + Arrays.toString(receiveData));
 
-        this.elevators.get(receiveData[1] - 1).processData(receiveData);
+        switch (receiveData[0]) {
+        case Globals.FROM_FLOOR:
+            // TODO: Fault stuff.
+            break;
+        case Globals.FROM_SCHEDULER:
+            this.elevators.get(receiveData[1] - 1).processData(receiveData);
+            break;
+        }
     }
 
     /**
