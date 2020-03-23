@@ -49,9 +49,11 @@ public class ArrivalSensor implements Runnable {
             final int elevatorFloor = this.elevator.getCurrentHeight() / Globals.FLOOR_HEIGHT;
             final boolean elevatorMoving = elevator.getState() == ElevatorState.MOVING_UP
                     || elevator.getState() == ElevatorState.MOVING_DOWN;
+            
+            final boolean hasFault = elevatorMoving && elevatorFloor == this.floor && elevator.getElevatorSystem().hasFault(this.floor, ElevatorFault.SENSOR_FAULT);
 
-            if (elevatorMoving && elevatorFloor == this.floor) {
-                System.out.println("Floor " + floor + ": detected elevator " + elevator.getElevatorId());
+            if (elevatorMoving && elevatorFloor == this.floor && !hasFault) {
+                System.out.println("Floor " + this.floor + ": detected elevator " + this.elevator.getElevatorId());
 
                 this.detectedElevator = true;
 
@@ -74,6 +76,9 @@ public class ArrivalSensor implements Runnable {
                 }
 
                 // Sleep longer here so it doesn't keep sending data to Scheduler.
+                Globals.sleep(1000);
+            } else if (hasFault) {
+                System.out.println("FAULT: Floor " + this.floor + " failed to detect " + this.elevator.getElevatorId());
                 Globals.sleep(1000);
             }
 
