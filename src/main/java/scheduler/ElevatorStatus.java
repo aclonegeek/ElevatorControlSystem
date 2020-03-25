@@ -34,6 +34,7 @@ public class ElevatorStatus {
             public void run() {
                 System.out.println("Fault detected for elevator " + id);
                 scheduler.sendElevatorAction(id, ElevatorAction.STOP_MOVING);
+                scheduler.getElevatorStatuses().remove(id);
             }
         };
         // It takes 1 second for the elevator to move between floors.
