@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import global.Globals;
 
@@ -13,6 +14,7 @@ import global.Globals;
  */
 public class ElevatorSystem {
     private final ArrayList<Elevator> elevators;
+    private final HashMap<Integer, ElevatorFault> faults;
     private DatagramSocket receiveSocket, sendSocket;
     private boolean sendingData;
 
@@ -21,6 +23,8 @@ public class ElevatorSystem {
     }
 
     public ElevatorSystem(final int numOfElevators) {
+        this.faults = new HashMap<>();
+        
         // Create Elevator threads.
         this.elevators = new ArrayList<>();
         for (int i = 1; i <= numOfElevators; i++) {
@@ -101,7 +105,8 @@ public class ElevatorSystem {
 
         switch (receiveData[0]) {
         case Globals.FROM_FLOOR:
-            // TODO: Fault stuff.
+            // receiveData[2] is floor number, [1] is the fault type.
+            this.faults.put((int) receiveData[2], ElevatorFault.values()[receiveData[1]]);
             break;
         case Globals.FROM_SCHEDULER:
             this.elevators.get(receiveData[1] - 1).processData(receiveData);
@@ -152,6 +157,15 @@ public class ElevatorSystem {
         } catch (final InterruptedException e) {
             System.err.println(e);
         }
+    }
+    
+    public synchronized boolean hasFault(final int floorNumber, final ElevatorFault fault) {
+        if (this.faults.get(floorNumber) == fault) {
+            this.faults.remove(floorNumber);
+            return true;
+        }
+        
+        return false;
     }
 
     /* METHODS USED FOR TESTING */
