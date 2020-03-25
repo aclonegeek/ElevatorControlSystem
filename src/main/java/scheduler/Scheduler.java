@@ -224,7 +224,7 @@ public class Scheduler {
      * @param id     the {@link Elevator}'s id
      * @param action the {@link ElevatorAction} for the {@link Elevator} to perform
      */
-    private void sendElevatorAction(final int id, final ElevatorAction action) {
+    public void sendElevatorAction(final int id, final ElevatorAction action) {
         if (action == ElevatorAction.MOVE_UP || action == ElevatorAction.MOVE_DOWN) {
             this.elevatorStatuses.get(id).startTimer();
         }
@@ -259,7 +259,7 @@ public class Scheduler {
     private void registerElevator(final int id) {
         System.out.println("Registering elevator " + id + ".");
         // All elevators start at the ground floor.
-        this.elevatorStatuses.put(id, new ElevatorStatus(ElevatorState.IDLE_DOOR_OPEN, 0));
+        this.elevatorStatuses.put(id, new ElevatorStatus(id, this, ElevatorState.IDLE_DOOR_OPEN, 0));
     }
 
     /**

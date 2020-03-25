@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import elevator.ElevatorAction;
 import elevator.ElevatorState;
 
 public class ElevatorStatus {
+    private final int id;
     private ElevatorState state;
     private final ArrayList<Integer> destinations;
     private int currentFloor;
@@ -14,7 +16,12 @@ public class ElevatorStatus {
     private Timer timer;
     private TimerTask timerTask;
 
-    public ElevatorStatus(final ElevatorState state, final int currentFloor) {
+    private Scheduler scheduler;
+
+    public ElevatorStatus(final int id, final Scheduler scheduler, final ElevatorState state,
+            final int currentFloor) {
+        this.id = id;
+        this.scheduler = scheduler;
         this.destinations = new ArrayList<Integer>();
         this.state = state;
         this.currentFloor = currentFloor;
@@ -23,12 +30,12 @@ public class ElevatorStatus {
 
     public void startTimer() {
         this.timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    System.out.println("FAULT DETECTED");
-                    // TODO: Do stuff based on the fault.
-                }
-            };
+            @Override
+            public void run() {
+                System.out.println("Fault detected for elevator " + id);
+                scheduler.sendElevatorAction(id, ElevatorAction.STOP_MOVING);
+            }
+        };
         // It takes 1 second for the elevator to move between floors.
         // If the {@link TimerTask} isn't cancelled after 2 seconds
         // (i.e. the arrival sensor hasn't notified us), then there's a fault.
