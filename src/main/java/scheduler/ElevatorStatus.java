@@ -33,8 +33,8 @@ public class ElevatorStatus {
             @Override
             public void run() {
                 System.out.println("Fault detected for elevator " + id);
+                scheduler.rerouteFaultedElevator(id, state);
                 scheduler.sendElevatorAction(id, ElevatorAction.STOP_MOVING);
-                scheduler.getElevatorStatuses().remove(id);
             }
         };
         // It takes 1 second for the elevator to move between floors.
@@ -49,6 +49,10 @@ public class ElevatorStatus {
 
     public void addDestination(final int floor) {
         this.destinations.add(floor);
+    }
+    
+    public void addDestinations(final ArrayList<Integer> floors) {
+        this.destinations.addAll(floors);
     }
 
     public ArrayList<Integer> getDestinations() {
