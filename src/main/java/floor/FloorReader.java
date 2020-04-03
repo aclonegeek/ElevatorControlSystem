@@ -10,7 +10,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import elevator.ElevatorFault;
-import floor.FloorData;
 import floor.FloorData.ButtonState;
 
 /**

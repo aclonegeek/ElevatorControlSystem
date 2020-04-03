@@ -8,7 +8,6 @@ import java.io.ObjectOutputStream;
 import java.time.LocalTime;
 
 import elevator.ElevatorFault;
-import floor.FloorData;
 import floor.FloorData.ButtonState;
 import junit.framework.TestCase;
 
