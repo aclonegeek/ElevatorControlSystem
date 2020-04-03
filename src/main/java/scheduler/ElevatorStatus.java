@@ -45,7 +45,6 @@ public class ElevatorStatus {
     }
 
     public void startDoorFaultTimerTask() {
-        final ElevatorStatus es = this;
         final ElevatorState previousState = this.state;
 
         this.doorFaultTimerTask = new TimerTask() {
@@ -57,7 +56,11 @@ public class ElevatorStatus {
                 }
 
                 System.out.println("Door fault detected for elevator " + id);
-                scheduler.sendElevatorMoveAction(id, es);
+                if (state == ElevatorState.IDLE_DOOR_OPEN) {
+                    scheduler.sendElevatorAction(id, ElevatorAction.CLOSE_DOORS);
+                } else if (state == ElevatorState.DOOR_CLOSED_FOR_IDLING) {
+                    scheduler.sendElevatorAction(id, ElevatorAction.OPEN_DOORS);
+                }
             }
         };
         // If the elevator's state doesn't change after telling it to close or
