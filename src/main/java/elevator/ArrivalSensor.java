@@ -78,7 +78,7 @@ public class ArrivalSensor implements Runnable {
                 // Sleep longer here so it doesn't keep sending data to Scheduler.
                 Globals.sleep(1000);
             } else if (hasFault) {
-                System.out.println("FAULT: Floor " + this.floor + " failed to detect " + this.elevator.getElevatorId());
+                System.out.println("FAULT: Floor " + this.floor + " failed to detect " + this.elevator.getElevatorId() + "!");
                 Globals.sleep(1000);
             }
 

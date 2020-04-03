@@ -115,10 +115,22 @@ public class ElevatorSubsystem implements Runnable {
             this.state = ElevatorState.DOOR_CLOSED_FOR_IDLING;
             break;
         case OPEN_DOORS:
+            if (this.elevatorSystem.hasFault(this.getCurrentFloor(), ElevatorFault.DOOR_STUCK_CLOSED)) {
+                System.out.println("FAULT: Elevator " + elevatorId + "'s door is stuck closed!");
+                return ElevatorResponse.FAILURE;
+            }
+            
             this.state = ElevatorState.IDLE_DOOR_OPEN;
             break;
         case CLOSE_DOORS:
+            if (this.elevatorSystem.hasFault(this.getCurrentFloor(), ElevatorFault.DOOR_STUCK_OPEN)) {
+                System.out.println("FAULT: Elevator " + elevatorId + "'s door is stuck open!");
+                return ElevatorResponse.FAILURE;
+            }
+            
             this.state = ElevatorState.DOOR_CLOSED_FOR_MOVING;
+            break;
+        default:
             break;
         }
 
