@@ -45,22 +45,23 @@ public class ElevatorStatus {
     }
 
     public void startDoorFaultTimerTask() {
-        ElevatorStatus es = this;
+        final ElevatorStatus es = this;
+        final ElevatorState previousState = this.state;
 
         this.doorFaultTimerTask = new TimerTask() {
             @Override
             public void run() {
                 // No door fault.
-                if (state != ElevatorState.DOOR_CLOSED_FOR_MOVING) {
+                if (state != previousState) {
                     return;
                 }
 
                 System.out.println("Door fault detected for elevator " + id);
-                scheduler.resendElevatorAction(id, es);
+                scheduler.sendElevatorMoveAction(id, es);
             }
         };
-        // If the elevator state doesn't change from door closed within 100 ms,
-        // there's a problem.
+        // If the elevator's state doesn't change after telling it to close or
+        // open its doors within 100 ms, there's a problem.
         this.timer.schedule(doorFaultTimerTask, 100);
     }
 
