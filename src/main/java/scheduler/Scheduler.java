@@ -184,11 +184,11 @@ public class Scheduler {
         final int id = data[1];
         final int floor = data[2];
 
-        this.elevatorStatuses.get(id).stopTimer();
+        this.elevatorStatuses.get(id).stopMovementTimerTask();
         this.elevatorStatuses.get(id).setCurrentFloor(floor);
 
         if (!this.elevatorStatuses.get(id).getDestinations().contains(floor)) {
-            this.elevatorStatuses.get(id).startTimer();
+            this.elevatorStatuses.get(id).startMovementTimerTask();
             return;
         }
 
@@ -198,7 +198,7 @@ public class Scheduler {
 
         this.send(packet);
 
-        this.elevatorStatuses.get(id).getDestinations().remove(0);
+        this.elevatorStatuses.get(id).removeDestination();
     }
 
     /**
@@ -226,7 +226,7 @@ public class Scheduler {
      */
     public void sendElevatorAction(final int id, final ElevatorAction action) {
         if (action == ElevatorAction.MOVE_UP || action == ElevatorAction.MOVE_DOWN) {
-            this.elevatorStatuses.get(id).startTimer();
+            this.elevatorStatuses.get(id).startMovementTimerTask();
         }
 
         final byte reply[] =
@@ -261,16 +261,28 @@ public class Scheduler {
         // All elevators start at the ground floor.
         this.elevatorStatuses.put(id, new ElevatorStatus(id, this, ElevatorState.IDLE_DOOR_OPEN, 0));
     }
-    
-    
+
+    /**
+     * Resends an {@link ElevatorAction} to an {@link Elevator}.
+     *
+     * @param id     the {@link Elevator}'s id
+     * @param status the {@link Elevator}'s status
+     */
+    public void resendElevatorAction(final int id, final ElevatorStatus status)  {
+        final int distance = status.getCurrentFloor() - status.getDestinations().get(0);
+        final ElevatorState direction = distance < 0 ? ElevatorState.MOVING_UP : ElevatorState.MOVING_DOWN;
+        final BestElevator bestElevator = this.getBestElevator(status.getCurrentFloor(), direction);
+        this.sendElevatorAction(bestElevator.id, bestElevator.direction);
+    }
+
     //Reroute Elevator
     public void rerouteFaultedElevator(int id, ElevatorState state) {
         ElevatorStatus faultedStatus = this.elevatorStatuses.remove(id);
-        int floor = faultedStatus.getCurrentFloor(); 
+        int floor = faultedStatus.getCurrentFloor();
         int bestElevatorID = findElevator(floor, state);
         this.elevatorStatuses.get(bestElevatorID).addDestinations(faultedStatus.getDestinations());
     }
-    
+
     //Find best elevator for a current floor
     private int findElevator(final int floor, final ElevatorState state) {
         int bestElevatorID = -1;
@@ -326,10 +338,10 @@ public class Scheduler {
                 bestElevatorID = tempElevatorID;
             }
         }
-        
+
         return bestElevatorID;
     }
- 
+
 
     /**
      * Determines the best {@link Elevator} to travel to the specified {@link Floor}.
