@@ -4,43 +4,77 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import elevator.ElevatorAction;
 import elevator.ElevatorState;
 
 public class ElevatorStatus {
+    private final int id;
     private ElevatorState state;
     private final ArrayList<Integer> destinations;
     private int currentFloor;
 
     private Timer timer;
-    private TimerTask timerTask;
+    private TimerTask movementTimerTask;
+    private TimerTask doorFaultTimerTask;
 
-    public ElevatorStatus(final ElevatorState state, final int currentFloor) {
+    private Scheduler scheduler;
+
+    public ElevatorStatus(final int id, final Scheduler scheduler, final ElevatorState state,
+            final int currentFloor) {
+        this.id = id;
+        this.scheduler = scheduler;
         this.destinations = new ArrayList<Integer>();
         this.state = state;
         this.currentFloor = currentFloor;
         this.timer = new Timer();
     }
 
-    public void startTimer() {
-        this.timerTask = new TimerTask() {
-                @Override
-                public void run() {
-                    System.out.println("FAULT DETECTED");
-                    // TODO: Do stuff based on the fault.
-                }
-            };
+    public void startMovementTimerTask() {
+        this.movementTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Fault detected for elevator " + id);
+                scheduler.rerouteFaultedElevator(id, state);
+                scheduler.sendElevatorAction(id, ElevatorAction.STOP_MOVING);
+            }
+        };
         // It takes 1 second for the elevator to move between floors.
         // If the {@link TimerTask} isn't cancelled after 2 seconds
         // (i.e. the arrival sensor hasn't notified us), then there's a fault.
-        this.timer.schedule(timerTask, 1500);
+        this.timer.schedule(movementTimerTask, 1500);
     }
 
-    public void stopTimer() {
-        this.timerTask.cancel();
+    public void startDoorFaultTimerTask() {
+        final ElevatorStatus es = this;
+        final ElevatorState previousState = this.state;
+
+        this.doorFaultTimerTask = new TimerTask() {
+            @Override
+            public void run() {
+                // No door fault.
+                if (state != previousState) {
+                    return;
+                }
+
+                System.out.println("Door fault detected for elevator " + id);
+                scheduler.sendElevatorMoveAction(id, es);
+            }
+        };
+        // If the elevator's state doesn't change after telling it to close or
+        // open its doors within 100 ms, there's a problem.
+        this.timer.schedule(doorFaultTimerTask, 100);
+    }
+
+    public void stopMovementTimerTask() {
+        this.movementTimerTask.cancel();
     }
 
     public void addDestination(final int floor) {
         this.destinations.add(floor);
+    }
+
+    public void addDestinations(final ArrayList<Integer> floors) {
+        this.destinations.addAll(floors);
     }
 
     public ArrayList<Integer> getDestinations() {

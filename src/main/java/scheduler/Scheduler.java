@@ -123,11 +123,11 @@ public class Scheduler {
 
             final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
+            final ElevatorStatus status = this.elevatorStatuses.get(bestElevator.id);
+            status.addDestination(data[3]);
+            status.startDoorFaultTimerTask();
 
             this.sendElevatorAction(bestElevator.id, ElevatorAction.CLOSE_DOORS);
-
-            this.elevatorStatuses.get(bestElevator.id).addDestination(data[3]);
-            this.sendElevatorAction(bestElevator.id, bestElevator.direction);
             break;
         default:
             System.out.println("Unknown floor message received.");
@@ -147,29 +147,33 @@ public class Scheduler {
             break;
         case READY: {
             final int id = data[1];
+            final ElevatorStatus status = this.elevatorStatuses.get(id);
 
-            if (this.elevatorStatuses.get(id).getDestinations().isEmpty()) {
+            if (status.getDestinations().isEmpty()) {
                 break;
             }
 
+            status.startDoorFaultTimerTask();
             this.sendElevatorAction(id, ElevatorAction.CLOSE_DOORS);
-
-            final int currentFloor = this.elevatorStatuses.get(id).getCurrentFloor();
-            final int destination = this.elevatorStatuses.get(id).getDestinations().get(0);
-            final int distance = currentFloor - destination;
-
-            final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
-            this.sendElevatorAction(id, direction);
         }
             break;
-        case OPEN_DOORS:
-            this.sendElevatorAction(data[1], ElevatorAction.OPEN_DOORS);
+        case OPEN_DOORS: {
+            final int id = data[1];
+            this.elevatorStatuses.get(id).startDoorFaultTimerTask();
+            this.sendElevatorAction(id, ElevatorAction.OPEN_DOORS);
             break;
+        }
         // data[3] - elevator state
         case STATE_CHANGED: {
             final int id = data[1];
             final ElevatorState state = ElevatorState.values[data[3]];
-            this.elevatorStatuses.get(id).setState(state);
+            final ElevatorStatus status = this.elevatorStatuses.get(id);
+            status.setState(state);
+
+            // We can now move the elevator.
+            if (state == ElevatorState.DOOR_CLOSED_FOR_MOVING) {
+                this.sendElevatorMoveAction(id, status);
+            }
         }
             break;
         default:
@@ -184,11 +188,11 @@ public class Scheduler {
         final int id = data[1];
         final int floor = data[2];
 
-        this.elevatorStatuses.get(id).stopTimer();
+        this.elevatorStatuses.get(id).stopMovementTimerTask();
         this.elevatorStatuses.get(id).setCurrentFloor(floor);
 
         if (!this.elevatorStatuses.get(id).getDestinations().contains(floor)) {
-            this.elevatorStatuses.get(id).startTimer();
+            this.elevatorStatuses.get(id).startMovementTimerTask();
             return;
         }
 
@@ -198,7 +202,7 @@ public class Scheduler {
 
         this.send(packet);
 
-        this.elevatorStatuses.get(id).getDestinations().remove(0);
+        this.elevatorStatuses.get(id).removeDestination();
     }
 
     /**
@@ -224,9 +228,9 @@ public class Scheduler {
      * @param id     the {@link Elevator}'s id
      * @param action the {@link ElevatorAction} for the {@link Elevator} to perform
      */
-    private void sendElevatorAction(final int id, final ElevatorAction action) {
+    public void sendElevatorAction(final int id, final ElevatorAction action) {
         if (action == ElevatorAction.MOVE_UP || action == ElevatorAction.MOVE_DOWN) {
-            this.elevatorStatuses.get(id).startTimer();
+            this.elevatorStatuses.get(id).startMovementTimerTask();
         }
 
         final byte reply[] =
@@ -259,18 +263,41 @@ public class Scheduler {
     private void registerElevator(final int id) {
         System.out.println("Registering elevator " + id + ".");
         // All elevators start at the ground floor.
-        this.elevatorStatuses.put(id, new ElevatorStatus(ElevatorState.IDLE_DOOR_OPEN, 0));
+        this.elevatorStatuses.put(id, new ElevatorStatus(id, this, ElevatorState.IDLE_DOOR_OPEN, 0));
     }
 
     /**
-     * Determines the best {@link Elevator} to travel to the specified {@link Floor}.
+     * Sends an {@link ElevatorAction} to an {@link Elevator}.
      *
-     * @param floor the floor to go to
-     * @param state the direction to travel (up or down)
-     *
-     * @return the {@link BestElevator} for the job
+     * @param id     the {@link Elevator}'s id
+     * @param status the {@link Elevator}'s status
      */
-    public BestElevator getBestElevator(final int floor, final ElevatorState state) {
+    public void sendElevatorMoveAction(final int id, final ElevatorStatus status)  {
+        final int distance = status.getCurrentFloor() - status.getDestinations().get(0);
+        final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
+        this.sendElevatorAction(id, direction);
+    }
+
+    /**
+     * Reroutes a faulted {@link Elevator}.
+     *
+     * @param id    the {@link Elevator}'s id
+     * @param state the {@link ElevatorState} current state
+     */
+    public void rerouteFaultedElevator(final int id, final ElevatorState state) {
+        final ElevatorStatus faultedStatus = this.elevatorStatuses.remove(id);
+        final int floor = faultedStatus.getCurrentFloor();
+        final int bestElevatorID = findElevator(floor, state);
+        this.elevatorStatuses.get(bestElevatorID).addDestinations(faultedStatus.getDestinations());
+    }
+
+    /**
+     * Finds the best elevator for a floor.
+     *
+     * @param floor the floor to find the best elevator for
+     * @param state the {@link Elevator}'s current state
+     */
+    private int findElevator(final int floor, final ElevatorState state) {
         int bestElevatorID = -1;
         int tempElevatorID;
         ElevatorStatus tempElevatorStatus;
@@ -324,6 +351,21 @@ public class Scheduler {
                 bestElevatorID = tempElevatorID;
             }
         }
+
+        return bestElevatorID;
+    }
+
+
+    /**
+     * Determines the best {@link Elevator} to travel to the specified {@link Floor}.
+     *
+     * @param floor the floor to go to
+     * @param state the direction to travel (up or down)
+     *
+     * @return the {@link BestElevator} for the job
+     */
+    public BestElevator getBestElevator(final int floor, final ElevatorState state) {
+        final int bestElevatorID = findElevator(floor, state);
 
         // Add destination to best elevators destinations.
         this.elevatorStatuses.get(bestElevatorID).addDestination(floor);

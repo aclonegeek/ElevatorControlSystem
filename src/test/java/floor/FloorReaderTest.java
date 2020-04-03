@@ -3,8 +3,6 @@ package floor;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-import floor.FloorData;
-import floor.FloorReader;
 import floor.FloorData.ButtonState;
 import junit.framework.TestCase;
 
