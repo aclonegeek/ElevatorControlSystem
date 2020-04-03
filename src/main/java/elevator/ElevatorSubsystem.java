@@ -101,8 +101,6 @@ public class ElevatorSubsystem implements Runnable {
         }
     }
 
-    // TODO: Light up elevator lamps.
-    // TODO: OPEN_DOORS and CLOSE_DOORS should take time.
     public ElevatorResponse updateState(final ElevatorAction elevatorAction) {
         initialState = false;
 

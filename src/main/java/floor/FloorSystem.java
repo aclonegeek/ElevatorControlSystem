@@ -90,19 +90,6 @@ public class FloorSystem {
             System.err.println(e);
             System.exit(1);
         }
-
-        // Block until receive response from Scheduler.
-        // TODO: Handle success/failure cases.
-//        final byte[] receiveData = new byte[1];
-//        final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-//        try {
-//            this.receiveSocket.receive(receivePacket);
-//        } catch (IOException e) {
-//            System.err.println(e);
-//            System.exit(1);
-//        }
-//
-//        System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
     }
 
     /* METHODS USED FOR TESTING */

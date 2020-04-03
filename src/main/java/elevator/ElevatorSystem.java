@@ -71,19 +71,6 @@ public class ElevatorSystem {
             System.out.println("Elevator " + elevator.getSubsystem().getElevatorId() + ": sending registration request");
 
             this.sendData(sendData);
-
-            // Block until Scheduler responds signifying the elevator has been registered.
-            // TODO: Handle success/failure cases.
-//            final byte[] receiveData = new byte[1];
-//            final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-//            try {
-//                this.receiveSocket.receive(receivePacket);
-//            } catch (IOException e) {
-//                System.err.println(e);
-//                System.exit(1);
-//            }
-//
-//            System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
         }
     }
 
@@ -138,19 +125,6 @@ public class ElevatorSystem {
                 System.err.println(e);
                 System.exit(1);
             }
-
-            // Block until receive response from Scheduler.
-            // TODO: Handle success/failure cases.
-//            final byte[] receiveData = new byte[1];
-//            final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-//            try {
-//                this.receiveSocket.receive(receivePacket);
-//            } catch (IOException e) {
-//                System.err.println(e);
-//                System.exit(1);
-//            }
-//
-//            System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
 
             this.sendingData = false;
             this.notifyAll();
