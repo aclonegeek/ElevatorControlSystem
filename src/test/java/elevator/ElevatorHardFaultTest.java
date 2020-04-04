@@ -6,6 +6,7 @@ import classes.RunnableScheduler;
 import global.Globals;
 import junit.framework.TestCase;
 
+//NOTE: Methods must be run individually due to socket binding issues.
 public class ElevatorHardFaultTest extends TestCase {
     /*
      * Elevator gets stuck on floor 3 on its way to floor 5 then 7. Verify that the
