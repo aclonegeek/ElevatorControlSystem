@@ -212,7 +212,7 @@ public class Scheduler {
 
         this.send(packet);
 
-        this.elevatorStatuses.get(id).removeDestination();
+        status.getDestinations().remove(status.getDestinations().indexOf(floor));
     }
 
     /**
