@@ -125,8 +125,13 @@ public class Scheduler {
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
             final ElevatorStatus status = this.elevatorStatuses.get(bestElevator.id);
             status.addDestination(data[3]);
-            status.startDoorFaultTimerTask();
 
+            if (status.getState() == ElevatorState.MOVING_UP ||
+                status.getState() == ElevatorState.MOVING_DOWN) {
+                break;
+            }
+
+            status.startDoorFaultTimerTask();
             this.sendElevatorAction(bestElevator.id, ElevatorAction.CLOSE_DOORS);
             break;
         default:
@@ -306,72 +311,72 @@ public class Scheduler {
         boolean onPathElevator = false;
 
         for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
-            
             tempElevatorID = entry.getKey();
             tempElevatorStatus = entry.getValue();
-            
+
             final int tempStopsBetween = getStopsBetween(tempElevatorStatus, floor);
-            
-            if(tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_UP && floor >= tempElevatorStatus.getCurrentFloor()) {
+
+            if (tempElevatorStatus.getState() == state &&
+                state == ElevatorState.MOVING_UP &&
+                floor >= tempElevatorStatus.getCurrentFloor()) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     onPathElevator = true;
-                } 
-            } 
-            
-            else if (tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_DOWN && floor <= tempElevatorStatus.getCurrentFloor()) {
+                }
+            }
+
+            else if (tempElevatorStatus.getState() == state &&
+                     state == ElevatorState.MOVING_DOWN &&
+                     floor <= tempElevatorStatus.getCurrentFloor()) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     onPathElevator = true;
                 }
             }
         }
-        
-        
-        if (onPathElevator == false) {
-           
+
+
+        if (!onPathElevator) {
             for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
-                
                 tempElevatorID = entry.getKey();
                 tempElevatorStatus = entry.getValue();
-                
+
                 // Best elevator is idle.
                 if (tempElevatorStatus.getState() == ElevatorState.DOOR_CLOSED_FOR_IDLING ||
                         tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
-                    
-                    if(bestElevatorID == -69) {
+
+                    if (bestElevatorID == -69) {
                         bestElevatorID = tempElevatorID;
                         idleElevator = true;
-                    }
-                    else if(getDistanceBetween(tempElevatorID, floor) <= getDistanceBetween(bestElevatorID, floor)) {
+                    } else if (getDistanceBetween(tempElevatorID, floor) <= getDistanceBetween(bestElevatorID, floor)) {
                         bestElevatorID = tempElevatorID;
                         idleElevator = true;
                     }
                 }
             }
-            
         }
-           
-        if(!onPathElevator && !idleElevator) {
+
+        if (!onPathElevator && !idleElevator) {
             for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
                 tempElevatorID = entry.getKey();
                 tempElevatorStatus = entry.getValue();
-            
-                if(bestElevatorID == -69) {
+
+                if (bestElevatorID == -69) {
                     bestElevatorID = tempElevatorID;
                 }
-                
+
                 // Best elevator is one the one with least stops between.
                 else if (tempElevatorStatus.getDestinations().size() <= this.elevatorStatuses.get(bestElevatorID)
-                        .getDestinations().size() && !idleElevator && !onPathElevator) {
+                         .getDestinations().size() &&
+                         !idleElevator &&
+                         !onPathElevator) {
                     bestElevatorID = tempElevatorID;
                 }
             }
         }
-        
+
         return bestElevatorID;
     }
-
 
     /**
      * Determines the best {@link Elevator} to travel to the specified {@link Floor}.
