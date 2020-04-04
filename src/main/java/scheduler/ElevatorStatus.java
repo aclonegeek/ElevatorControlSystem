@@ -75,10 +75,10 @@ public class ElevatorStatus {
 
     public void addDestination(final int floor) {
         this.destinations.add(floor);
-        if(this.state == ElevatorState.MOVING_UP) {
+        if(this.state == ElevatorState.MOVING_UP || floor >= this.currentFloor) {
             Collections.sort(this.destinations);
         }
-        else if(this.state == ElevatorState.MOVING_UP) {
+        else if(this.state == ElevatorState.MOVING_UP || floor < this.currentFloor) {
             Collections.sort(this.destinations, Collections.reverseOrder());
         }
         else {
