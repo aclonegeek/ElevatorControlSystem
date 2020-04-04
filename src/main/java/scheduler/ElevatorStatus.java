@@ -1,6 +1,7 @@
 package scheduler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -74,6 +75,15 @@ public class ElevatorStatus {
 
     public void addDestination(final int floor) {
         this.destinations.add(floor);
+        if(this.state == ElevatorState.MOVING_UP) {
+            Collections.sort(this.destinations);
+        }
+        else if(this.state == ElevatorState.MOVING_UP) {
+            Collections.sort(this.destinations, Collections.reverseOrder());
+        }
+        else {
+            System.out.println("uh oh spahettio");
+        }
     }
 
     public void addDestinations(final ArrayList<Integer> floors) {

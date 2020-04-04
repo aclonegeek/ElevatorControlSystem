@@ -315,6 +315,7 @@ public class Scheduler {
             if(tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_UP && floor >= tempElevatorStatus.getCurrentFloor()) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
+                    bestStopsBetween = tempStopsBetween;
                     onPathElevator = true;
                 } 
             } 
@@ -322,6 +323,7 @@ public class Scheduler {
             else if (tempElevatorStatus.getState() == state && state == ElevatorState.MOVING_DOWN && floor <= tempElevatorStatus.getCurrentFloor()) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
+                    bestStopsBetween = tempStopsBetween;
                     onPathElevator = true;
                 }
             }
