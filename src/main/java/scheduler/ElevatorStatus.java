@@ -33,7 +33,7 @@ public class ElevatorStatus {
         this.movementTimerTask = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("Fault detected for elevator " + id);
+                System.out.println("ERROR - Fault detected for elevator " + id);
                 scheduler.rerouteFaultedElevator(id, state);
                 scheduler.sendElevatorAction(id, ElevatorAction.STOP_MOVING);
             }
@@ -50,12 +50,12 @@ public class ElevatorStatus {
         this.doorFaultTimerTask = new TimerTask() {
             @Override
             public void run() {
-                // No door fault.
+                // No door fault detected.
                 if (state != previousState) {
                     return;
                 }
 
-                System.out.println("Door fault detected for elevator " + id);
+                System.out.println("ERROR - Door fault detected for elevator " + id);
                 if (state == ElevatorState.IDLE_DOOR_OPEN) {
                     scheduler.sendElevatorAction(id, ElevatorAction.CLOSE_DOORS);
                 } else if (state == ElevatorState.DOOR_CLOSED_FOR_IDLING) {
