@@ -77,7 +77,7 @@ public class ElevatorStatus {
         this.destinations.add(floor);
         if (this.state == ElevatorState.MOVING_UP || floor >= this.currentFloor) {
             Collections.sort(this.destinations);
-        } else if(this.state == ElevatorState.MOVING_UP || floor < this.currentFloor) {
+        } else if (this.state == ElevatorState.MOVING_DOWN || floor < this.currentFloor) {
             Collections.sort(this.destinations, Collections.reverseOrder());
         }
     }
