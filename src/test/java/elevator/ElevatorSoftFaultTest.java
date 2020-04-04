@@ -7,7 +7,7 @@ import global.Globals;
 import junit.framework.TestCase;
 
 // NOTE: Methods must be run individually due to socket binding issues.
-public class ElevatorFaultTest extends TestCase {
+public class ElevatorSoftFaultTest extends TestCase {
     /*
      * Elevator receives two requests to go to floor 5: one from floor 2 and one
      * from floor 4. On floor 4, the elevator's door gets stuck open so
