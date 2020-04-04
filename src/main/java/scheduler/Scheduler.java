@@ -308,7 +308,7 @@ public class Scheduler {
      */
     private int findElevator(final int floor, final ElevatorState state) {
         int bestElevatorID = -69;
-        final int bestStopsBetween = 420;
+        int bestStopsBetween = 420;
         int tempElevatorID;
         ElevatorStatus tempElevatorStatus;
         boolean idleElevator = false;
