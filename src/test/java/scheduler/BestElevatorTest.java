@@ -32,21 +32,23 @@ public class BestElevatorTest extends TestCase {
         scheduler.addElevatorStatus(3, elevatorStatus3);
         scheduler.addElevatorStatus(4, elevatorStatus4);
 
-        // assert we get the idle Elevator first
-        BestElevator target = new BestElevator(1, 3, ElevatorAction.MOVE_DOWN);
-        BestElevator predicted = scheduler.getBestElevator(6, ElevatorState.MOVING_DOWN);
+       
+        BestElevator target = new BestElevator(3, 5, ElevatorAction.MOVE_UP);
+        BestElevator predicted = scheduler.getBestElevator(6, ElevatorState.MOVING_UP);
         assertEquals(target.id, predicted.id);
         assertEquals(target.numFloors, predicted.numFloors);
-
-        // remove the first elevator because it has priority
+        
+        scheduler.getElevatorStatuses().remove(2);
+        scheduler.getElevatorStatuses().remove(3);
+        
+        
+        // assert we find the elevator with least total stops if there is no elevator
+        // going same direction
+        target = new BestElevator(1, 0, ElevatorAction.STOP_MOVING);
+        predicted = scheduler.getBestElevator(9, ElevatorState.MOVING_DOWN);
+        assertEquals(target.id, predicted.id);
+        assertEquals(target.numFloors, predicted.numFloors);
         scheduler.getElevatorStatuses().remove(1);
-
-        // assert we find an elevator going the same direction with the least stops
-        // before
-        target = new BestElevator(3, 5, ElevatorAction.MOVE_UP);
-        predicted = scheduler.getBestElevator(6, ElevatorState.MOVING_UP);
-        assertEquals(target.id, predicted.id);
-        assertEquals(target.numFloors, predicted.numFloors);
 
         // assert we find the elevator with least total stops if there is no elevator
         // going same direction
@@ -54,5 +56,6 @@ public class BestElevatorTest extends TestCase {
         predicted = scheduler.getBestElevator(9, ElevatorState.MOVING_DOWN);
         assertEquals(target.id, predicted.id);
         assertEquals(target.numFloors, predicted.numFloors);
+        
     }
 }
