@@ -121,10 +121,14 @@ public class Scheduler {
                 this.sendElevatorFault(ElevatorFault.values()[data[5] - 1], data[6]);
             }
 
+            final int destinationFloor = data[3];
             final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
+
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
             final ElevatorStatus status = this.elevatorStatuses.get(bestElevator.id);
-            status.addDestination(data[3]);
+            if (!status.getDestinations().contains(destinationFloor)) {
+                status.addDestination(destinationFloor);
+            }
 
             if (status.getState() == ElevatorState.MOVING_UP ||
                 status.getState() == ElevatorState.MOVING_DOWN) {
