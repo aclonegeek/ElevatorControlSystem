@@ -65,7 +65,7 @@ public class FloorSystem {
 
             this.sendData(sendData);
 
-            System.out.println("Floor " + request.getFloor() + ": sent request to go " + request.getButtonState()
+            System.out.println("[floor system] Floor " + request.getFloor() + ": sent request to go " + request.getButtonState()
                     + " to floor " + request.getDestination());
 
             Globals.sleep(sleepTime);

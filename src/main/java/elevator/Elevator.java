@@ -51,7 +51,7 @@ public class Elevator {
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
         final ElevatorState previousState = this.elevatorSubsystem.getState();
         
-        System.out.println("Elevator " + this.elevatorSubsystem.getElevatorId() + ": received action " + action);
+        System.out.println("[elevator system] Elevator " + this.elevatorSubsystem.getElevatorId() + ": received action " + action);
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
 
         if (previousState != this.elevatorSubsystem.getState()) {

@@ -34,7 +34,7 @@ public class ElevatorStatus {
         this.movementTimerTask = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("ERROR - Fault detected for elevator " + id);
+                System.out.println("[scheduler] ERROR: Fault detected for elevator " + id);
                 scheduler.rerouteFaultedElevator(id, state);
                 scheduler.sendElevatorAction(id, ElevatorAction.STOP_MOVING);
             }
@@ -56,7 +56,7 @@ public class ElevatorStatus {
                     return;
                 }
 
-                System.out.println("ERROR - Door fault detected for elevator " + id);
+                System.out.println("[scheduler] ERROR: Door fault detected for elevator " + id);
                 if (state == ElevatorState.IDLE_DOOR_OPEN) {
                     scheduler.sendElevatorAction(id, ElevatorAction.CLOSE_DOORS);
                 } else if (state == ElevatorState.DOOR_CLOSED_FOR_IDLING) {
@@ -75,14 +75,10 @@ public class ElevatorStatus {
 
     public void addDestination(final int floor) {
         this.destinations.add(floor);
-        if(this.state == ElevatorState.MOVING_UP || floor >= this.currentFloor) {
+        if (this.state == ElevatorState.MOVING_UP || floor >= this.currentFloor) {
             Collections.sort(this.destinations);
-        }
-        else if(this.state == ElevatorState.MOVING_UP || floor < this.currentFloor) {
+        } else if(this.state == ElevatorState.MOVING_UP || floor < this.currentFloor) {
             Collections.sort(this.destinations, Collections.reverseOrder());
-        }
-        else {
-            System.out.println("uh oh spahettio");
         }
     }
 

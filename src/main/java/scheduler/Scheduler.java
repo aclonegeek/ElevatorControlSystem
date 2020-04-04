@@ -49,7 +49,7 @@ public class Scheduler {
     }
 
     public void run() {
-        System.out.println("Running scheduler...\n");
+        System.out.println("[scheduler] Running scheduler...\n");
 
         while (true) {
             final DatagramPacket packet = this.receive();
@@ -78,13 +78,13 @@ public class Scheduler {
      */
     private void handleMessage(final byte[] data) {
         if (data.length == 0) {
-            System.out.println("Received empty message.");
+            System.out.println("[scheduler] Received empty message.");
             return;
         }
 
         this.state = State.HANDLING_MESSAGE;
 
-        System.out.println("Received: " + Arrays.toString(data));
+        System.out.println("[scheduler] Received: " + Arrays.toString(data));
 
         switch (data[0]) {
         case Globals.FROM_FLOOR:
@@ -97,7 +97,7 @@ public class Scheduler {
             this.handleArrivalSensorMessage(data);
             break;
         default:
-            System.err.println("Received invalid bytes.");
+            System.err.println("[scheduler] Received invalid bytes.");
             break;
         }
 
@@ -105,7 +105,7 @@ public class Scheduler {
     }
 
     private void handleFloorMessage(final byte[] data) {
-        System.out.println("Handling a floor message.");
+        System.out.println("[scheduler] Handling a floor message.");
 
         switch (Floor.Request.values[data[2]]) {
         // data[1] - floor that made the request
@@ -139,13 +139,13 @@ public class Scheduler {
             this.sendElevatorAction(bestElevator.id, ElevatorAction.CLOSE_DOORS);
             break;
         default:
-            System.out.println("Unknown floor message received.");
+            System.out.println("[scheduler] Unknown floor message received.");
             break;
         }
     }
 
     private void handleElevatorMessage(final byte[] data) {
-        System.out.println("Handling an elevator message.");
+        System.out.println("[scheduler] Handling an elevator message.");
 
         // data[1] - elevator ID
         // data[2] - Elevator.Request
@@ -186,13 +186,13 @@ public class Scheduler {
         }
             break;
         default:
-            System.out.println("Unknown elevator message received.");
+            System.out.println("[scheduler] Unknown elevator message received.");
             break;
         }
     }
 
     private void handleArrivalSensorMessage(final byte[] data) {
-        System.out.println("Handling an arrival sensor message.");
+        System.out.println("[scheduler] Handling an arrival sensor message.");
 
         final int id = data[1];
         final int floor = data[2];
@@ -222,7 +222,7 @@ public class Scheduler {
      */
     private void send(final DatagramPacket packet) {
         System.out.println(
-                "Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()) + "\n");
+                "[scheduler] Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()) + "\n");
 
         try {
             this.sendSocket.send(packet);
@@ -271,7 +271,7 @@ public class Scheduler {
      * @param id the {@link Elevator}'s id
      */
     private void registerElevator(final int id) {
-        System.out.println("Registering elevator " + id + ".");
+        System.out.println("[scheduler] Registering elevator " + id + ".");
         // All elevators start at the ground floor.
         this.elevatorStatuses.put(id, new ElevatorStatus(id, this, ElevatorState.IDLE_DOOR_OPEN, 0));
     }

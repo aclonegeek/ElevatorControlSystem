@@ -94,7 +94,7 @@ public class ElevatorSubsystem implements Runnable {
             // Check if fault should occur here (ie. elevator gets stuck).
             final int currentFloor = this.getCurrentFloor();
             if (currentFloor != tempFloor && this.elevatorSystem.hasFault(currentFloor, ElevatorFault.ELEVATOR_STUCK)) {
-                System.out.println("FAULT: Elevator " + elevatorId + " is stuck!");
+                System.out.println("[elevator system] FAULT: Elevator " + elevatorId + " is stuck!");
                 this.state = ElevatorState.DOOR_CLOSED_FOR_IDLING;
                 stuck = true;
             }
@@ -116,7 +116,7 @@ public class ElevatorSubsystem implements Runnable {
             break;
         case OPEN_DOORS:
             if (this.elevatorSystem.hasFault(this.getCurrentFloor(), ElevatorFault.DOOR_STUCK_CLOSED)) {
-                System.out.println("FAULT: Elevator " + elevatorId + "'s door is stuck closed!");
+                System.out.println("[elevator system] FAULT: Elevator " + elevatorId + "'s door is stuck closed!");
                 return ElevatorResponse.FAILURE;
             }
             
@@ -124,7 +124,7 @@ public class ElevatorSubsystem implements Runnable {
             break;
         case CLOSE_DOORS:
             if (this.elevatorSystem.hasFault(this.getCurrentFloor(), ElevatorFault.DOOR_STUCK_OPEN)) {
-                System.out.println("FAULT: Elevator " + elevatorId + "'s door is stuck open!");
+                System.out.println("[elevator system] FAULT: Elevator " + elevatorId + "'s door is stuck open!");
                 return ElevatorResponse.FAILURE;
             }
             
@@ -134,9 +134,9 @@ public class ElevatorSubsystem implements Runnable {
             break;
         }
 
-        System.out.println("Elevator " + this.elevatorId + ": state changed to " + this.state);
+        System.out.println("[elevator system] Elevator " + this.elevatorId + ": state changed to " + this.state);
         if (this.state == ElevatorState.DOOR_CLOSED_FOR_IDLING) {
-            System.out.println("Elevator " + this.elevatorId + ": arrived at floor " + this.getCurrentFloor());
+            System.out.println("[elevator system] Elevator " + this.elevatorId + ": arrived at floor " + this.getCurrentFloor());
         }
 
         // For now, there are no errors.

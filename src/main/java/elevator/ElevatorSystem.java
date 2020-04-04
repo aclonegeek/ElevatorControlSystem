@@ -68,7 +68,7 @@ public class ElevatorSystem {
             sendData[2] = (byte) Elevator.Request.REGISTER.ordinal();
 
             // System.out.println("Sending to port " + sendPacket.getPort() + ": " + Arrays.toString(sendData));
-            System.out.println("Elevator " + elevator.getSubsystem().getElevatorId() + ": sending registration request");
+            System.out.println("[elevator system] Elevator " + elevator.getSubsystem().getElevatorId() + ": sending registration request");
 
             this.sendData(sendData);
         }
@@ -94,7 +94,7 @@ public class ElevatorSystem {
         case Globals.FROM_FLOOR:
             // receiveData[2] is floor number, [1] is the fault type.
             this.faults.put((int) receiveData[2], ElevatorFault.values()[receiveData[1]]);
-            System.out.println("Received future fault: floor " + receiveData[2] + ", type " + ElevatorFault.values()[receiveData[1]]);
+            System.out.println("[elevator system] Received future fault: floor " + receiveData[2] + ", type " + ElevatorFault.values()[receiveData[1]]);
             break;
         case Globals.FROM_SCHEDULER:
             this.elevators.get(receiveData[1] - 1).processData(receiveData);
