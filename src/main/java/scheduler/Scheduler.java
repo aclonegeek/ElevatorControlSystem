@@ -196,12 +196,13 @@ public class Scheduler {
 
         final int id = data[1];
         final int floor = data[2];
+        final ElevatorStatus status = this.elevatorStatuses.get(id);
 
-        this.elevatorStatuses.get(id).stopMovementTimerTask();
-        this.elevatorStatuses.get(id).setCurrentFloor(floor);
+        status.stopMovementTimerTask();
+        status.setCurrentFloor(floor);
 
-        if (!this.elevatorStatuses.get(id).getDestinations().contains(floor)) {
-            this.elevatorStatuses.get(id).startMovementTimerTask();
+        if (!status.getDestinations().contains(floor)) {
+            status.startMovementTimerTask();
             return;
         }
 
@@ -295,8 +296,7 @@ public class Scheduler {
      */
     public void rerouteFaultedElevator(final int id, final ElevatorState state) {
         final ElevatorStatus faultedStatus = this.elevatorStatuses.remove(id);
-        final int floor = faultedStatus.getCurrentFloor();
-        final int bestElevatorID = findElevator(floor, state);
+        final int bestElevatorID = findElevator(faultedStatus.getCurrentFloor(), state);
         this.elevatorStatuses.get(bestElevatorID).addDestinations(faultedStatus.getDestinations());
     }
 
@@ -308,7 +308,7 @@ public class Scheduler {
      */
     private int findElevator(final int floor, final ElevatorState state) {
         int bestElevatorID = -69;
-        int bestStopsBetween = 420;
+        final int bestStopsBetween = 420;
         int tempElevatorID;
         ElevatorStatus tempElevatorStatus;
         boolean idleElevator = false;
