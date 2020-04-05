@@ -77,11 +77,6 @@ public class Scheduler {
      * @param data the message to parse
      */
     private void handleMessage(final byte[] data) {
-        if (data.length == 0) {
-            System.out.println("[scheduler] Received empty message.");
-            return;
-        }
-
         this.state = State.HANDLING_MESSAGE;
 
         System.out.println("[scheduler] Received: " + Arrays.toString(data));
@@ -260,7 +255,7 @@ public class Scheduler {
             break;
         case Globals.FROM_SCHEDULER:
             System.out.println("[scheduler] Sending: " + "FROM_SCHEDULER, Elevator ID = " +
-                               data[1] + ", " + ", ElevatorAction = " + ElevatorAction.values()[data[2]]);
+                               data[1] + ", ElevatorAction = " + ElevatorAction.values()[data[2]]);
             break;
         }
     }
