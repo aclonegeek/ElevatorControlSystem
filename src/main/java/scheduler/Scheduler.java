@@ -260,7 +260,7 @@ public class Scheduler {
             break;
         case Globals.FROM_SCHEDULER:
             System.out.println("[scheduler] Sending: " + "FROM_SCHEDULER, Elevator ID = " +
-                               data[1] + ", " + ", ElevatorAction = " + ElevatorAction.values()[data[2]]);
+                               data[1] + ", ElevatorAction = " + ElevatorAction.values()[data[2]]);
             break;
         }
     }
