@@ -194,7 +194,10 @@ public class Scheduler {
 
             // We can now move the elevator.
             if (state == ElevatorState.DOOR_CLOSED_FOR_MOVING) {
-                this.sendElevatorMoveAction(id, status);
+                final int distance = status.getCurrentFloor() - status.getDestinations().get(0);
+                final ElevatorAction direction
+                    = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
+                this.sendElevatorAction(id, direction);
             }
         }
             break;
@@ -311,18 +314,6 @@ public class Scheduler {
         System.out.println("[scheduler] Registering elevator " + id + ".");
         // All elevators start at the ground floor.
         this.elevatorStatuses.put(id, new ElevatorStatus(id, this, ElevatorState.IDLE_DOOR_OPEN, 0));
-    }
-
-    /**
-     * Sends an {@link ElevatorAction} to an {@link Elevator}.
-     *
-     * @param id     the {@link Elevator}'s id
-     * @param status the {@link Elevator}'s status
-     */
-    public void sendElevatorMoveAction(final int id, final ElevatorStatus status)  {
-        final int distance = status.getCurrentFloor() - status.getDestinations().get(0);
-        final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
-        this.sendElevatorAction(id, direction);
     }
 
     /**
