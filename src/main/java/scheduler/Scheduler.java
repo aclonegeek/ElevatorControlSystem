@@ -140,7 +140,6 @@ public class Scheduler {
                 break;
             }
 
-            status.startDoorFaultTimerTask();
             this.sendElevatorAction(bestElevator.id, ElevatorAction.CLOSE_DOORS);
             break;
         default:
@@ -175,13 +174,11 @@ public class Scheduler {
                 break;
             }
 
-            status.startDoorFaultTimerTask();
             this.sendElevatorAction(id, ElevatorAction.CLOSE_DOORS);
         }
             break;
         case OPEN_DOORS: {
             final int id = data[1];
-            this.elevatorStatuses.get(id).startDoorFaultTimerTask();
             this.sendElevatorAction(id, ElevatorAction.OPEN_DOORS);
             break;
         }
@@ -279,8 +276,17 @@ public class Scheduler {
      * @param action the {@link ElevatorAction} for the {@link Elevator} to perform
      */
     public void sendElevatorAction(final int id, final ElevatorAction action) {
-        if (action == ElevatorAction.MOVE_UP || action == ElevatorAction.MOVE_DOWN) {
+        switch (action) {
+        case MOVE_UP:
+        case MOVE_DOWN:
             this.elevatorStatuses.get(id).startMovementTimerTask();
+            break;
+        case OPEN_DOORS:
+        case CLOSE_DOORS:
+            this.elevatorStatuses.get(id).startDoorFaultTimerTask();
+            break;
+        default:
+            break;
         }
 
         final byte reply[] =
