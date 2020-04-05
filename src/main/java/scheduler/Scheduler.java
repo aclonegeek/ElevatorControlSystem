@@ -100,7 +100,17 @@ public class Scheduler {
     }
 
     private void handleFloorMessage(final byte[] data) {
-        System.out.println("[scheduler] Handling a floor message.");
+        System.out.print("[scheduler] Floor message: " +
+                         "Floor = " + data[1] + ", " +
+                         "Destination Floor = " + data[3] + ", " +
+                         "ButtonState = " + ButtonState.values()[data[4]]);
+
+        if (data[5] != 0) {
+            System.out.print(", ElevatorFault = " + ElevatorFault.values()[data[5 - 1]] +
+                             ", Fault Floor = " + data[6]);
+        }
+
+        System.out.println();
 
         switch (Floor.Request.values[data[2]]) {
         // data[1] - floor that made the request
@@ -110,12 +120,6 @@ public class Scheduler {
         // data[5] - optional, indicates a fault
         // data[6] - optional, indicates floor the fault will occur
         case REQUEST:
-            System.out.println("Floor = " + data[1] + ", " +
-                               "Destination Floor = " + data[3] + ", " +
-                               "ButtonState = " + data[4] + ", " +
-                               "ElevatorFault = " + ElevatorFault.values()[data[5]] + ", " +
-                               "Fault Floor = " + data[6]);
-
             // If there is a fault, send it off to the elevator system right away.
             // Then we continue processing the rest of the message as normal.
             if (data[5] != 0) {
@@ -146,7 +150,15 @@ public class Scheduler {
     }
 
     private void handleElevatorMessage(final byte[] data) {
-        System.out.println("[scheduler] Handling an elevator message.");
+        System.out.print("[scheduler] Elevator message: " +
+                         "Elevator ID = " + data[1] + ", " +
+                         "ElevatorRequest = " + Elevator.Request.values[data[2]]);
+
+        if (Elevator.Request.values[data[2]] == Elevator.Request.STATE_CHANGED) {
+            System.out.print(", ElevatorState = " + ElevatorState.values[data[3]]);
+        }
+
+        System.out.println();
 
         // data[1] - elevator ID
         // data[2] - Elevator.Request
@@ -156,9 +168,6 @@ public class Scheduler {
             System.out.println();
             break;
         case READY: {
-            System.out.println("Elevator ID = " + data[1] + ", " +
-                               "ElevatorRequest = " + Elevator.Request.values[data[2]]);
-
             final int id = data[1];
             final ElevatorStatus status = this.elevatorStatuses.get(id);
 
@@ -171,9 +180,6 @@ public class Scheduler {
         }
             break;
         case OPEN_DOORS: {
-            System.out.println("Elevator ID = " + data[1] + ", " +
-                               "ElevatorRequest = " + Elevator.Request.values[data[2]]);
-
             final int id = data[1];
             this.elevatorStatuses.get(id).startDoorFaultTimerTask();
             this.sendElevatorAction(id, ElevatorAction.OPEN_DOORS);
@@ -181,10 +187,6 @@ public class Scheduler {
         }
         // data[3] - elevator state
         case STATE_CHANGED: {
-            System.out.println("Elevator ID = " + data[1] + ", " +
-                               "ElevatorRequest = " + Elevator.Request.values[data[2]] + ", " +
-                               "ElevatorState = " + ElevatorState.values[data[3]]);
-
             final int id = data[1];
             final ElevatorState state = ElevatorState.values[data[3]];
             final ElevatorStatus status = this.elevatorStatuses.get(id);
@@ -203,8 +205,8 @@ public class Scheduler {
     }
 
     private void handleArrivalSensorMessage(final byte[] data) {
-        System.out.println("[scheduler] Handling an arrival sensor message.");
-        System.out.println("Elevator ID = " + data[1] + ", " +
+        System.out.println("[scheduler] Arrival sensor message: " +
+                           "Elevator ID = " + data[1] + ", " +
                            "Floor = " + data[2]);
 
         final int id = data[1];
@@ -235,7 +237,7 @@ public class Scheduler {
      */
     private void send(final DatagramPacket packet) {
         System.out.println(
-                "[scheduler] Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()) + "\n");
+                "[scheduler] Sending to port " + packet.getPort() + ": " + Arrays.toString(packet.getData()));
         this.logSendPretty(packet.getData());
 
         try {
@@ -258,6 +260,8 @@ public class Scheduler {
                                data[1] + ", ElevatorAction = " + ElevatorAction.values()[data[2]]);
             break;
         }
+
+        System.out.println();
     }
 
     /**
