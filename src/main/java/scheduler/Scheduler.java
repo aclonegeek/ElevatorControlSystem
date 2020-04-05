@@ -330,11 +330,18 @@ public class Scheduler {
      */
     public void rerouteFaultedElevator(final int id, final ElevatorState state) {
         final ElevatorStatus faultedStatus = this.elevatorStatuses.remove(id); 
-        final int bestElevatorID = findElevator(faultedStatus.getCurrentFloor(), state);
-        this.elevatorStatuses.get(bestElevatorID).addDestinations(faultedStatus.getDestinations());
-        final int distance = this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - faultedStatus.getCurrentFloor();
-        final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
-        this.sendElevatorAction(bestElevatorID, direction);
+        final int reroutedElevatorID = findElevator(faultedStatus.getCurrentFloor(), state);
+        final ElevatorStatus reroutedStatus = this.elevatorStatuses.get(reroutedElevatorID);
+        reroutedStatus.addDestinations(faultedStatus.getDestinations());
+        if (reroutedStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
+            this.sendElevatorAction(reroutedElevatorID, ElevatorAction.CLOSE_DOORS);
+        }
+        else if(reroutedStatus.getState() == ElevatorState.DOOR_CLOSED_FOR_MOVING) {
+            final int distance = reroutedStatus.getCurrentFloor() - faultedStatus.getCurrentFloor();
+            final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
+            this.sendElevatorAction(reroutedElevatorID, direction);
+        }
+           
     }
 
     /**
