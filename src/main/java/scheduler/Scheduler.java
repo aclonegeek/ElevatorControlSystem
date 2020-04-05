@@ -127,7 +127,7 @@ public class Scheduler {
             }
 
             final int destinationFloor = data[3];
-            final ElevatorState direction = this.checkDirection(ButtonState.values[data[4]]);
+            final ElevatorState direction = this.getDirectionFromButtonState(ButtonState.values[data[4]]);
 
             final BestElevator bestElevator = this.getBestElevator(data[1], direction);
             final ElevatorStatus status = this.elevatorStatuses.get(bestElevator.id);
@@ -231,7 +231,7 @@ public class Scheduler {
     }
 
     /**
-     * Send a {@link DatagramPacket} to a port.
+     * Sends a {@link DatagramPacket} to a port.
      *
      * @param packet the {@link DatagramPacket} to send.
      */
@@ -248,6 +248,11 @@ public class Scheduler {
         }
     }
 
+    /**
+     * Prints out data to be sent in a pretty way.
+     *
+     * @param data the data to pretty print
+     */
     private void logSendPretty(final byte[] data) {
         switch (data[0]) {
         case Globals.FROM_FLOOR:
@@ -360,11 +365,9 @@ public class Scheduler {
                     bestStopsBetween = tempStopsBetween;
                     onPathElevator = true;
                 }
-            }
-
-            else if (tempElevatorStatus.getState() == state &&
-                     state == ElevatorState.MOVING_DOWN &&
-                     floor <= tempElevatorStatus.getCurrentFloor()) {
+            } else if (tempElevatorStatus.getState() == state &&
+                       state == ElevatorState.MOVING_DOWN &&
+                       floor <= tempElevatorStatus.getCurrentFloor()) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     bestStopsBetween = tempStopsBetween;
@@ -381,12 +384,10 @@ public class Scheduler {
 
                 // Best elevator is idle.
                 if (tempElevatorStatus.getState() == ElevatorState.DOOR_CLOSED_FOR_IDLING ||
-                        tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
+                    tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
 
-                    if (bestElevatorID == -69) {
-                        bestElevatorID = tempElevatorID;
-                        idleElevator = true;
-                    } else if (getDistanceBetween(tempElevatorID, floor) <= getDistanceBetween(bestElevatorID, floor)) {
+                    if (bestElevatorID == -69 ||
+                        getAbsoluteDistanceBetween(tempElevatorID, floor) <= getAbsoluteDistanceBetween(bestElevatorID, floor)) {
                         bestElevatorID = tempElevatorID;
                         idleElevator = true;
                     }
@@ -401,9 +402,7 @@ public class Scheduler {
 
                 if (bestElevatorID == -69) {
                     bestElevatorID = tempElevatorID;
-                }
-
-                // Best elevator is one the one with least stops between.
+                } // Best elevator is the one with least stops between.
                 else if (tempElevatorStatus.getDestinations().size() <= this.elevatorStatuses.get(bestElevatorID)
                          .getDestinations().size() &&
                          !idleElevator &&
@@ -426,8 +425,6 @@ public class Scheduler {
      */
     public BestElevator getBestElevator(final int floor, final ElevatorState state) {
         final int bestElevatorID = findElevator(floor, state);
-
-        // Add destination to best elevators destinations.
         this.elevatorStatuses.get(bestElevatorID).addDestination(floor);
 
         final int distance = this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor;
@@ -441,18 +438,27 @@ public class Scheduler {
      *
      * @return the corresponding {@link ElevatorState} for a given {@link ButtonState}
      */
-    private ElevatorState checkDirection(final ButtonState state) {
-        if (state == ButtonState.UP) {
+    private ElevatorState getDirectionFromButtonState(final ButtonState state) {
+        switch (state) {
+        case UP:
             return ElevatorState.MOVING_UP;
-        } else if (state == ButtonState.DOWN) {
+        case DOWN:
             return ElevatorState.MOVING_DOWN;
-        } else {
+        default:
             return ElevatorState.DOOR_CLOSED_FOR_IDLING;
         }
     }
 
-    private int getDistanceBetween(final int bestElevatorID, final int floor) {
-        return Math.abs(this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor);
+    /**
+     * Returns the distance between an elevator's current floor and a floor.
+     *
+     * @param elevatorId
+     * @param floor
+     *
+     * @return the distance between the elevator's current floor and floor
+     */
+    private int getAbsoluteDistanceBetween(final int elevatorId, final int floor) {
+        return Math.abs(this.elevatorStatuses.get(elevatorId).getCurrentFloor() - floor);
     }
 
     private int getStopsBetween(final ElevatorStatus elevatorStatus, final int floor) {
@@ -460,10 +466,11 @@ public class Scheduler {
 
         for (final int destination : elevatorStatus.getDestinations()) {
             if (destination < floor && destination > elevatorStatus.getCurrentFloor() ||
-                    destination > floor && destination < elevatorStatus.getCurrentFloor()) {
+                destination > floor && destination < elevatorStatus.getCurrentFloor()) {
                 floorsBetween++;
             }
         }
+
         return floorsBetween;
     }
 
