@@ -332,9 +332,12 @@ public class Scheduler {
      * @param state the {@link ElevatorState} current state
      */
     public void rerouteFaultedElevator(final int id, final ElevatorState state) {
-        final ElevatorStatus faultedStatus = this.elevatorStatuses.remove(id);
+        final ElevatorStatus faultedStatus = this.elevatorStatuses.remove(id); 
         final int bestElevatorID = findElevator(faultedStatus.getCurrentFloor(), state);
         this.elevatorStatuses.get(bestElevatorID).addDestinations(faultedStatus.getDestinations());
+        final int distance = this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - faultedStatus.getCurrentFloor();
+        final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
+        this.sendElevatorAction(bestElevatorID, direction);
     }
 
     /**
@@ -357,17 +360,13 @@ public class Scheduler {
 
             final int tempStopsBetween = getStopsBetween(tempElevatorStatus, floor);
 
-            if (tempElevatorStatus.getState() == state &&
-                state == ElevatorState.MOVING_UP &&
-                floor >= tempElevatorStatus.getCurrentFloor()) {
+            if (floor >= tempElevatorStatus.getCurrentFloor() && state == ElevatorState.MOVING_UP) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     bestStopsBetween = tempStopsBetween;
                     onPathElevator = true;
                 }
-            } else if (tempElevatorStatus.getState() == state &&
-                       state == ElevatorState.MOVING_DOWN &&
-                       floor <= tempElevatorStatus.getCurrentFloor()) {
+            } else if (floor <= tempElevatorStatus.getCurrentFloor() && state == ElevatorState.MOVING_DOWN) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     bestStopsBetween = tempStopsBetween;
@@ -383,8 +382,7 @@ public class Scheduler {
                 tempElevatorStatus = entry.getValue();
 
                 // Best elevator is idle.
-                if (tempElevatorStatus.getState() == ElevatorState.DOOR_CLOSED_FOR_IDLING ||
-                    tempElevatorStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
+                if (tempElevatorStatus.getDestinations().size() == 0) {
 
                     if (bestElevatorID == -69 ||
                         getAbsoluteDistanceBetween(tempElevatorID, floor) <= getAbsoluteDistanceBetween(bestElevatorID, floor)) {
