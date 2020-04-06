@@ -77,30 +77,12 @@ public class ElevatorStatus {
 
     public void addDestination(final int floor) {
         
-        if(this.destinations.size() == 0) {
-            this.destinations.add(floor);
-            if(this.currentFloor > floor ) {
-                this.increasingOrder = false;
-            } else {
-                this.increasingOrder = true;
-            }
+        this.destinations.add(floor);
+        if (this.state == ElevatorState.MOVING_UP || floor > this.currentFloor) {
+            Collections.sort(this.destinations);
+        } else if (this.state == ElevatorState.MOVING_DOWN || floor < this.currentFloor) {
+            Collections.sort(this.destinations, Collections.reverseOrder());
         }
-        
-        else if(increasingOrder && floor >= this.currentFloor) {
-           this.destinations.add(floor);
-           Collections.sort(this.destinations, Collections.reverseOrder());
-       }
-       
-       else if(!increasingOrder && floor <= this.currentFloor) {
-           this.destinations.add(floor);
-           Collections.sort(this.destinations);
-       }
- 
-       else {
-           this.destinations.add(floor);
-       }
-       
-       System.out.println("destinations: " + this.destinations);
         
     }
 

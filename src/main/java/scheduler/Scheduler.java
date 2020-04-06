@@ -364,13 +364,13 @@ public class Scheduler {
 
             final int tempStopsBetween = getStopsBetween(tempElevatorStatus, floor);
 
-            if (floor >= tempElevatorStatus.getCurrentFloor() && state == ElevatorState.MOVING_UP) {
+            if (floor >= tempElevatorStatus.getCurrentFloor() && state == ElevatorState.MOVING_UP && tempElevatorStatus.getState() == state) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     bestStopsBetween = tempStopsBetween;
                     onPathElevator = true;
                 }
-            } else if (floor <= tempElevatorStatus.getCurrentFloor() && state == ElevatorState.MOVING_DOWN) {
+            } else if (floor <= tempElevatorStatus.getCurrentFloor() && state == ElevatorState.MOVING_DOWN && tempElevatorStatus.getState() == state) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     bestStopsBetween = tempStopsBetween;
