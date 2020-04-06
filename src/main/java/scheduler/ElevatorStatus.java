@@ -87,20 +87,16 @@ public class ElevatorStatus {
         }
         
         else if(increasingOrder && floor >= this.currentFloor) {
-           System.out.println("here1");
            this.destinations.add(floor);
            Collections.sort(this.destinations, Collections.reverseOrder());
        }
        
        else if(!increasingOrder && floor <= this.currentFloor) {
-           System.out.println("here2");
            this.destinations.add(floor);
            Collections.sort(this.destinations);
        }
  
-  
        else {
-           System.out.println("here");
            this.destinations.add(floor);
        }
        

@@ -216,7 +216,7 @@ public class Scheduler {
         status.stopMovementTimerTask();
         status.setCurrentFloor(floor);
 
-        if (!status.getDestinations().contains(floor)) {
+        if (status.getDestinations().get(0) != floor) {
             status.startMovementTimerTask();
             return;
         }
