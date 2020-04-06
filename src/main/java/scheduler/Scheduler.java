@@ -379,24 +379,21 @@ public class Scheduler {
             }
         }
 
+        for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
+            tempElevatorID = entry.getKey();
+            tempElevatorStatus = entry.getValue();
 
-        if (!onPathElevator) {
-            for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
-                tempElevatorID = entry.getKey();
-                tempElevatorStatus = entry.getValue();
+            // Best elevator is idle.
+            if (tempElevatorStatus.getDestinations().size() == 0) {
 
-                // Best elevator is idle.
-                if (tempElevatorStatus.getDestinations().size() == 0) {
-
-                    if (bestElevatorID == -69 ||
-                        getAbsoluteDistanceBetween(tempElevatorID, floor) <= getAbsoluteDistanceBetween(bestElevatorID, floor)) {
-                        bestElevatorID = tempElevatorID;
-                        idleElevator = true;
-                    }
+                if (bestElevatorID == -69 ||
+                    getAbsoluteDistanceBetween(tempElevatorID, floor) <= getAbsoluteDistanceBetween(bestElevatorID, floor)) {
+                    bestElevatorID = tempElevatorID;
+                    idleElevator = true;
                 }
             }
         }
-
+            
         if (!onPathElevator && !idleElevator) {
             for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
                 tempElevatorID = entry.getKey();

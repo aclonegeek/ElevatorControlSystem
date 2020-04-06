@@ -80,6 +80,8 @@ public class ElevatorStatus {
         } else if (this.state == ElevatorState.MOVING_DOWN || floor < this.currentFloor) {
             Collections.sort(this.destinations, Collections.reverseOrder());
         }
+        
+        System.out.println("[scheduler] Elevator " + this.id + " destinations: " + this.destinations);
     }
 
     public void addDestinations(final ArrayList<Integer> floors) {
