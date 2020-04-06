@@ -28,7 +28,7 @@ public class ElevatorSoftFaultTest extends TestCase {
                 new RunnableFloorSystem("/doorStuckOpenFaultData.txt", 10);
         new Thread(runnableFloorSystem).start();
 
-        Globals.sleep(10000);
+        Globals.sleep(15000);
         assertEquals(5, runnableElevatorSystem.getElevatorSystem().getElevators().get(3).getSubsystem().getCurrentFloor());
     }
 
@@ -52,7 +52,7 @@ public class ElevatorSoftFaultTest extends TestCase {
                 new RunnableFloorSystem("/doorStuckClosedFaultData.txt", 10);
         new Thread(runnableFloorSystem).start();
 
-        Globals.sleep(10000);
+        Globals.sleep(15000);
         assertEquals(5, runnableElevatorSystem.getElevatorSystem().getElevators().get(3).getSubsystem().getCurrentFloor());
     }
 }

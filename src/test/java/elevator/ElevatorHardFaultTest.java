@@ -25,7 +25,7 @@ public class ElevatorHardFaultTest extends TestCase {
         final RunnableFloorSystem runnableFloorSystem = new RunnableFloorSystem("/elevatorStuckFaultData.txt", 10);
         new Thread(runnableFloorSystem).start();
 
-        Globals.sleep(10000);
+        Globals.sleep(20000);
         assertEquals(3, runnableElevatorSystem.getElevatorSystem().getElevators().get(3).getSubsystem()
                 .getCurrentFloor());
         assertEquals(7, runnableElevatorSystem.getElevatorSystem().getElevators().get(2).getSubsystem()
@@ -50,7 +50,7 @@ public class ElevatorHardFaultTest extends TestCase {
         final RunnableFloorSystem runnableFloorSystem = new RunnableFloorSystem("/sensorFaultData.txt", 10);
         new Thread(runnableFloorSystem).start();
 
-        Globals.sleep(10000);
+        Globals.sleep(20000);
         assertEquals(3, runnableElevatorSystem.getElevatorSystem().getElevators().get(3).getSubsystem()
                 .getCurrentFloor());
         assertEquals(7, runnableElevatorSystem.getElevatorSystem().getElevators().get(2).getSubsystem()

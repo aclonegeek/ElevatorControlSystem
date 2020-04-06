@@ -16,7 +16,7 @@ public class ArrivalSensorTest extends TestCase {
         elevator.getSubsystem().setCurrentHeight(Globals.FLOOR_HEIGHT * 10);
         elevator.getSubsystem().updateState(ElevatorAction.CLOSE_DOORS);
         elevator.getSubsystem().updateState(ElevatorAction.MOVE_UP);
-        Globals.sleep(5000);
+        Globals.sleep(10000);
         elevator.getSubsystem().updateState(ElevatorAction.STOP_MOVING);
         
         for (int i = 0; i < 10; i++) {
