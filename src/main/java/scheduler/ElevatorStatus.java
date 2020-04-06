@@ -13,6 +13,7 @@ public class ElevatorStatus {
     private ElevatorState state;
     private final ArrayList<Integer> destinations;
     private int currentFloor;
+    private boolean increasingOrder;
 
     private Timer timer;
     private TimerTask movementTimerTask;
@@ -28,6 +29,7 @@ public class ElevatorStatus {
         this.state = state;
         this.currentFloor = currentFloor;
         this.timer = new Timer();
+        this.increasingOrder = true;
     }
 
     public void startMovementTimerTask() {
@@ -74,12 +76,36 @@ public class ElevatorStatus {
     }
 
     public void addDestination(final int floor) {
-        this.destinations.add(floor);
-        if (this.state == ElevatorState.MOVING_UP || floor >= this.currentFloor) {
-            Collections.sort(this.destinations);
-        } else if (this.state == ElevatorState.MOVING_DOWN || floor < this.currentFloor) {
-            Collections.sort(this.destinations, Collections.reverseOrder());
+        
+        if(this.destinations.size() == 0) {
+            this.destinations.add(floor);
+            if(this.currentFloor > floor ) {
+                this.increasingOrder = false;
+            } else {
+                this.increasingOrder = true;
+            }
         }
+        
+        else if(increasingOrder && floor >= this.currentFloor) {
+           System.out.println("here1");
+           this.destinations.add(floor);
+           Collections.sort(this.destinations, Collections.reverseOrder());
+       }
+       
+       else if(!increasingOrder && floor <= this.currentFloor) {
+           System.out.println("here2");
+           this.destinations.add(floor);
+           Collections.sort(this.destinations);
+       }
+ 
+  
+       else {
+           System.out.println("here");
+           this.destinations.add(floor);
+       }
+       
+       System.out.println("destinations: " + this.destinations);
+        
     }
 
     public void addDestinations(final ArrayList<Integer> floors) {
