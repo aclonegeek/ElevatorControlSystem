@@ -431,7 +431,7 @@ public class Scheduler {
 
         final int distance = this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor;
         final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
-
+       
         return new BestElevator(bestElevatorID, Math.abs(distance), direction);
     }
 
