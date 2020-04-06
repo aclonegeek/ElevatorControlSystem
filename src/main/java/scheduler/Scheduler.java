@@ -226,8 +226,8 @@ public class Scheduler {
                 new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
 
         this.send(packet);
-
-        status.getDestinations().remove(status.getDestinations().indexOf(floor));
+       
+        status.removeDestination();
     }
 
     /**
