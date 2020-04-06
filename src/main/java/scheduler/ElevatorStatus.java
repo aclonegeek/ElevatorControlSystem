@@ -13,7 +13,6 @@ public class ElevatorStatus {
     private ElevatorState state;
     private final ArrayList<Integer> destinations;
     private int currentFloor;
-    private boolean increasingOrder;
 
     private Timer timer;
     private TimerTask movementTimerTask;
@@ -29,7 +28,6 @@ public class ElevatorStatus {
         this.state = state;
         this.currentFloor = currentFloor;
         this.timer = new Timer();
-        this.increasingOrder = true;
     }
 
     public void startMovementTimerTask() {
@@ -76,14 +74,12 @@ public class ElevatorStatus {
     }
 
     public void addDestination(final int floor) {
-        
         this.destinations.add(floor);
         if (this.state == ElevatorState.MOVING_UP || floor > this.currentFloor) {
             Collections.sort(this.destinations);
         } else if (this.state == ElevatorState.MOVING_DOWN || floor < this.currentFloor) {
             Collections.sort(this.destinations, Collections.reverseOrder());
         }
-        
     }
 
     public void addDestinations(final ArrayList<Integer> floors) {
