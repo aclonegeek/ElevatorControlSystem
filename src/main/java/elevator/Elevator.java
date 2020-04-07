@@ -50,6 +50,8 @@ public class Elevator {
     public byte[] processData(final byte[] receiveData) {
         final ElevatorAction action = ElevatorAction.values[receiveData[2]];
         final ElevatorState previousState = this.elevatorSubsystem.getState();
+        
+        System.out.println("[elevator system] Elevator " + this.elevatorSubsystem.getElevatorId() + ": received action " + action);
         final ElevatorResponse response = this.elevatorSubsystem.updateState(action);
 
         if (previousState != this.elevatorSubsystem.getState()) {
@@ -59,7 +61,6 @@ public class Elevator {
             sendData[2] = (byte) Request.STATE_CHANGED.ordinal();
             sendData[3] = (byte) this.elevatorSubsystem.getState().ordinal();
             sendData[4] = (byte) response.ordinal();
-
             this.elevatorSystem.sendData(sendData);
             return sendData;
         }

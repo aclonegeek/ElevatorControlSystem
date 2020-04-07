@@ -1,6 +1,7 @@
 package scheduler;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -33,7 +34,7 @@ public class ElevatorStatus {
         this.movementTimerTask = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("Fault detected for elevator " + id);
+                System.out.println("[scheduler] ERROR: Fault detected for elevator " + id);
                 scheduler.rerouteFaultedElevator(id, state);
                 scheduler.sendElevatorAction(id, ElevatorAction.STOP_MOVING);
             }
@@ -45,19 +46,22 @@ public class ElevatorStatus {
     }
 
     public void startDoorFaultTimerTask() {
-        final ElevatorStatus es = this;
         final ElevatorState previousState = this.state;
 
         this.doorFaultTimerTask = new TimerTask() {
             @Override
             public void run() {
-                // No door fault.
+                // No door fault detected.
                 if (state != previousState) {
                     return;
                 }
 
-                System.out.println("Door fault detected for elevator " + id);
-                scheduler.sendElevatorMoveAction(id, es);
+                System.out.println("[scheduler] ERROR: Door fault detected for elevator " + id);
+                if (state == ElevatorState.IDLE_DOOR_OPEN) {
+                    scheduler.sendElevatorAction(id, ElevatorAction.CLOSE_DOORS);
+                } else if (state == ElevatorState.DOOR_CLOSED_FOR_IDLING) {
+                    scheduler.sendElevatorAction(id, ElevatorAction.OPEN_DOORS);
+                }
             }
         };
         // If the elevator's state doesn't change after telling it to close or
@@ -71,6 +75,13 @@ public class ElevatorStatus {
 
     public void addDestination(final int floor) {
         this.destinations.add(floor);
+        if (this.state == ElevatorState.MOVING_UP || floor > this.currentFloor) {
+            Collections.sort(this.destinations);
+        } else if (this.state == ElevatorState.MOVING_DOWN || floor < this.currentFloor) {
+            Collections.sort(this.destinations, Collections.reverseOrder());
+        }
+        
+        System.out.println("[scheduler] Elevator " + this.id + " destinations: " + this.destinations);
     }
 
     public void addDestinations(final ArrayList<Integer> floors) {

@@ -44,7 +44,7 @@ public class ElevatorSubsystemTest extends TestCase {
         
         // Verify the elevator has moved up.
         final int height1 = elevatorSubsystem.getCurrentHeight();
-        Globals.sleep(1000);
+        Globals.sleep(5000);
         assertTrue(elevatorSubsystem.getCurrentHeight() > height1);
         
         // Stop the elevator and move down.
@@ -53,7 +53,7 @@ public class ElevatorSubsystemTest extends TestCase {
         
         // Verify the elevator has moved down.
         final int height2 = elevatorSubsystem.getCurrentHeight();
-        Globals.sleep(1000);
+        Globals.sleep(5000);
         assertTrue(elevatorSubsystem.getCurrentHeight() < height2);
         
         elevatorSystem.closeSockets();

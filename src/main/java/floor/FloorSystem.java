@@ -65,7 +65,7 @@ public class FloorSystem {
 
             this.sendData(sendData);
 
-            System.out.println("Floor " + request.getFloor() + ": sent request to go " + request.getButtonState()
+            System.out.println("[floor system] Floor " + request.getFloor() + ": sent request to go " + request.getButtonState()
                     + " to floor " + request.getDestination());
 
             Globals.sleep(sleepTime);
@@ -90,19 +90,6 @@ public class FloorSystem {
             System.err.println(e);
             System.exit(1);
         }
-
-        // Block until receive response from Scheduler.
-        // TODO: Handle success/failure cases.
-//        final byte[] receiveData = new byte[1];
-//        final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-//        try {
-//            this.receiveSocket.receive(receivePacket);
-//        } catch (IOException e) {
-//            System.err.println(e);
-//            System.exit(1);
-//        }
-//
-//        System.out.println("Received: " + Arrays.toString(receiveData) + "\n");
     }
 
     /* METHODS USED FOR TESTING */
