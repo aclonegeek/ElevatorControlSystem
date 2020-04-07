@@ -33,29 +33,30 @@ public class BestElevatorTest extends TestCase {
         scheduler.addElevatorStatus(4, elevatorStatus4);
 
        
-        BestElevator target = new BestElevator(3, 5, ElevatorAction.MOVE_UP);
+        BestElevator target = new BestElevator(1, 3, ElevatorAction.MOVE_UP);
         BestElevator predicted = scheduler.getBestElevator(6, ElevatorState.MOVING_UP);
         assertEquals(target.id, predicted.id);
         assertEquals(target.numFloors, predicted.numFloors);
         
         scheduler.getElevatorStatuses().remove(2);
         scheduler.getElevatorStatuses().remove(3);
-        
+    
         
         // assert we find the elevator with least total stops if there is no elevator
         // going same direction
-        target = new BestElevator(1, 0, ElevatorAction.STOP_MOVING);
+        target = new BestElevator(4, 1, ElevatorAction.STOP_MOVING);
         predicted = scheduler.getBestElevator(9, ElevatorState.MOVING_DOWN);
         assertEquals(target.id, predicted.id);
         assertEquals(target.numFloors, predicted.numFloors);
         scheduler.getElevatorStatuses().remove(1);
 
+       
         // assert we find the elevator with least total stops if there is no elevator
         // going same direction
         target = new BestElevator(4, 1, ElevatorAction.MOVE_DOWN);
         predicted = scheduler.getBestElevator(9, ElevatorState.MOVING_DOWN);
         assertEquals(target.id, predicted.id);
         assertEquals(target.numFloors, predicted.numFloors);
-        
+       
     }
 }
