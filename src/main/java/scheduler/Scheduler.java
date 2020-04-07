@@ -387,7 +387,7 @@ public class Scheduler {
             if (tempElevatorStatus.getDestinations().size() == 0) {
 
                 if (bestElevatorID == -69 ||
-                    getAbsoluteDistanceBetween(tempElevatorID, floor) <= getAbsoluteDistanceBetween(bestElevatorID, floor)) {
+                    getAbsoluteDistanceBetween(tempElevatorID, floor) < getAbsoluteDistanceBetween(bestElevatorID, floor)) {
                     bestElevatorID = tempElevatorID;
                     idleElevator = true;
                 }
