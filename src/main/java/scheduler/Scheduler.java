@@ -169,7 +169,7 @@ public class Scheduler {
         case READY: {
             final int id = data[1];
             final ElevatorStatus status = this.elevatorStatuses.get(id);
-            
+
             if (status == null || status.getDestinations().isEmpty()) {
                 break;
             }
@@ -180,11 +180,11 @@ public class Scheduler {
         case OPEN_DOORS: {
             final int id = data[1];
             final ElevatorStatus status = this.elevatorStatuses.get(id);
-            
+
             if (status == null) {
                 break;
             }
-            
+
             this.sendElevatorAction(id, ElevatorAction.OPEN_DOORS);
             break;
         }
@@ -193,11 +193,11 @@ public class Scheduler {
             final int id = data[1];
             final ElevatorState state = ElevatorState.values[data[3]];
             final ElevatorStatus status = this.elevatorStatuses.get(id);
-            
+
             if (status == null) {
                 break;
             }
-            
+
             status.setState(state);
 
             // We can now move the elevator.
@@ -237,7 +237,7 @@ public class Scheduler {
                 new DatagramPacket(reply, reply.length, Globals.IP, Globals.ELEVATOR_PORT);
 
         this.send(packet);
-       
+
         status.removeDestination();
     }
 
@@ -340,19 +340,18 @@ public class Scheduler {
      * @param state the {@link ElevatorState} current state
      */
     public void rerouteFaultedElevator(final int id, final ElevatorState state) {
-        final ElevatorStatus faultedStatus = this.elevatorStatuses.remove(id); 
+        final ElevatorStatus faultedStatus = this.elevatorStatuses.remove(id);
         final int reroutedElevatorID = findElevator(faultedStatus.getCurrentFloor(), state);
         final ElevatorStatus reroutedStatus = this.elevatorStatuses.get(reroutedElevatorID);
+
         reroutedStatus.addDestinations(faultedStatus.getDestinations());
         if (reroutedStatus.getState() == ElevatorState.IDLE_DOOR_OPEN) {
             this.sendElevatorAction(reroutedElevatorID, ElevatorAction.CLOSE_DOORS);
-        }
-        else if(reroutedStatus.getState() == ElevatorState.DOOR_CLOSED_FOR_MOVING) {
+        } else if (reroutedStatus.getState() == ElevatorState.DOOR_CLOSED_FOR_MOVING) {
             final int distance = reroutedStatus.getCurrentFloor() - faultedStatus.getCurrentFloor();
             final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
             this.sendElevatorAction(reroutedElevatorID, direction);
         }
-           
     }
 
     /**
@@ -375,13 +374,17 @@ public class Scheduler {
 
             final int tempStopsBetween = getStopsBetween(tempElevatorStatus, floor);
 
-            if (floor >= tempElevatorStatus.getCurrentFloor() && state == ElevatorState.MOVING_UP && tempElevatorStatus.getState() == state) {
+            if (floor >= tempElevatorStatus.getCurrentFloor() &&
+                state == ElevatorState.MOVING_UP &&
+                tempElevatorStatus.getState() == state) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     bestStopsBetween = tempStopsBetween;
                     onPathElevator = true;
                 }
-            } else if (floor <= tempElevatorStatus.getCurrentFloor() && state == ElevatorState.MOVING_DOWN && tempElevatorStatus.getState() == state) {
+            } else if (floor <= tempElevatorStatus.getCurrentFloor() &&
+                       state == ElevatorState.MOVING_DOWN &&
+                       tempElevatorStatus.getState() == state) {
                 if (tempStopsBetween <= bestStopsBetween) {
                     bestElevatorID = tempElevatorID;
                     bestStopsBetween = tempStopsBetween;
@@ -404,7 +407,7 @@ public class Scheduler {
                 }
             }
         }
-            
+
         if (!onPathElevator && !idleElevator) {
             for (final Entry<Integer, ElevatorStatus> entry : this.elevatorStatuses.entrySet()) {
                 tempElevatorID = entry.getKey();
@@ -439,7 +442,7 @@ public class Scheduler {
 
         final int distance = this.elevatorStatuses.get(bestElevatorID).getCurrentFloor() - floor;
         final ElevatorAction direction = distance < 0 ? ElevatorAction.MOVE_UP : ElevatorAction.MOVE_DOWN;
-       
+
         return new BestElevator(bestElevatorID, Math.abs(distance), direction);
     }
 
