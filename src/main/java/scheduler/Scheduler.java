@@ -169,8 +169,8 @@ public class Scheduler {
         case READY: {
             final int id = data[1];
             final ElevatorStatus status = this.elevatorStatuses.get(id);
-
-            if (status.getDestinations().isEmpty()) {
+            
+            if (status == null || status.getDestinations().isEmpty()) {
                 break;
             }
 
@@ -179,6 +179,12 @@ public class Scheduler {
             break;
         case OPEN_DOORS: {
             final int id = data[1];
+            final ElevatorStatus status = this.elevatorStatuses.get(id);
+            
+            if (status == null) {
+                break;
+            }
+            
             this.sendElevatorAction(id, ElevatorAction.OPEN_DOORS);
             break;
         }
@@ -187,6 +193,11 @@ public class Scheduler {
             final int id = data[1];
             final ElevatorState state = ElevatorState.values[data[3]];
             final ElevatorStatus status = this.elevatorStatuses.get(id);
+            
+            if (status == null) {
+                break;
+            }
+            
             status.setState(state);
 
             // We can now move the elevator.
