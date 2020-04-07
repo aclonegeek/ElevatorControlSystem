@@ -26,9 +26,9 @@ public class ElevatorHardFaultTest extends TestCase {
         new Thread(runnableFloorSystem).start();
 
         Globals.sleep(20000);
-        assertEquals(3, runnableElevatorSystem.getElevatorSystem().getElevators().get(3).getSubsystem()
+        assertEquals(3, runnableElevatorSystem.getElevatorSystem().getElevators().get(0).getSubsystem()
                 .getCurrentFloor());
-        assertEquals(7, runnableElevatorSystem.getElevatorSystem().getElevators().get(2).getSubsystem()
+        assertEquals(7, runnableElevatorSystem.getElevatorSystem().getElevators().get(1).getSubsystem()
                 .getCurrentFloor());
     }
 
@@ -51,9 +51,9 @@ public class ElevatorHardFaultTest extends TestCase {
         new Thread(runnableFloorSystem).start();
 
         Globals.sleep(20000);
-        assertEquals(3, runnableElevatorSystem.getElevatorSystem().getElevators().get(3).getSubsystem()
+        assertEquals(3, runnableElevatorSystem.getElevatorSystem().getElevators().get(0).getSubsystem()
                 .getCurrentFloor());
-        assertEquals(7, runnableElevatorSystem.getElevatorSystem().getElevators().get(2).getSubsystem()
+        assertEquals(7, runnableElevatorSystem.getElevatorSystem().getElevators().get(1).getSubsystem()
                 .getCurrentFloor());
     }
 }
