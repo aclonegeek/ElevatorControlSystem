@@ -4,7 +4,8 @@
 
 The report can be found in the root directory, titled report.pdf.
 
-The demo video can be found in the root directory, titled demo.mp4.
+The demo video can be found in the root directory, titled demo.mp4. Alternatively, it can be found here:
+https://drive.google.com/file/d/1mdJhyR-6_HkjIXeYxq6VqEWorGypLce7/view
 
 =========================
 === TABLE OF CONTENTS ===
