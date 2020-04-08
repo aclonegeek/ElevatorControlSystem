@@ -2,9 +2,7 @@
 === SYSC3303B PROJECT - GROUP 8 ===
 ===================================
 
-Reflection on how concurrency control at the scheduler changed from Iteration 2 to Iteration 3
-- Before, the Scheduler blocked on receiving an event from the Floor. After it did, the Elevator would take control to obtain the event, then free the Scheduler to receive more events from the floor.
-- Now, the Scheduler works in the same way, except that it blocks on the socket for receiving data. Once it obtains the data, it handles it, and then goes back to receiving.
+The report can be found in the root directory, titled report.pdf.
 
 =========================
 === TABLE OF CONTENTS ===
@@ -34,7 +32,7 @@ Important notes:
     3. FloorSystem.java (src/main/floor/FloorSystem.java)
     This will run through the data specified in data.txt.
 - Tests (see IMPORTANT NOTE below): In Eclipse, right click on the /src/test/java folder on the Package Explorer pane and click Run As > JUnit Test.
-  - IMPORTANT NOTE: Each test (found in the src/test/java/ folder) must be run individually (right click on the test file in Eclipse and click Run As > JUnit Test) for the time being.
+  - IMPORTANT NOTE: Each test (found in the src/test/java/ folder) must be run individually (right click on EACH FUNCTION in the test file in Eclipse and click Run As > JUnit Test).
 
 =============
 === FILES ===
@@ -43,6 +41,7 @@ Important notes:
     - ArrivalSensor.java
     - Elevator.java
     - ElevatorAction.java
+    - ElevatorFault.java
     - ElevatorResponse.java
     - ElevatorState.java
     - ElevatorSystem.java
@@ -65,6 +64,8 @@ Important notes:
     - RunnableScheduler.java
 - src/test/java/elevator/
     - ArrivalSensorTest.java
+    - ElevatorHardFaultTest.java
+    - ElevatorSoftFaultTest.java
     - ElevatorTest.java
     - ElevatorSystem.java
     - ElevatorSubsystemTest.java
@@ -75,15 +76,34 @@ Important notes:
 - src/test/java/scheduler/
     - BestElevatorTest.java
     - SchedulerTest.java
-- src/main/resources/data.txt and src/test/resources/data.txt
+- src/main/resources/data.txt
   - This contains the test data (a sample floor input file) used by the floor subsystem and floor reader.
-- src/test/resources/elevatorSystemTestData.txt
+- src/test/resources/
+    - data.txt
+    - doorStuckClosedFaultData.txt
+    - doorStuckOpenFaultData.txt
+    - elevatorStuckFaultData.txt
+    - elevatorSystemTestData.txt
+    - sensorFaultData.txt
 - uml/ClassDiagram.pdf
-- uml/SequenceDiagram.pdf
 
 ======================
 === WORK BREAKDOWN ===
 ======================
+
+=======================
+=== FINAL ITERATION ===
+=======================
+Code:
+    - Scheduler Fault Handling: Randy
+      - Elevator Fault Handling Counterpart: Layne
+    - Scheduler Algorithm: Galen, Layne and Tan
+Testing: Layne, Randy, and Galen
+Diagrams:
+    - Class Diagrams: Mike and Randy
+    - State Machine Diagram: Randy
+    - Sequence Diagrams: Layne
+
 ===================
 === ITERATION 3 ===
 ===================
